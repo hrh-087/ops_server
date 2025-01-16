@@ -2,7 +2,7 @@ FROM golang:alpine AS builder
 
 WORKDIR /data/ops
 LABEL stage=gobuilder
-COPY docker .
+COPY . .
 
 ENV CGO_ENABLED 0
 ENV GOPROXY https://goproxy.cn,direct
