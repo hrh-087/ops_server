@@ -7,4 +7,3 @@ test
 .idea/*
 
 # Ignore config file
-config.yaml

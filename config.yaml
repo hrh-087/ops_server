@@ -1,0 +1,92 @@
+
+# db
+mysql:
+  prefix: ""
+  port: "3306"
+  config: charset=utf8mb4&parseTime=True&loc=Local
+  db-name: ops
+  username: root
+  password: "1234567890"
+  path: 192.168.128.129
+  engine: ""
+  log-mode: error
+  max-idle-conns: 10
+  max-open-conns: 100
+  singular: false
+  log-zap: false
+
+jwt:
+  signing-key: 5dc9907b-3e0a-429f-addc-5c3a58b12cf0
+  expires-time: 7d
+  buffer-time: 1d
+  issuer: ops
+
+captcha:
+  key-long: 4
+  img-width: 240
+  img-height: 80
+  open-captcha: 0
+  open-captcha-timeout: 3600
+
+email:
+  to: 1197289278@qq.com
+  from: 1197289278@163.com
+  host: smtp.163.com
+  secret: xxx
+  nickname: test
+  port: 465
+  is-ssl: true
+
+excel:
+  dir: ./resource/excel/
+
+local:
+  path: ./resource/
+  store-path: ./resource/
+
+redis:
+  addr: 192.168.128.129:55561
+  password: "pineapple"
+  db: 1
+  useCluster: false
+  clusterAddrs:
+    - 172.21.0.3:7000
+    - 172.21.0.4:7001
+    - 172.21.0.2:7002
+
+system:
+  db-type: mysql
+  router-prefix: ""
+  addr: 8889
+  iplimit-count: 15000
+  iplimit-time: 3600
+  use-multipoint: false # 暂未处理多点登录  默认为false
+  use-redis: false
+  use-mongo: false
+
+zap:
+  level: info
+  prefix: '[local-ops] '
+  format: console
+  director: logs
+  encode-level: LowercaseColorLevelEncoder
+  stacktrace-key: stacktrace
+  show-line: true
+  log-in-console: true
+  retention-day: -1
+
+# 异步队列配置
+asynq:
+  addr: 192.168.128.129 # redis地址
+  port: 6379 # redis端口
+  db: 2 # redisDb
+  password: "" # redis密码
+  max-retry: 0 # 重试次数
+  retention: 7 # 保留天数
+  concurrency: 10 # 并发数
+  timeout: 600 # 任务执行超时时间 单位秒
+
+game:
+  game-path: /data/game/ # 游戏安装目录
+  game-script-path: /data/script/ # 游戏脚本目录
+  game-script-auto-path: /data/script/auto/ # 游戏脚本目录
