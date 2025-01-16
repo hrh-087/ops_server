@@ -1,0 +1,10 @@
+# Ignore test dir
+resource
+logs
+test
+
+# Ignore IEDA files
+.ieda
+
+# Ignore config file
+config.yaml

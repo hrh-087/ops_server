@@ -1,0 +1,21 @@
+package global
+
+import (
+	"github.com/hibiken/asynq"
+	"github.com/spf13/viper"
+	"go.uber.org/zap"
+	"gorm.io/gorm"
+	"ops-server/config"
+)
+
+var (
+	OPS_DB     *gorm.DB
+	OPS_CONFIG config.Server
+	//OPS_REDIS redis.UniversalClient
+	OPS_VP *viper.Viper
+
+	// OPS_LOG
+	OPS_LOG      *zap.Logger
+	AsynqClinet  *asynq.Client
+	AsynqInspect *asynq.Inspector
+)
