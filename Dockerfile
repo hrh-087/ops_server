@@ -2,7 +2,7 @@ FROM golang:alpine AS builder
 
 WORKDIR /data/ops
 LABEL stage=gobuilder
-COPY ../ .
+COPY docker .
 
 ENV CGO_ENABLED 0
 ENV GOPROXY https://goproxy.cn,direct
@@ -11,8 +11,8 @@ ENV GO111MODULE on
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk update --no-cache && apk add --no-cache tzdata
 
-ADD ../go.mod .
-ADD ../go.sum .
+ADD go.mod .
+ADD go.sum .
 
 RUN go env
 RUN go mod tidy

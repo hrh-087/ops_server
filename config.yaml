@@ -57,7 +57,7 @@ redis:
 system:
   db-type: mysql
   router-prefix: ""
-  addr: 8889
+  addr: 8000
   iplimit-count: 15000
   iplimit-time: 3600
   use-multipoint: false # 暂未处理多点登录  默认为false
