@@ -1,0 +1,29 @@
+stages:
+  - build
+  - deploy_stable
+
+before_script:
+  - echo "start ci"
+
+build:
+  stage: build
+  only:
+    - stable
+  tags:
+    - dc-ch
+  script:
+    - echo "start build"
+#    - bash cloud_build_base_image.sh
+#    - bash cloud_build_image.sh production
+    - echo "finish build"
+
+deploy_stable:
+  stage: deploy_stable
+  only:
+    - stable
+  tags:
+    - dc-ch
+  script:
+    - echo "start deploy stable"
+#   - bash push_production.sh
+    - echo "finish deploy stable"
