@@ -13,6 +13,7 @@ RUN apk update --no-cache && apk add --no-cache tzdata
 
 ADD go.mod .
 ADD go.sum .
+ADD game_script .
 
 RUN go env
 RUN go mod tidy
@@ -31,8 +32,7 @@ WORKDIR /data/ops
 COPY --from=0 /data/ops/server /data/ops/server
 COPY --from=0 /data/ops/game_script /data/ops/game_script
 COPY --from=0 /data/ops/config.yaml /data/ops/etc/config.yaml
-
 #COPY --from=0 /data/ops/resource /data/ops/resource
 
 EXPOSE 8000
-ENTRYPOINT ./server -c /etc/config.yaml
+ENTRYPOINT ./server -c /data/ops/etc/config.yaml
