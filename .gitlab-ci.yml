@@ -1,29 +1,30 @@
 stages:
-  - build
-  - deploy_stable
+  - deployStable
+  - deployDev
 
 before_script:
   - echo "start ci"
 
-build:
-  stage: build
+deployStable:
+  stage: deployStable
   only:
     - stable
   tags:
     - dc-ch
   script:
-    - echo "start build"
-#    - bash cloud_build_base_image.sh
-#    - bash cloud_build_image.sh production
-    - echo "finish build"
+    - echo "start build stable"
+    - bash build_image.sh stable
+    - bash push_image.sh stable
+    - echo "finish build stable"
 
-deploy_stable:
-  stage: deploy_stable
+deployDev:
+  stage: deployDev
   only:
-    - stable
+    - dev
   tags:
     - dc-ch
   script:
-    - echo "start deploy stable"
-#   - bash push_production.sh
-    - echo "finish deploy stable"
+    - echo "start build stable"
+    - bash build_image.sh dev
+    - bash push_image.sh dev
+    - echo "finish build stable"
