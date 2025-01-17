@@ -30,7 +30,7 @@ RUN apk update && apk add --no-cache tzdata openntpd && ln -sf /usr/share/zonein
 WORKDIR /data/ops
 
 COPY --from=0 /data/ops/server /data/ops/server
-COPY --from=0 /data/ops/game_script /data/ops/game_script
+#COPY --from=0 /data/ops/game_script /data/ops/game_script
 COPY --from=0 /data/ops/config.yaml /data/ops/etc/config.yaml
 #COPY --from=0 /data/ops/resource /data/ops/resource
 

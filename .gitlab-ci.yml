@@ -1,0 +1,30 @@
+stages:
+  - deployStable
+  - deployDev
+
+before_script:
+  - echo "start ci"
+
+deployStable:
+  stage: deployStable
+  only:
+    - stable
+  tags:
+    - dc-ch
+  script:
+    - echo "start build stable"
+    - bash script/build_image.sh stable
+    - bash script/push_image.sh stable
+    - echo "finish build stable"
+
+deployDev:
+  stage: deployDev
+  only:
+    - dev
+  tags:
+    - dc-ch
+  script:
+    - echo "start build stable"
+    - bash script/build_image.sh dev
+    - bash script/push_image.sh dev
+    - echo "finish build stable"
