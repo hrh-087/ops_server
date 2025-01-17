@@ -9,5 +9,5 @@ if [ -z "$TAG" ]; then
     TAG="dev"
 fi
 
-docker tag ${IMAGE}:${TAG} ${repo}/${IMAGE}:${TAG}
-docker push ${repo}/${IMAGE}:${TAG}
+docker tag ${IMAGE}:${TAG} ${REPO}/${IMAGE}:${TAG}
+docker push ${REPO}/${IMAGE}:${TAG}
