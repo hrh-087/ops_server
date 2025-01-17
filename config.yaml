@@ -51,8 +51,6 @@ redis:
   useCluster: false
   clusterAddrs:
     - 172.21.0.3:7000
-    - 172.21.0.4:7001
-    - 172.21.0.2:7002
 
 system:
   db-type: mysql
