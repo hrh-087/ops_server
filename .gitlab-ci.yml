@@ -13,8 +13,8 @@ deployStable:
     - dc-ch
   script:
     - echo "start build stable"
-    - bash build_image.sh stable
-    - bash push_image.sh stable
+    - bash script/build_image.sh stable
+    - bash script/push_image.sh stable
     - echo "finish build stable"
 
 deployDev:
@@ -25,6 +25,6 @@ deployDev:
     - dc-ch
   script:
     - echo "start build stable"
-    - bash build_image.sh dev
-    - bash push_image.sh dev
+    - bash script/build_image.sh dev
+    - bash script/push_image.sh dev
     - echo "finish build stable"
