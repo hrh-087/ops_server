@@ -13,7 +13,7 @@ RUN apk update --no-cache && apk add --no-cache tzdata
 
 ADD go.mod .
 ADD go.sum .
-ADD game_script .
+ADD script .
 
 RUN go env
 RUN go mod tidy
