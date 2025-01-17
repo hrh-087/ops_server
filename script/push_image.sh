@@ -2,7 +2,7 @@
 
 REPO=swr.cn-south-1.myhuaweicloud.com/dc2gz
 
-IMAGES=ops-server
+IMAGE=ops-server
 TAG=$1
 
 if [ -z "$TAG" ]; then
