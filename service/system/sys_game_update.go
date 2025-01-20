@@ -74,9 +74,9 @@ func (s *GameUpdateService) createHotUpdateStep(step int8, hotParams sysReq.HotU
 		updateParams.JobId = uuid.Must(uuid.NewV4())
 
 		if hotParams.ServerType == 1 {
-			updateParams.Command = fmt.Sprintf("sh %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptPath, "hot_game_rsync_server.sh game "))
+			updateParams.Command = fmt.Sprintf("sh %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptAutoPath, "hot_game_rsync_server.sh game "))
 		} else {
-			updateParams.Command = fmt.Sprintf("sh %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptPath, "hot_game_rsync_server.sh game_type "))
+			updateParams.Command = fmt.Sprintf("sh %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptAutoPath, "hot_game_rsync_server.sh game_type "))
 		}
 	}
 	return
@@ -208,7 +208,7 @@ func (s *GameUpdateService) ExecUpdateTask(ctx *gin.Context, id int) (jobId uuid
 	//var hostList []system.SysAssetsServer
 	var gameUpdate system.GameUpdate
 
-	if err = global.OPS_DB.WithContext(ctx).First(&gameUpdate, "id = ?", id).Error; err != nil {
+	if err = global.OPS_DB.WithContext(ctx).Preload("SysProject").First(&gameUpdate, "id = ?", id).Error; err != nil {
 		return
 	}
 
@@ -241,8 +241,11 @@ func (s *GameUpdateService) ExecUpdateTask(ctx *gin.Context, id int) (jobId uuid
 	}
 
 	switch gameUpdate.UpdateType {
+	// 正常更新
 	case 1:
 		var hostIdList []int
+		var command string
+		var allHostIpList []string
 		// 根据不同的步骤获取主机列表
 		switch gameUpdate.Step {
 		case 1, 2, 4:
@@ -255,10 +258,29 @@ func (s *GameUpdateService) ExecUpdateTask(ctx *gin.Context, id int) (jobId uuid
 			if err == gorm.ErrRecordNotFound {
 				return jobId, errors.New("未添加后台服务器")
 			}
+
+			err = global.OPS_DB.WithContext(ctx).Model(&system.SysAssetsServer{}).Where("status = ? and server_type = ?", 1, 1).Pluck("pub_ip", &allHostIpList).Error
+			if err != nil {
+				return jobId, errors.New("获取游戏服务器列表失败")
+			}
 		}
 
 		if len(hostIdList) == 0 {
 			return jobId, errors.New("未获取到匹配主机")
+		}
+
+		if gameUpdate.Step == 3 {
+			command = fmt.Sprintf("%s %s %s %s",
+				updateParams[gameUpdate.Step].Command,
+				global.OPS_CONFIG.Game.GameConfigDir, // 临时写死
+				//gameUpdate.SysProject.ConfigDir,
+				global.OPS_CONFIG.Game.RemoteConfigDir,
+				strings.Join(allHostIpList, ","),
+			)
+		} else if gameUpdate.Step == 5 {
+			command = fmt.Sprintf("%s %s %s", updateParams[gameUpdate.Step].Command, gameUpdate.GameVersion, strings.Join(allHostIpList, ","))
+		} else {
+			command = updateParams[gameUpdate.Step].Command
 		}
 
 		// 根据步骤参数添加到任务列表中
@@ -274,7 +296,7 @@ func (s *GameUpdateService) ExecUpdateTask(ctx *gin.Context, id int) (jobId uuid
 			taskInfo, err := task.NewUpdateGameTask(updateParams[gameUpdate.Step].TaskTypeName, task.NormalUpdateGameParams{
 				Host:    host,
 				TaskId:  taskId,
-				Command: updateParams[gameUpdate.Step].Command,
+				Command: command,
 				Params:  updateParams[gameUpdate.Step].Params,
 			})
 
@@ -297,9 +319,13 @@ func (s *GameUpdateService) ExecUpdateTask(ctx *gin.Context, id int) (jobId uuid
 			}
 			taskList = append(taskList, t)
 		}
+
+	//热更
 	case 2:
 		var hostIdList []int
 		var gameServerList []*system.SysGameServer
+
+		// 获取执行主机
 		switch gameUpdate.Step {
 		case 1, 2:
 			err = global.OPS_DB.WithContext(ctx).Model(&system.SysAssetsServer{}).Where("status = ? and server_type = ?", 1, 3).Limit(1).Pluck("id", &hostIdList).Error
@@ -328,10 +354,18 @@ func (s *GameUpdateService) ExecUpdateTask(ctx *gin.Context, id int) (jobId uuid
 			}
 		}
 
+		// 获取热更文件信息，替换文件路径
+		hotFilePath := strings.ReplaceAll(gameUpdate.HotFile, "resource", global.OPS_CONFIG.Game.HotFileDir)
+		hotFileName := strings.Split(filepath.Base(hotFilePath), ".")[0]
+		if hotFileName == "" {
+			return jobId, errors.New("热更文件不能为空")
+		}
+
 		if len(hostIdList) > 0 {
 			var serverList []system.SysGameServer
 			var commandParams []string
 			var command string
+
 			if gameUpdate.Step == 2 {
 				var gameTypeList []int
 				if err = json.Unmarshal([]byte(gameUpdate.ServerList), &gameTypeList); err != nil {
@@ -357,7 +391,10 @@ func (s *GameUpdateService) ExecUpdateTask(ctx *gin.Context, id int) (jobId uuid
 					commandParams = append(commandParams, server.Host.PubIp)
 				}
 				// 拼接命令
-				command = fmt.Sprintf("%s %s", updateParams[gameUpdate.Step].Command, strings.Join(commandParams, ","))
+				command = fmt.Sprintf("%s /tmp/%s %s", updateParams[gameUpdate.Step].Command, hotFileName, strings.Join(commandParams, ","))
+
+			} else if gameUpdate.Step == 1 {
+				command = fmt.Sprintf(updateParams[gameUpdate.Step].Command, hotFilePath, hotFileName)
 			} else {
 				command = updateParams[gameUpdate.Step].Command
 			}
@@ -406,9 +443,9 @@ func (s *GameUpdateService) ExecUpdateTask(ctx *gin.Context, id int) (jobId uuid
 				taskId := uuid.Must(uuid.NewV4())
 				// 根据热更类型拼接命令
 				if gameUpdate.ServerType == 1 {
-					command = fmt.Sprintf("%s %s_%d", updateParams[gameUpdate.Step].Command, gameServer.GameType.Code, gameServer.Vmid)
+					command = fmt.Sprintf("%s %s_%d /tmp/%s/", updateParams[gameUpdate.Step].Command, gameServer.GameType.Code, gameServer.Vmid, hotFileName)
 				} else if gameUpdate.ServerType == 2 {
-					command = fmt.Sprintf("%s %s", updateParams[gameUpdate.Step].Command, gameServer.GameType.Code)
+					command = fmt.Sprintf("%s %s /tmp/%s/", updateParams[gameUpdate.Step].Command, gameServer.GameType.Code, hotFileName)
 				} else {
 					return jobId, errors.New("无法识别游戏服热更类型")
 				}

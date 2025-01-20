@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/hibiken/asynq"
 	"go.uber.org/zap"
+	"golang.org/x/crypto/ssh"
 	"ops-server/global"
 	"ops-server/model/system"
 	"ops-server/utils"
@@ -83,4 +84,14 @@ func GetSSHKey(projectId uint, host, port string) (auth utils.SShConfig, err err
 			PrivateKeyPassphrase: sshKey.PrivateKeyPassphrase,
 		}, err
 	}
+}
+
+func GetSSHConn(projectId uint, pubIp string, port string) (client *ssh.Client, err error) {
+	sshConfig, err := GetSSHKey(projectId, pubIp, port)
+	if err != nil {
+		global.OPS_LOG.Error("获取ssh配置失败", zap.Error(err))
+		return nil, err
+	}
+
+	return utils.NewSSHClient(&sshConfig)
 }

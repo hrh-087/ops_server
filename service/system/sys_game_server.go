@@ -180,7 +180,7 @@ func (g *GameServerService) InstallGameServer(ctx *gin.Context, ids request.IdsR
 
 	jobId = uuid.Must(uuid.NewV4())
 
-	for index, _ := range gameServerList {
+	for index := range gameServerList {
 		var t system.JobTask
 
 		taskId := uuid.Must(uuid.NewV4())
@@ -208,8 +208,8 @@ func (g *GameServerService) InstallGameServer(ctx *gin.Context, ids request.IdsR
 
 		taskList = append(taskList, t)
 		// 修改游戏服状态为安装中
-		gameServerList[index].Status = 1
-		global.OPS_DB.WithContext(ctx).Save(gameServerList[index])
+		//gameServerList[index].Status = 1
+		//global.OPS_DB.WithContext(ctx).Save(gameServerList[index])
 	}
 
 	job.JobId = jobId
