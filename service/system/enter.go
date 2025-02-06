@@ -19,6 +19,7 @@ type ServiceGroup struct {
 	AssetsMongoService
 	AssetsRedisService
 	AssetsKafkaService
+	AssetsLbService
 	// 游戏管理
 	GameTypeService
 	GameServerService

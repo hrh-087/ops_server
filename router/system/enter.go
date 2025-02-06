@@ -18,6 +18,7 @@ type RouterGroup struct {
 	AssetsMongoRouter
 	AssetsRedisRouter
 	AssetsKafkaRouter
+	AssetsLbRouter
 
 	GameTypeRouter
 	GameServerRouter

@@ -26,9 +26,10 @@ var (
 
 	AssetsServerVerify = Rules{"PrivateIp": {NotEmpty()}, "PubIp": {NotEmpty()}, "SSHPort": {NotEmpty()}, "ServerName": {NotEmpty()}, "PlatformId": {NotEmpty()}}
 	AssetsMysqlVerify  = Rules{"Host": {NotEmpty()}, "Name": {NotEmpty()}, "Pass": {NotEmpty()}, "Port": {NotEmpty()}, "PlatformId": {NotEmpty()}}
-	AssetsRedisVerify  = Rules{"Host": {NotEmpty()}, "Name": {NotEmpty()}, "Password": {NotEmpty()}, "PlatformId": {NotEmpty()}, "Port": {NotEmpty()}}
+	AssetsRedisVerify  = Rules{"Host": {NotEmpty()}, "Name": {NotEmpty()}, "PlatformId": {NotEmpty()}, "Port": {NotEmpty()}}
 	AssetsMongoVerify  = Rules{"Host": {NotEmpty()}, "Name": {NotEmpty()}, "PlatformId": {NotEmpty()}, "Auth": {NotEmpty()}}
 	AssetsKafkaVerify  = Rules{"Host": {NotEmpty()}, "Name": {NotEmpty()}, "PlatformId": {NotEmpty()}}
+	AssetsLbVerify     = Rules{"PlatformId": {NotEmpty()}, "CloudProduceId": {NotEmpty()}}
 
 	GameTypeVerify   = Rules{"Code": {NotEmpty()}, "Name": {NotEmpty()}, "VmidRule": {NotEmpty()}}
 	GameServerVerify = Rules{

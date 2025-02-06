@@ -16,6 +16,7 @@ func InitWorkers() {
 		},
 		asynq.Config{
 			Concurrency: global.OPS_CONFIG.Asynq.Concurrency,
+			//Logger: global.OPS_LOG,
 		},
 	)
 

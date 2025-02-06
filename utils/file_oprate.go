@@ -1,6 +1,9 @@
 package utils
 
-import "os"
+import (
+	"os"
+	"path/filepath"
+)
 
 func CreateFile(filePath, fileName string, text string) (string, error) {
 
@@ -10,7 +13,7 @@ func CreateFile(filePath, fileName string, text string) (string, error) {
 		return "", err
 	}
 
-	fullPath := filePath + "/" + fileName
+	fullPath := filepath.Join(filePath, fileName)
 
 	err = os.WriteFile(fullPath, []byte(text), 0644)
 	if err != nil {

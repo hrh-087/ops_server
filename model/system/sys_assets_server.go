@@ -44,10 +44,11 @@ type SysAssetsRedis struct {
 	Platform           SysGamePlatform `json:"platform" gorm:"foreignKey:PlatformId;references:ID"`
 	SysAssetDeviceInfo `json:"deviceInfo" gorm:"embedded;comment:附加属性"`
 
-	Name     string `json:"name" gorm:"comment:redis名称"`
-	Host     string `json:"host" gorm:"comment:连接地址"`
-	Port     int64  `json:"port" gorm:"comment:连接端口"`
-	Password string `json:"password" gorm:"comment:连接密码"`
+	Name      string `json:"name" gorm:"comment:redis名称"`
+	Host      string `json:"host" gorm:"comment:连接地址"`
+	Port      int64  `json:"port" gorm:"comment:连接端口"`
+	Password  string `json:"password" gorm:"comment:连接密码"`
+	IsCluster bool   `json:"isCluster" gorm:"comment:是否集群"`
 }
 
 func (a *SysAssetsRedis) TableName() string {

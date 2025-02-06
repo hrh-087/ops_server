@@ -42,6 +42,8 @@ func RegisterTables() {
 		system.SysAssetsMongo{},
 		system.SysAssetsMysql{},
 		system.SysAssetsKafka{},
+		system.SysAssetsLb{},
+		system.SysAssetsListener{},
 
 		// game
 		system.SysGameServer{},
