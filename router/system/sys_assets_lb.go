@@ -3,13 +3,14 @@ package system
 import (
 	"github.com/gin-gonic/gin"
 	v1 "ops-server/api/v1"
+	"ops-server/middleware"
 )
 
 type AssetsLbRouter struct {
 }
 
 func (*AssetsLbRouter) InitAssetsLbRouter(Router *gin.RouterGroup) {
-	router := Router.Group("assets")
+	router := Router.Group("assets").Use(middleware.OperationRecord())
 	routerWithoutRecord := Router.Group("assets")
 
 	routerApi := v1.ApiGroupApp.SystemApiGroup.AssetsLbApi

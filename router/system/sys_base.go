@@ -13,9 +13,9 @@ func (s *BaseRouter) InitBaseRouter(Router *gin.RouterGroup) gin.IRouter {
 	baseApi := v1.ApiGroupApp.SystemApiGroup.BaseApi
 
 	{
-		baseRouter.POST("login", baseApi.Login)
-		baseRouter.POST("logout", baseApi.Logout)
-		baseRouter.POST("uploadFile", baseApi.UploadFile)
+		baseRouter.POST("login/", baseApi.Login)
+		baseRouter.POST("logout/", baseApi.Logout)
+		baseRouter.POST("uploadFile/", baseApi.UploadFile)
 	}
 	return baseRouter
 }

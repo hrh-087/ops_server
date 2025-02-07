@@ -29,4 +29,6 @@ type ServiceGroup struct {
 	JobCommandService
 	// 更新
 	GameUpdateService
+	// 操作记录
+	OperationRecordService
 }

@@ -14,13 +14,13 @@ type CasbinInReceive struct {
 
 func DefaultCasbin() []CasbinInfo {
 	return []CasbinInfo{
-		{Path: "/menu/getMenu", Method: "POST"},
+		{Path: "/menu/getMenu/", Method: "POST"},
 		//{Path: "/jwt/jsonInBlacklist", Method: "POST"},
-		//{Path: "/base/login", Method: "POST"},
+		{Path: "/base/login/", Method: "POST"},
 		//{Path: "/user/admin_register", Method: "POST"},
-		{Path: "/user/changePassword", Method: "POST"},
-		{Path: "/user/setUserAuthority", Method: "POST"},
-		{Path: "/user/setSelfInfo", Method: "PUT"},
-		{Path: "/user/getUserInfo", Method: "GET"},
+		{Path: "/user/changePassword/", Method: "POST"},
+		{Path: "/user/setUserAuthority/", Method: "POST"},
+		{Path: "/user/setSelfInfo/", Method: "PUT"},
+		{Path: "/user/getUserInfo/", Method: "GET"},
 	}
 }

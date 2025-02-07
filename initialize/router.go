@@ -40,6 +40,7 @@ func Routers() *gin.Engine {
 		systemRouter.ApiRouter.InitApiRouter(PrivateGroup, PublicGroup)
 		systemRouter.CasbinRouter.InitCasbinRouter(PrivateGroup)
 		systemRouter.ProjectRouter.InitProjectRouter(PrivateGroup)
+		systemRouter.OperationRecordRouter.InitSysOperationRecordRouter(ProjectGroup)
 
 		systemRouter.SshAuthRouter.InitSshAuthRouter(ProjectGroup)
 		systemRouter.CloudProduceRouter.InitCloudProduceRouter(ProjectGroup)

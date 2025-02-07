@@ -54,6 +54,8 @@ func RegisterTables() {
 		system.JobTask{},
 		system.JobCommand{},
 		system.GameUpdate{},
+
+		system.SysOperationRecord{},
 	)
 	if err != nil {
 		panic("register table failed")

@@ -9,6 +9,7 @@ type RouterGroup struct {
 	CasbinRouter
 	ProjectRouter
 	SshAuthRouter
+	OperationRecordRouter
 
 	CloudProduceRouter
 	GamePlatformRouter
