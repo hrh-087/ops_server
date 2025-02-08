@@ -19,6 +19,7 @@ type ApiGroup struct {
 	AssetsRedisApi
 	AssetsMongoApi
 	AssetsKafkaApi
+	AssetsLbApi
 
 	// 游戏服管理
 	GameTypeApi
@@ -31,6 +32,8 @@ type ApiGroup struct {
 
 	// 更新
 	GameUpdateApi
+	// 操作记录
+	OperationRecordApi
 }
 
 var (
@@ -51,6 +54,7 @@ var (
 	assetsRedisService  = service.ServiceGroupApp.SystemServiceGroup.AssetsRedisService
 	assetsMongoService  = service.ServiceGroupApp.SystemServiceGroup.AssetsMongoService
 	assetsKafkaService  = service.ServiceGroupApp.SystemServiceGroup.AssetsKafkaService
+	assetsLbService     = service.ServiceGroupApp.SystemServiceGroup.AssetsLbService
 
 	gameTypeService   = service.ServiceGroupApp.SystemServiceGroup.GameTypeService
 	gameServerService = service.ServiceGroupApp.SystemServiceGroup.GameServerService
@@ -59,5 +63,6 @@ var (
 	jobTaskService    = service.ServiceGroupApp.SystemServiceGroup.JobTaskService
 	jobCommandService = service.ServiceGroupApp.SystemServiceGroup.JobCommandService
 
-	gameUpdateService = service.ServiceGroupApp.SystemServiceGroup.GameUpdateService
+	gameUpdateService      = service.ServiceGroupApp.SystemServiceGroup.GameUpdateService
+	operationRecordService = service.ServiceGroupApp.SystemServiceGroup.OperationRecordService
 )

@@ -54,7 +54,7 @@ redis:
 system:
   db-type: mysql
   router-prefix: ""
-  addr: 8000
+  addr: 8001
   iplimit-count: 15000
   iplimit-time: 3600
   use-multipoint: false # 暂未处理多点登录  默认为false
@@ -87,3 +87,6 @@ game:
   game-path: /data/game/ # 游戏安装目录
   game-script-path: /data/script/ # 游戏脚本目录
   game-script-auto-path: /data/script/auto/ # 游戏脚本目录
+  hot-file-dir: /data/ops/data/ops/resource/ # 热更新文件目录
+  game-config-dir: /data/game/data/ # 游戏配置文件目录
+  remote-config-dir: /data/game/data/ # 远程配置文件目录

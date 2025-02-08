@@ -3,13 +3,14 @@ package system
 import (
 	"github.com/gin-gonic/gin"
 	v1 "ops-server/api/v1"
+	"ops-server/middleware"
 )
 
 type GameServerRouter struct {
 }
 
 func (*GameServerRouter) InitGameServerRouter(Router *gin.RouterGroup) {
-	router := Router.Group("game")
+	router := Router.Group("game").Use(middleware.OperationRecord())
 	routerWithoutRecord := Router.Group("game")
 
 	routerApi := v1.ApiGroupApp.SystemApiGroup.GameServerApi

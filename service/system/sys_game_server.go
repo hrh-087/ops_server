@@ -3,6 +3,7 @@ package system
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid/v5"
 	"go.uber.org/zap"
@@ -11,6 +12,8 @@ import (
 	"ops-server/job/task"
 	"ops-server/model/common/request"
 	"ops-server/model/system"
+	"ops-server/utils/cloud"
+	cloudRequest "ops-server/utils/cloud/request"
 	"time"
 )
 
@@ -60,7 +63,13 @@ func (g *GameServerService) CreateGameServer(ctx context.Context, gameServer sys
 
 		// 获取vmid
 		var vmid int64
-		tx.Debug().Model(&system.SysGameServer{}).Select("max(vmid) as max").Where("platform_id = ? and game_type_id = ?", server.PlatformId, gameType.ID).Pluck("max", &vmid)
+		err = tx.Debug().Model(&system.SysGameServer{}).Select("IFNULL(max(vmid), 0) as max").Where("platform_id = ? and game_type_id = ?", server.PlatformId, gameType.ID).Pluck("max", &vmid).Error
+
+		if err != nil {
+			global.OPS_LOG.Error("获取vmid失败", zap.Error(err))
+			return errors.New("获取vmid失败")
+		}
+
 		if vmid == 0 {
 			vmid = gameType.VmidRule
 		} else {
@@ -126,7 +135,39 @@ func (g *GameServerService) UpdateGameServer(ctx context.Context, gameServer sys
 }
 
 func (g *GameServerService) DeleteGameServer(ctx context.Context, id int) (err error) {
-	return global.OPS_DB.WithContext(ctx).Where("id = ?", id).Delete(&system.SysGameServer{}).Error
+	//global.OPS_DB.WithContext(ctx).Where("id = ?", id).Delete(&system.SysGameServer{}).Error
+	return global.OPS_DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		var gameServer system.SysGameServer
+		var listenerList []system.SysAssetsListener
+		if err := tx.Preload("GameType").Preload("Platform").Where("id = ?", id).First(&gameServer).Error; err != nil {
+			return err
+		}
+
+		listenerName := fmt.Sprintf("%s_%s_%d", gameServer.Platform.PlatformCode, gameServer.GameType.Code, gameServer.Vmid)
+		if err := tx.Preload("Lb").Preload("Lb.CloudProduce").Where("name = ?", listenerName).Find(&listenerList).Error; err != nil {
+			return err
+		}
+
+		for _, listener := range listenerList {
+
+			deleteBackendMemberParams := cloudRequest.Listener{
+				AK:         listener.Lb.CloudProduce.SecretId,
+				SK:         listener.Lb.CloudProduce.SecretKey,
+				Region:     listener.Lb.CloudProduce.RegionId,
+				ListenerId: listener.InstanceId,
+			}
+			if err := cloud.DeleteListener(deleteBackendMemberParams); err != nil {
+				global.OPS_LOG.Error("删除监听器失败", zap.Error(err), zap.String("listenerName", listenerName), zap.String("instanceId", listener.InstanceId))
+				return err
+			}
+
+			if err := tx.Unscoped().Delete(&listener).Error; err != nil {
+				return err
+			}
+		}
+
+		return tx.Delete(&gameServer).Error
+	})
 }
 
 func (g *GameServerService) GetGameServerById(ctx context.Context, id int) (result system.SysGameServer, err error) {
@@ -180,7 +221,7 @@ func (g *GameServerService) InstallGameServer(ctx *gin.Context, ids request.IdsR
 
 	jobId = uuid.Must(uuid.NewV4())
 
-	for index, _ := range gameServerList {
+	for index := range gameServerList {
 		var t system.JobTask
 
 		taskId := uuid.Must(uuid.NewV4())
@@ -208,8 +249,8 @@ func (g *GameServerService) InstallGameServer(ctx *gin.Context, ids request.IdsR
 
 		taskList = append(taskList, t)
 		// 修改游戏服状态为安装中
-		gameServerList[index].Status = 1
-		global.OPS_DB.WithContext(ctx).Save(gameServerList[index])
+		//gameServerList[index].Status = 1
+		//global.OPS_DB.WithContext(ctx).Save(gameServerList[index])
 	}
 
 	job.JobId = jobId

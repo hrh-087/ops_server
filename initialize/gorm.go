@@ -42,6 +42,8 @@ func RegisterTables() {
 		system.SysAssetsMongo{},
 		system.SysAssetsMysql{},
 		system.SysAssetsKafka{},
+		system.SysAssetsLb{},
+		system.SysAssetsListener{},
 
 		// game
 		system.SysGameServer{},
@@ -52,6 +54,8 @@ func RegisterTables() {
 		system.JobTask{},
 		system.JobCommand{},
 		system.GameUpdate{},
+
+		system.SysOperationRecord{},
 	)
 	if err != nil {
 		panic("register table failed")

@@ -40,6 +40,7 @@ func Routers() *gin.Engine {
 		systemRouter.ApiRouter.InitApiRouter(PrivateGroup, PublicGroup)
 		systemRouter.CasbinRouter.InitCasbinRouter(PrivateGroup)
 		systemRouter.ProjectRouter.InitProjectRouter(PrivateGroup)
+		systemRouter.OperationRecordRouter.InitSysOperationRecordRouter(ProjectGroup)
 
 		systemRouter.SshAuthRouter.InitSshAuthRouter(ProjectGroup)
 		systemRouter.CloudProduceRouter.InitCloudProduceRouter(ProjectGroup)
@@ -50,6 +51,7 @@ func Routers() *gin.Engine {
 		systemRouter.AssetsMongoRouter.InitAssetsMongoRouter(ProjectGroup)
 		systemRouter.AssetsRedisRouter.InitAssetsRedisRouter(ProjectGroup)
 		systemRouter.AssetsKafkaRouter.InitAssetsKafkaRouter(ProjectGroup)
+		systemRouter.AssetsLbRouter.InitAssetsLbRouter(ProjectGroup)
 
 		systemRouter.GameTypeRouter.InitGameTypeRouter(ProjectGroup)
 		systemRouter.GameServerRouter.InitGameServerRouter(ProjectGroup)
