@@ -59,7 +59,7 @@ func (g *GameTypeService) GetGameTypeById(ctx context.Context, id int) (result s
 	return
 }
 
-func (g *GameTypeService) GetGameTypeList(ctx context.Context, info request.PageInfo, server request.NameAndPlatformSearch) (list interface{}, total int64, err error) {
+func (g *GameTypeService) GetGameTypeList(ctx context.Context, info request.PageInfo, server system.SysGameType) (list interface{}, total int64, err error) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	db := global.OPS_DB.WithContext(ctx).Model(&system.SysGameType{})

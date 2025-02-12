@@ -16,6 +16,9 @@ const (
 	InstallServerTypeName = "game:installGame"  // 安装游戏服
 	BatchCommandTypeName  = "game:batchCommand" // 批量命令
 
+	// 游戏服
+	RsyncGameConfigTypeName = "game:rsyncGameConfig" // 同步游戏服配置
+
 	// 正常更新任务
 	UpdateGameImageTypeName    = "game:updateGameImage"    // 更新游戏服镜像
 	StopGameTypeName           = "game:stopGame"           // 关闭游戏服

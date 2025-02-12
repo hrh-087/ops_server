@@ -174,7 +174,7 @@ func (g *GameServerService) GetGameServerById(ctx context.Context, id int) (resu
 	return
 }
 
-func (g *GameServerService) GetGameServerList(ctx context.Context, info request.PageInfo, server request.NameAndPlatformSearch) (list interface{}, total int64, err error) {
+func (g *GameServerService) GetGameServerList(ctx context.Context, info request.PageInfo, server system.SysGameServer) (list interface{}, total int64, err error) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	db := global.OPS_DB.WithContext(ctx).Model(&system.SysGameServer{})
@@ -189,6 +189,14 @@ func (g *GameServerService) GetGameServerList(ctx context.Context, info request.
 
 	if server.Name != "" {
 		db = db.Where("name like ?", "%"+server.Name+"%")
+	}
+
+	if server.PlatformId != 0 {
+		db = db.Where("platform_id = ?", server.PlatformId)
+	}
+
+	if server.GameTypeId != 0 {
+		db = db.Where("game_type_id = ?", server.GameTypeId)
 	}
 
 	db = db.Limit(limit).Offset(offset)
@@ -268,4 +276,127 @@ func (g *GameServerService) InstallGameServer(ctx *gin.Context, ids request.IdsR
 	}
 
 	return jobId, nil
+}
+
+func (g *GameServerService) UpdateGameConfig(ctx *gin.Context, updateType int8, ids []int8) (err error) {
+	var gameServerList []system.SysGameServer
+	switch updateType {
+	case 1:
+		err = global.OPS_DB.WithContext(ctx).Where("status = 2").Find(&gameServerList).Error
+	case 2:
+		if len(ids) == 0 {
+			return errors.New("选择的游戏服为空")
+		}
+		err = global.OPS_DB.WithContext(ctx).Where("id in ?", ids).Where("status = 2").Find(&gameServerList).Error
+	default:
+		return errors.New("更新类型错误")
+	}
+
+	if err != nil {
+		return
+	} else if len(gameServerList) == 0 {
+		return errors.New("没有需要更新的游戏服")
+	}
+
+	for index := range gameServerList {
+		// 初始化配置文件
+		gameServerList[index].ConfigFile, err = GameTypeApp.GenerateConfigFile(gameServerList[index])
+		if err != nil {
+			global.OPS_LOG.Error("更新配置文件失败", zap.Error(err))
+			return errors.New("更新配置文件失败")
+		}
+
+		// 初始化docker-compose文件
+		gameServerList[index].ComposeFile, err = GameTypeApp.GenerateComposeFile(gameServerList[index])
+		if err != nil {
+			global.OPS_LOG.Error("更新docker-compose文件失败", zap.Error(err))
+			return errors.New("更新docker-compose文件失败")
+		}
+		global.OPS_DB.WithContext(ctx).Save(&gameServerList[index])
+	}
+	return
+}
+
+func (g *GameServerService) RsyncGameConfig(ctx *gin.Context, updateType int8, ids []int8) (jobId uuid.UUID, err error) {
+	var job system.Job
+	var gameServerList []system.SysGameServer
+	var taskList []system.JobTask
+	switch updateType {
+	case 1:
+		err = global.OPS_DB.WithContext(ctx).Where("status = 2").Find(&gameServerList).Error
+	case 2:
+		if len(ids) == 0 {
+			return uuid.UUID{}, errors.New("选择的游戏服为空")
+		}
+		err = global.OPS_DB.WithContext(ctx).Where("id in ?", ids).Where("status = 2").Find(&gameServerList).Error
+	default:
+		return uuid.UUID{}, errors.New("更新类型错误")
+	}
+
+	if err != nil {
+		return
+	} else if len(gameServerList) == 0 {
+		return uuid.UUID{}, errors.New("没有需要同步的游戏服")
+	}
+
+	// 统一获取每个主机需要更新的游戏服
+	mapGameServer := make(map[uint][]uint)
+	for index := range gameServerList {
+		mapGameServer[gameServerList[index].HostId] = append(mapGameServer[gameServerList[index].HostId], gameServerList[index].ID)
+	}
+
+	jobId = uuid.Must(uuid.NewV4())
+
+	for hostId, gameServerIds := range mapGameServer {
+		var t system.JobTask
+		var host system.SysAssetsServer
+
+		if err = global.OPS_DB.WithContext(ctx).First(&host, "id = ?", hostId).Error; err != nil {
+			global.OPS_LOG.Error("获取主机信息失败", zap.Error(err))
+			continue
+		}
+
+		taskId := uuid.Must(uuid.NewV4())
+		taskInfo, err := task.NewRsyncGameConfigTask(task.RsyncGameConfigParams{
+			TaskId:  taskId,
+			HostId:  hostId,
+			GameIds: gameServerIds,
+		})
+
+		if err != nil {
+			global.OPS_LOG.Error("添加任务到队列失败", zap.String("jobId", jobId.String()), zap.Error(err))
+			continue
+		}
+
+		t.JobId = jobId
+		t.AsynqId = taskInfo.ID
+		t.TaskId = taskId
+		t.Status = taskInfo.State.String()
+		t.HostName = host.ServerName
+		t.HostIp = host.PubIp
+		t.CreateAt = time.Now()
+
+		if err := global.OPS_DB.WithContext(ctx).Create(&t).Error; err != nil {
+			global.OPS_LOG.Error("创建任务失败", zap.String("jobId", jobId.String()), zap.String("taskId", taskId.String()), zap.Error(err))
+			continue
+		}
+
+		taskList = append(taskList, t)
+	}
+
+	job.JobId = jobId
+	job.Name = "同步游戏服配置"
+	job.Status = 1
+	job.Type = task.RsyncGameConfigTypeName
+	//job.Creator = "system"
+	job.Tasks = taskList
+
+	// 创建作业任务
+	err = JobServiceApp.CreateJob(ctx, job)
+	if err != nil {
+		global.OPS_LOG.Error("创建作业任务失败", zap.String("jobId", jobId.String()), zap.Error(err))
+		return
+	}
+
+	return
 }

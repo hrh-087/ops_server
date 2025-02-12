@@ -21,6 +21,8 @@ func (*GameServerRouter) InitGameServerRouter(Router *gin.RouterGroup) {
 		router.DELETE("server/", routerApi.DeleteGameServer)
 		router.GET("server/:id/", routerApi.GetGameServerById)
 		router.POST("server/install/", routerApi.InstallGameServer)
+		router.POST("server/rsyncConfig/", routerApi.RsyncGameConfig)
+		router.POST("server/updateConfig/", routerApi.UpdateGameConfig)
 	}
 	{
 		routerWithoutRecord.GET("server/", routerApi.GetGameServerList)

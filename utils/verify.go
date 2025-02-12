@@ -45,5 +45,6 @@ var (
 	CommandVerify      = Rules{"Command": {NotEmpty()}, "Name": {NotEmpty()}}
 	BatchCommandVerify = Rules{"BatchType": {NotEmpty()}, "CommandId": {NotEmpty()}, "ServerList": []string{NotEmpty()}}
 
-	GameUpdateVerify = Rules{"Name": {NotEmpty()}, "UpdateType": {NotEmpty()}}
+	GameUpdateVerify       = Rules{"Name": {NotEmpty()}, "UpdateType": {NotEmpty()}}
+	UpdateGameConfigVerify = Rules{"UpdateType": {NotEmpty()}}
 )

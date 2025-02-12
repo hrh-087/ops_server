@@ -89,7 +89,7 @@ func (g *GameTypeApi) DeleteGameType(c *gin.Context) {
 }
 
 func (g *GameTypeApi) GetGameTypeList(c *gin.Context) {
-	var pageInfo systemReq.SearchGameParams
+	var pageInfo systemReq.SearchGameTypeParams
 
 	err := c.ShouldBindQuery(&pageInfo)
 	if err != nil {
@@ -102,7 +102,7 @@ func (g *GameTypeApi) GetGameTypeList(c *gin.Context) {
 		return
 	}
 
-	list, total, err := gameTypeService.GetGameTypeList(c, pageInfo.PageInfo, pageInfo.NameAndPlatformSearch)
+	list, total, err := gameTypeService.GetGameTypeList(c, pageInfo.PageInfo, pageInfo.SysGameType)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
