@@ -60,7 +60,6 @@ func (g *GameServerService) CreateGameServer(ctx context.Context, gameServer sys
 			global.OPS_LOG.Error("获取grpc端口失败", zap.Error(err))
 			return err
 		}
-
 		// 获取vmid
 		var vmid int64
 		err = tx.Debug().Model(&system.SysGameServer{}).Select("IFNULL(max(vmid), 0) as max").Where("platform_id = ? and game_type_id = ?", server.PlatformId, gameType.ID).Pluck("max", &vmid).Error

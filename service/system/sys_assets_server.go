@@ -94,24 +94,24 @@ func (s *AssetsServerService) GetAssetsServerAll(ctx context.Context, id uint) (
 }
 
 func (s *AssetsServerService) getServerPort(serverId uint, ruleRange string, tx *gorm.DB) (port int64, err error) {
+	var serverPort system.SysAssetsServerPort
+
 	ports := strings.Split(ruleRange, ",")
 	if len(ports) <= 1 {
 		return 0, errors.New("端口规则不正确")
 	}
 
-	tx.Model(&system.SysAssetsServerPort{}).Select("max(port) as max").Where("server_id = ? and port BETWEEN ? and ?", serverId, ports[0], ports[1]).Pluck("max", &port)
-	if port == 0 {
+	err = tx.Debug().Where("server_id = ? and port BETWEEN ? and ?", serverId, ports[0], ports[1]).Order("port desc").First(&serverPort).Error
+	if err == gorm.ErrRecordNotFound {
 		port, err = strconv.ParseInt(ports[0], 10, 64)
 		if err != nil {
-			return 0, errors.New("端口解析失败")
+			return 0, err
 		}
-	}
-	newPort := port + 1
-
-	serverPort := system.SysAssetsServerPort{
-		ServerId: serverId,
-		Port:     newPort,
+	} else if err != nil {
+		return 0, err
+	} else {
+		port = serverPort.Port + 1
 	}
 
-	return newPort, tx.Create(&serverPort).Error
+	return port, tx.Create(&system.SysAssetsServerPort{ServerId: serverId, Port: port}).Error
 }
