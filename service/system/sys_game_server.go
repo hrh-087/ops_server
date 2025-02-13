@@ -282,12 +282,12 @@ func (g *GameServerService) UpdateGameConfig(ctx *gin.Context, updateType int8, 
 	var gameServerList []system.SysGameServer
 	switch updateType {
 	case 1:
-		err = global.OPS_DB.WithContext(ctx).Where("status = 2").Find(&gameServerList).Error
+		err = global.OPS_DB.WithContext(ctx).Where("status = 2").Preload("Platform").Preload("GameType").Preload("Host").Preload("Redis").Preload("Mongo").Preload("Kafka").Find(&gameServerList).Error
 	case 2:
 		if len(ids) == 0 {
 			return errors.New("选择的游戏服为空")
 		}
-		err = global.OPS_DB.WithContext(ctx).Where("id in ?", ids).Where("status = 2").Find(&gameServerList).Error
+		err = global.OPS_DB.WithContext(ctx).Where("id in ?", ids).Where("status = 2").Preload("Platform").Preload("GameType").Preload("Host").Preload("Redis").Preload("Mongo").Preload("Kafka").Find(&gameServerList).Error
 	default:
 		return errors.New("更新类型错误")
 	}
@@ -312,7 +312,7 @@ func (g *GameServerService) UpdateGameConfig(ctx *gin.Context, updateType int8, 
 			global.OPS_LOG.Error("更新docker-compose文件失败", zap.Error(err))
 			return errors.New("更新docker-compose文件失败")
 		}
-		global.OPS_DB.WithContext(ctx).Save(&gameServerList[index])
+		err = global.OPS_DB.WithContext(ctx).Save(&gameServerList[index]).Error
 	}
 	return
 }

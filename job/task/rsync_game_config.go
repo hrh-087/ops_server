@@ -39,8 +39,8 @@ func HandleRsyncGameConfigTask(ctx context.Context, t *asynq.Task) (err error) {
 		return err
 	}
 
-	if err = global.OPS_DB.Preload("Platform").Preload("GameType").Preload("Host").Where("id = ?", params.HostId).First(&host).Error; err != nil {
-		return fmt.Errorf("获取负载均衡信息失败:%v", err)
+	if err = global.OPS_DB.Preload("Platform").Where("id = ?", params.HostId).First(&host).Error; err != nil {
+		return fmt.Errorf("获取主机失败:%v", err)
 	}
 
 	if err = global.OPS_DB.Preload("Platform").Preload("GameType").Preload("Host").Where("id in (?)", params.GameIds).Find(&gameServerList).Error; err != nil {
