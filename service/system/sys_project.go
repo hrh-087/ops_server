@@ -34,16 +34,11 @@ func (projectService *ProjectService) UpdateProject(project system.SysProject) (
 	var oldProject system.SysProject
 
 	err = global.OPS_DB.First(&oldProject, "id = ?", project.ID).Error
-	if oldProject.ProjectName == project.ProjectName {
-		return nil
+	if err != nil {
+		return err
 	}
 
-	if !errors.Is(global.OPS_DB.Where("project_name = ?", project.ProjectName).First(&system.SysProject{}).Error, gorm.ErrRecordNotFound) {
-		return errors.New("存在相同名称项目")
-	}
-	oldProject.ProjectName = project.ProjectName
-
-	return global.OPS_DB.Model(&oldProject).Updates(&project).Error
+	return global.OPS_DB.Save(&project).Error
 }
 
 // GetProjectList
