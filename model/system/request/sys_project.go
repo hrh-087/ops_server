@@ -12,5 +12,5 @@ type SearchProjectParams struct {
 
 type AddAuthorityProject struct {
 	AuthorityId uint                `json:"authorityId"`
-	ProjectIds  []system.SysProject `json:"projectIds:q"`
+	ProjectIds  []system.SysProject `json:"projectIds"`
 }
