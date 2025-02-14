@@ -69,11 +69,11 @@ func HandleRsyncGameScriptTask(ctx context.Context, t *asynq.Task) (err error) {
 	)
 
 	output, err := utils.ExecuteSSHCommand(sshClient, command)
+	resultList = append(resultList, output)
 	if err != nil {
 		return err
 	}
 
-	resultList = append(resultList, output)
 	WriteTaskResult(t, resultList)
 
 	return err
