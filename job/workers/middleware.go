@@ -30,6 +30,13 @@ func GetExecTimeMiddleware(h asynq.Handler) asynq.Handler {
 
 		startTime := time.Now()
 		err = h.ProcessTask(ctx, t)
+
+		err = global.OPS_DB.First(&task, "task_id = ?", params.TaskId).Error
+		if err != nil {
+			global.OPS_LOG.Error("获取taskId失败", zap.Error(err))
+			return err
+		}
+
 		if err != nil {
 			global.OPS_LOG.Error("任务执行失败", zap.Error(err), zap.String("taskId", task.TaskId.String()))
 			task.Status = asynq.TaskStateArchived.String()
@@ -37,12 +44,6 @@ func GetExecTimeMiddleware(h asynq.Handler) asynq.Handler {
 			task.Status = asynq.TaskStateCompleted.String()
 		}
 		execTime := time.Since(startTime)
-
-		err = global.OPS_DB.First(&task, "task_id = ?", params.TaskId).Error
-		if err != nil {
-			global.OPS_LOG.Error("获取taskId失败", zap.Error(err))
-			return err
-		}
 
 		// 完善task信息
 		task.ExecTime = float64(execTime.Milliseconds()) / 1000
