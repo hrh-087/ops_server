@@ -29,6 +29,8 @@ const (
 	HotGameUnzipFileTypeName   = "game:HotGameUnzipFile"   // 解压热更文件包
 	HotGameRsyncHostTypeName   = "game:HotGameRsyncHost"   // 同步到服务器
 	HotGameRsyncServerTypeName = "game:HotGameRsyncServer" // 同步到游戏服
+
+	RsyncGameScriptTypeName = "game:rsyncGameScript" // 同步游戏服脚本
 )
 
 // 任务存储时间

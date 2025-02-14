@@ -34,6 +34,8 @@ type ApiGroup struct {
 	GameUpdateApi
 	// 操作记录
 	OperationRecordApi
+
+	SysTaskApi
 }
 
 var (
@@ -65,4 +67,6 @@ var (
 
 	gameUpdateService      = service.ServiceGroupApp.SystemServiceGroup.GameUpdateService
 	operationRecordService = service.ServiceGroupApp.SystemServiceGroup.OperationRecordService
+
+	sysTaskService = service.ServiceGroupApp.SystemServiceGroup.SysTaskService
 )

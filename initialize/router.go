@@ -61,6 +61,7 @@ func Routers() *gin.Engine {
 		systemRouter.JobCommandRouter.InitJobCommandRouter(ProjectGroup)
 
 		systemRouter.GameUpdateRouter.InitGameUpdateRouter(ProjectGroup)
+		systemRouter.SysTaskRouter.InitSysTaskRouter(ProjectGroup)
 
 	}
 

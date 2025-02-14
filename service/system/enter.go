@@ -31,4 +31,6 @@ type ServiceGroup struct {
 	GameUpdateService
 	// 操作记录
 	OperationRecordService
+
+	SysTaskService
 }

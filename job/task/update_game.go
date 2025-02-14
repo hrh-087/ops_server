@@ -56,7 +56,12 @@ func HandleUpdateGameImage(ctx context.Context, t *asynq.Task) error {
 		WriteTaskResult(t, resultList)
 		return err
 	}
-	defer sshClient.Close()
+	defer func() {
+		err := sshClient.Close()
+		if err != nil {
+			global.OPS_LOG.Error("ssh连接关闭失败", zap.Error(err))
+		}
+	}()
 
 	// windows开发端路径替换
 	params.Command = strings.ReplaceAll(params.Command, "\\", "/")
@@ -133,7 +138,12 @@ func HandleUpdateGameJsonData(ctx context.Context, t *asynq.Task) error {
 		WriteTaskResult(t, resultList)
 		return err
 	}
-	defer sshClient.Close()
+	defer func() {
+		err := sshClient.Close()
+		if err != nil {
+			global.OPS_LOG.Error("ssh连接关闭失败", zap.Error(err))
+		}
+	}()
 
 	// windows开发端路径替换
 	params.Command = strings.ReplaceAll(params.Command, "\\", "/")

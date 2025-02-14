@@ -44,6 +44,8 @@ func InitWorkers() {
 	mux.HandleFunc(task.HotGameRsyncHostTypeName, task.HandleHotGameRsyncHost)
 	// 同步游戏服配置文件
 	mux.HandleFunc(task.RsyncGameConfigTypeName, task.HandleRsyncGameConfigTask)
+	// 同步游戏服脚本
+	mux.HandleFunc(task.RsyncGameScriptTypeName, task.HandleRsyncGameScriptTask)
 
 	if err := srv.Run(mux); err != nil {
 		global.OPS_LOG.Error("asynq task run failed", zap.Error(err))

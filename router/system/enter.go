@@ -29,4 +29,6 @@ type RouterGroup struct {
 	JobCommandRouter
 
 	GameUpdateRouter
+
+	SysTaskRouter
 }

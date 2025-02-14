@@ -272,8 +272,8 @@ func (s *GameUpdateService) ExecUpdateTask(ctx *gin.Context, id int) (jobId uuid
 		if gameUpdate.Step == 3 {
 			command = fmt.Sprintf("%s %s %s %s",
 				updateParams[gameUpdate.Step].Command,
-				global.OPS_CONFIG.Game.GameConfigDir, // 临时写死
-				//gameUpdate.SysProject.ConfigDir,
+				//global.OPS_CONFIG.Game.GameConfigDir, // 临时写死
+				gameUpdate.SysProject.ConfigDir,
 				global.OPS_CONFIG.Game.RemoteConfigDir,
 				strings.Join(allHostIpList, ","),
 			)
