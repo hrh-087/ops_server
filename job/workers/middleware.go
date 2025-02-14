@@ -28,12 +28,6 @@ func GetExecTimeMiddleware(h asynq.Handler) asynq.Handler {
 			return err
 		}
 
-		err = global.OPS_DB.First(&task, "task_id = ?", params.TaskId).Error
-		if err != nil {
-			global.OPS_LOG.Error("获取taskId失败", zap.Error(err))
-			return err
-		}
-
 		startTime := time.Now()
 		err = h.ProcessTask(ctx, t)
 		if err != nil {
@@ -43,26 +37,15 @@ func GetExecTimeMiddleware(h asynq.Handler) asynq.Handler {
 			task.Status = asynq.TaskStateCompleted.String()
 		}
 		execTime := time.Since(startTime)
+
+		err = global.OPS_DB.First(&task, "task_id = ?", params.TaskId).Error
+		if err != nil {
+			global.OPS_LOG.Error("获取taskId失败", zap.Error(err))
+			return err
+		}
+
 		// 完善task信息
 		task.ExecTime = float64(execTime.Milliseconds()) / 1000
-
-		//// 获取任务执行状态
-		//for {
-		//	taskInfo, err := global.AsynqInspect.GetTaskInfo("default", task.AsynqId)
-		//	if err != nil {
-		//		global.OPS_LOG.Error("获取taskInfo失败", zap.Error(err), zap.String("taskId", task.TaskId.String()))
-		//		return err
-		//	}
-		//	fmt.Printf("State: %v\n", taskInfo.State)
-		//	fmt.Printf("TaskStateCompleted: %v\n", asynq.TaskStateCompleted)
-		//	fmt.Printf("TaskStateArchived: %v\n", asynq.TaskStateArchived)
-		//	if taskInfo.State == asynq.TaskStateCompleted || taskInfo.State == asynq.TaskStateArchived {
-		//		task.Status = taskInfo.State.String()
-		//		break
-		//	}
-		//
-		//	time.Sleep(time.Millisecond * 300)
-		//}
 
 		err = global.OPS_DB.WithContext(ctx).Save(&task).Error
 		if err != nil {
