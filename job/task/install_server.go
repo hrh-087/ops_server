@@ -133,22 +133,22 @@ func HandleInstallServerTask(ctx context.Context, t *asynq.Task) (err error) {
 		return fmt.Errorf("创建游戏服目录失败:%v", err)
 	}
 
-	configFilePath, err := utils.CreateFile(localGameServerDir, "application.yaml", gameServer.ConfigFile)
+	configFilePath, err := utils.CreateFile(localGameServerDir, "application.yml", gameServer.ConfigFile)
 	if err != nil {
 		return fmt.Errorf("创建配置文件失败:%v", err)
 	}
 
-	composeFilePath, err := utils.CreateFile(localGameServerDir, "docker-compose.yaml", gameServer.ComposeFile)
+	composeFilePath, err := utils.CreateFile(localGameServerDir, "docker-compose.yml", gameServer.ComposeFile)
 	if err != nil {
 		return fmt.Errorf("创建docker-compose文件失败:%v", err)
 	}
 
-	err = utils.UploadFile(sshClient, configFilePath, fmt.Sprintf("%s/data/application.yaml", gameServerDir))
+	err = utils.UploadFile(sshClient, configFilePath, fmt.Sprintf("%s/data/application.yml", gameServerDir))
 	if err != nil {
 		return fmt.Errorf("上传配置文件失败:%v", err)
 	}
 
-	err = utils.UploadFile(sshClient, composeFilePath, fmt.Sprintf("%s/docker-compose.yaml", gameServerDir))
+	err = utils.UploadFile(sshClient, composeFilePath, fmt.Sprintf("%s/docker-compose.yml", gameServerDir))
 	if err != nil {
 		return fmt.Errorf("上传docker-compose文件失败:%v", err)
 	}
