@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"html/template"
 	"ops-server/global"
 	"ops-server/model/common/request"
 	"ops-server/model/system"
 	"strings"
+	"text/template"
 )
 
 type GameTypeService struct {
