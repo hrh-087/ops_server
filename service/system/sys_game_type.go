@@ -115,9 +115,9 @@ func (g GameTypeService) GenerateConfigFile(game system.SysGameServer) (content 
 		MongoAuth:     game.Mongo.Auth,
 		DbName:        fmt.Sprintf("%s_%s", dbNamePrefix, game.Platform.PlatformCode),
 		KafkaUri:      game.Kafka.Host,
-		RedisUri:      game.Redis.Host,
+		RedisUri:      fmt.Sprintf("%s:%d", game.Redis.Host, game.Redis.Port),
 		RedisPass:     game.Redis.Password,
-		RedisMeshUri:  game.Redis.Host,
+		RedisMeshUri:  fmt.Sprintf("%s:%d", game.Redis.Host, game.Redis.Port),
 		RedisMeshPass: game.Redis.Password,
 	}
 
