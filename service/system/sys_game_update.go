@@ -28,27 +28,25 @@ func (s *GameUpdateService) createNormalUpdateStep(step int8, version string) (u
 		updateParams.StepName = "拉取游戏服镜像"
 		updateParams.TaskTypeName = task.UpdateGameImageTypeName
 		updateParams.JobId = uuid.Must(uuid.NewV4())
-		updateParams.Command = fmt.Sprintf("sh %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptAutoPath, "pull_game_image.sh"))
+
 	case 2:
 		updateParams.StepName = "关闭游戏服"
 		updateParams.TaskTypeName = task.StopGameTypeName
 		updateParams.JobId = uuid.Must(uuid.NewV4())
-		updateParams.Command = fmt.Sprintf("sh %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptAutoPath, "stop_game.sh"))
+
 	case 3:
 		updateParams.StepName = "更新游戏服配置"
-		updateParams.TaskTypeName = task.UpdateGameJsonDataTypeName
+		updateParams.TaskTypeName = task.RsyncGameJsonConfigTypeName
 		updateParams.JobId = uuid.Must(uuid.NewV4())
-		updateParams.Command = fmt.Sprintf("sh %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptPath, "game_sync_config.sh"))
+
 	case 4:
 		updateParams.StepName = "开启游戏服"
 		updateParams.TaskTypeName = task.StartGameTypeName
 		updateParams.JobId = uuid.Must(uuid.NewV4())
-		updateParams.Command = fmt.Sprintf("sh %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptAutoPath, "start_game.sh"))
 	case 5:
 		updateParams.StepName = "检查游戏版本号"
 		updateParams.TaskTypeName = task.CheckGameVersionTypeName
 		updateParams.JobId = uuid.Must(uuid.NewV4())
-		updateParams.Command = fmt.Sprintf("sh %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptPath, "check_game_version.sh"))
 	}
 	return
 }
@@ -143,7 +141,7 @@ func (s *GameUpdateService) UpdateGameUpdate(ctx *gin.Context, gameUpdate system
 }
 
 func (s *GameUpdateService) DeleteGameUpdate(ctx *gin.Context, id int) (err error) {
-	return
+	return global.OPS_DB.WithContext(ctx).Unscoped().Delete(&system.GameUpdate{}, "id = ?", id).Error
 }
 
 func (s *GameUpdateService) GetGameUpdateList(ctx *gin.Context, info request.PageInfo) (list interface{}, total int64, err error) {
@@ -244,12 +242,10 @@ func (s *GameUpdateService) ExecUpdateTask(ctx *gin.Context, id int) (jobId uuid
 	// 正常更新
 	case 1:
 		var hostIdList []int
-		var command string
-		var allHostIpList []string
 		// 根据不同的步骤获取主机列表
 		switch gameUpdate.Step {
 		case 1, 2, 4:
-			err = global.OPS_DB.WithContext(ctx).Model(&system.SysGameServer{}).Where("status = ?", 2).Pluck("host_id", &hostIdList).Group("host_id").Error
+			err = global.OPS_DB.WithContext(ctx).Model(&system.SysGameServer{}).Where("status = ?", 2).Group("host_id").Pluck("host_id", &hostIdList).Error
 			if err != nil {
 				return
 			}
@@ -259,29 +255,25 @@ func (s *GameUpdateService) ExecUpdateTask(ctx *gin.Context, id int) (jobId uuid
 				return jobId, errors.New("未添加后台服务器")
 			}
 
-			err = global.OPS_DB.WithContext(ctx).Model(&system.SysAssetsServer{}).Where("status = ? and server_type = ?", 1, 1).Pluck("pub_ip", &allHostIpList).Error
-			if err != nil {
-				return jobId, errors.New("获取游戏服务器列表失败")
-			}
 		}
 
 		if len(hostIdList) == 0 {
 			return jobId, errors.New("未获取到匹配主机")
 		}
 
-		if gameUpdate.Step == 3 {
-			command = fmt.Sprintf("%s %s %s %s",
-				updateParams[gameUpdate.Step].Command,
-				//global.OPS_CONFIG.Game.GameConfigDir, // 临时写死
-				gameUpdate.SysProject.ConfigDir,
-				global.OPS_CONFIG.Game.RemoteConfigDir,
-				strings.Join(allHostIpList, ","),
-			)
-		} else if gameUpdate.Step == 5 {
-			command = fmt.Sprintf("%s %s %s", updateParams[gameUpdate.Step].Command, gameUpdate.GameVersion, strings.Join(allHostIpList, ","))
-		} else {
-			command = updateParams[gameUpdate.Step].Command
-		}
+		//if gameUpdate.Step == 3 {
+		//	command = fmt.Sprintf("%s %s %s %s",
+		//		updateParams[gameUpdate.Step].Command,
+		//		gameUpdate.SysProject.ConfigDir,
+		//		//global.OPS_CONFIG.Game.GameConfigDir, // 临时写死
+		//		global.OPS_CONFIG.Game.RemoteConfigDir,
+		//		strings.Join(allHostIpList, ","),
+		//	)
+		//} else if gameUpdate.Step == 5 {
+		//	command = fmt.Sprintf("%s %s %s", updateParams[gameUpdate.Step].Command, gameUpdate.GameVersion, strings.Join(allHostIpList, ","))
+		//} else {
+		//	command = updateParams[gameUpdate.Step].Command
+		//}
 
 		// 根据步骤参数添加到任务列表中
 		for _, hostId := range hostIdList {
@@ -293,11 +285,10 @@ func (s *GameUpdateService) ExecUpdateTask(ctx *gin.Context, id int) (jobId uuid
 				continue
 			}
 			taskId = uuid.Must(uuid.NewV4())
-			taskInfo, err := task.NewUpdateGameTask(updateParams[gameUpdate.Step].TaskTypeName, task.NormalUpdateGameParams{
-				Host:    host,
-				TaskId:  taskId,
-				Command: command,
-				Params:  updateParams[gameUpdate.Step].Params,
+			taskInfo, err := task.NewGameTask(updateParams[gameUpdate.Step].TaskTypeName, task.GameTaskParams{
+				HostId:    host.ID,
+				TaskId:    taskId,
+				ProjectId: gameUpdate.ProjectId,
 			})
 
 			if err != nil {

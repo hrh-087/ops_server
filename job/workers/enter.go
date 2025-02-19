@@ -23,7 +23,7 @@ func InitWorkers() {
 	mux := asynq.NewServeMux()
 	mux.Use(GetExecTimeMiddleware)
 	// 游戏服安装
-	mux.HandleFunc(task.InstallServerTypeName, task.HandleInstallServerTask)
+	mux.HandleFunc(task.InstallGameServerTypeName, task.HandleInstallServer)
 	// 批量执行命令
 	mux.HandleFunc(task.BatchCommandTypeName, task.HandleBatchCommand)
 	// 更新游戏服镜像
@@ -31,11 +31,11 @@ func InitWorkers() {
 	// 关闭游戏服
 	mux.HandleFunc(task.StopGameTypeName, task.HandleStopGame)
 	// 更新配置文件
-	mux.HandleFunc(task.UpdateGameJsonDataTypeName, task.HandleUpdateGameJsonData)
+	mux.HandleFunc(task.RsyncGameJsonConfigTypeName, task.HandleRsyncGameJsonConfig)
 	// 启动游戏服
 	mux.HandleFunc(task.StartGameTypeName, task.HandleStartGame)
 	// 检查游戏服版本号
-	mux.HandleFunc(task.CheckGameVersionTypeName, task.HandleCheckGameVersion)
+	mux.HandleFunc(task.CheckGameVersionTypeName, task.HandleCheckGameImageVersion)
 	// 解压热更文件
 	mux.HandleFunc(task.HotGameUnzipFileTypeName, task.HandleHotGameUnzipFile)
 	// 同步热更文件到游戏服
@@ -43,9 +43,9 @@ func InitWorkers() {
 	// 同步热更文件到对应服务器
 	mux.HandleFunc(task.HotGameRsyncHostTypeName, task.HandleHotGameRsyncHost)
 	// 同步游戏服配置文件
-	mux.HandleFunc(task.RsyncGameConfigTypeName, task.HandleRsyncGameConfigTask)
+	mux.HandleFunc(task.RsyncGameConfigTypeName, task.HandleRsyncGameConfig)
 	// 同步游戏服脚本
-	mux.HandleFunc(task.RsyncGameScriptTypeName, task.HandleRsyncGameScriptTask)
+	mux.HandleFunc(task.RsyncGameScriptTypeName, task.HandleRsyncGameScript)
 
 	if err := srv.Run(mux); err != nil {
 		global.OPS_LOG.Error("asynq task run failed", zap.Error(err))

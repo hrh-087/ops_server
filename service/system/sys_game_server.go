@@ -400,3 +400,41 @@ func (g *GameServerService) RsyncGameConfig(ctx *gin.Context, updateType int8, i
 
 	return
 }
+
+func (g *GameServerService) ExecGameTask(ctx *gin.Context, taskType int8, ids []uint) (jobId uuid.UUID, err error) {
+	var gameServerList []system.SysGameServer
+	var taskTypeName string
+
+	if len(ids) == 0 {
+		return uuid.UUID{}, errors.New("选择的游戏服为空")
+	}
+	err = global.OPS_DB.WithContext(ctx).Where("id in ?", ids).Where("status = 2").Preload("Platform").Preload("GameType").Preload("Host").Preload("Redis").Preload("Mongo").Preload("Kafka").Find(&gameServerList).Error
+
+	if err != nil {
+		return uuid.UUID{}, errors.New("获取游戏服信息失败")
+	}
+
+	switch taskType {
+
+	case 1:
+		// 开启游戏服
+		taskTypeName = task.StartGameTypeName
+	case 2:
+		// 关闭游戏服
+		taskTypeName = task.StopGameTypeName
+	case 3:
+		// 更新游戏服配置文件
+		taskTypeName = task.UpdateGameConfigTypeName
+	case 4:
+		// 同步游戏服配置文件
+		taskTypeName = task.RsyncGameConfigTypeName
+	case 5:
+		// 安装游戏服
+		taskTypeName = task.InstallGameServerTypeName
+	default:
+		return uuid.UUID{}, errors.New("更新类型错误")
+	}
+	fmt.Println(taskTypeName)
+
+	return
+}

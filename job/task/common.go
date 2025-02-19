@@ -21,3 +21,19 @@ func NewCommonTask(taskType string, params CommonTaskParams) (*asynq.TaskInfo, e
 	task := NewTask(taskType, payload)
 	return global.AsynqClinet.Enqueue(task)
 }
+
+type GameTaskParams struct {
+	TaskId        uuid.UUID
+	HostId        uint
+	GameServerIds []uint
+	ProjectId     uint
+}
+
+func NewGameTask(taskType string, params GameTaskParams) (*asynq.TaskInfo, error) {
+	payload, err := json.Marshal(params)
+	if err != nil {
+		return nil, err
+	}
+	task := NewTask(taskType, payload)
+	return global.AsynqClinet.Enqueue(task)
+}

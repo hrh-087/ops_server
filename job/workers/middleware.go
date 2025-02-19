@@ -28,14 +28,22 @@ func GetExecTimeMiddleware(h asynq.Handler) asynq.Handler {
 			return err
 		}
 
+		// 防止任务开始时,task表没有插入数据
+		for i := 1; i <= 3; i++ {
+			err = global.OPS_DB.First(&task, "task_id = ?", params.TaskId).Error
+			if err != nil {
+				if i >= 3 {
+					global.OPS_LOG.Error("获取taskId失败", zap.Error(err))
+					return err
+				}
+				time.Sleep(time.Second)
+			} else {
+				break
+			}
+		}
+
 		startTime := time.Now()
 		err = h.ProcessTask(ctx, t)
-
-		err = global.OPS_DB.First(&task, "task_id = ?", params.TaskId).Error
-		if err != nil {
-			global.OPS_LOG.Error("获取taskId失败", zap.Error(err))
-			return err
-		}
 
 		if err != nil {
 			global.OPS_LOG.Error("任务执行失败", zap.Error(err), zap.String("taskId", task.TaskId.String()))

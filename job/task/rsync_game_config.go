@@ -29,7 +29,7 @@ func NewRsyncGameConfigTask(params RsyncGameConfigParams) (*asynq.TaskInfo, erro
 	return global.AsynqClinet.Enqueue(task)
 }
 
-func HandleRsyncGameConfigTask(ctx context.Context, t *asynq.Task) (err error) {
+func HandleRsyncGameConfig(ctx context.Context, t *asynq.Task) (err error) {
 	var params RsyncGameConfigParams
 	var resultList []string
 	var host system.SysAssetsServer

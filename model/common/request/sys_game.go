@@ -15,6 +15,12 @@ type GameConfigFile struct {
 	KafkaUri      string `json:"kafkaUri"`
 	RedisUri      string `json:"redisUri"`
 	RedisPass     string `json:"redisPass"`
+	RedisPort     int64  `json:"redisPort"`
 	RedisMeshUri  string `json:"redisMeshUri"`
 	RedisMeshPass string `json:"redisMeshPass"`
+	RedisMeshPort int64  `json:"meshPort"`
+	GatewayUri    string `json:"gatewayUri"`
+}
+
+type DockerComposeFile struct {
 }

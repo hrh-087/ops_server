@@ -20,7 +20,7 @@ type RsyncGameScriptParams struct {
 	HostId       uint
 }
 
-func HandleRsyncGameScriptTask(ctx context.Context, t *asynq.Task) (err error) {
+func HandleRsyncGameScript(ctx context.Context, t *asynq.Task) (err error) {
 	var params CommonTaskParams
 	var resultList []string
 	var host system.SysAssetsServer

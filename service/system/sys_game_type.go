@@ -119,6 +119,7 @@ func (g GameTypeService) GenerateConfigFile(game system.SysGameServer) (content 
 		RedisPass:     game.Redis.Password,
 		RedisMeshUri:  fmt.Sprintf("%s:%d", game.Redis.Host, game.Redis.Port),
 		RedisMeshPass: game.Redis.Password,
+		GatewayUri:    game.SysProject.GatewayUrl,
 	}
 
 	tmpl, err := template.New("config").Parse(game.GameType.ConfigTemplate)

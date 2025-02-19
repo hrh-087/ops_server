@@ -28,11 +28,11 @@ func NewInstallServerTask(params InstallServerParams) (*asynq.TaskInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	task := NewTask(InstallServerTypeName, payload)
+	task := NewTask(InstallGameServerTypeName, payload)
 	return global.AsynqClinet.Enqueue(task)
 }
 
-func HandleInstallServerTask(ctx context.Context, t *asynq.Task) (err error) {
+func HandleInstallServer(ctx context.Context, t *asynq.Task) (err error) {
 	var gameServer system.SysGameServer
 	//var task system.JobTask
 	var resultList []string

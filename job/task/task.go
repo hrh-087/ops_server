@@ -13,24 +13,24 @@ import (
 )
 
 const (
-	InstallServerTypeName = "game:installGame"  // 安装游戏服
-	BatchCommandTypeName  = "game:batchCommand" // 批量命令
+	BatchCommandTypeName = "game:batchCommand" // 批量命令
 
 	// 游戏服
-	RsyncGameConfigTypeName = "game:rsyncGameConfig" // 同步游戏服配置
+	UpdateGameConfigTypeName    = "game:updateGameConfig"    // 更新游戏服配置
+	RsyncGameConfigTypeName     = "game:rsyncGameConfig"     // 同步游戏服配置
+	RsyncGameJsonConfigTypeName = "game:rsyncGameJsonConfig" // 同步游戏服json配置文件
+	RsyncGameScriptTypeName     = "game:rsyncGameScript"     // 同步游戏服脚本
+	InstallGameServerTypeName   = "game:installGameServer"   // 安装游戏服
+	StartGameTypeName           = "game:startGame"           // 启动游戏服
+	StopGameTypeName            = "game:stopGame"            // 关闭游戏服
+	UpdateGameImageTypeName     = "game:updateGameImage"     // 更新游戏服镜像
+	CheckGameVersionTypeName    = "game:checkGameVersion"    // 检查游戏服版本
 
-	// 正常更新任务
-	UpdateGameImageTypeName    = "game:updateGameImage"    // 更新游戏服镜像
-	StopGameTypeName           = "game:stopGame"           // 关闭游戏服
-	UpdateGameJsonDataTypeName = "game:updateGameJsonData" // 更新游戏服配置
-	StartGameTypeName          = "game:startGame"          // 启动游戏服
-	CheckGameVersionTypeName   = "game:checkGameVersion"   // 检查游戏服版本
 	// 热更游戏服代码
 	HotGameUnzipFileTypeName   = "game:HotGameUnzipFile"   // 解压热更文件包
 	HotGameRsyncHostTypeName   = "game:HotGameRsyncHost"   // 同步到服务器
 	HotGameRsyncServerTypeName = "game:HotGameRsyncServer" // 同步到游戏服
 
-	RsyncGameScriptTypeName = "game:rsyncGameScript" // 同步游戏服脚本
 )
 
 // 任务存储时间
