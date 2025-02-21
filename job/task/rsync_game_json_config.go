@@ -73,7 +73,7 @@ func RsyncGameJsonConfig(projectId uint, hostId uint) (output string, err error)
 	}()
 
 	command := fmt.Sprintf(
-		"sh %s %s %s %s",
+		"bash %s %s %s %s",
 		filepath.Join(global.OPS_CONFIG.Game.GameScriptPath, "game_sync_config.sh"),
 		host.SysProject.ConfigDir,
 		global.OPS_CONFIG.Game.RemoteConfigDir,

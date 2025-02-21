@@ -55,7 +55,7 @@ func HandleRsyncGameScript(ctx context.Context, t *asynq.Task) (err error) {
 		}
 	}()
 
-	command := fmt.Sprintf("sh %s %s %s",
+	command := fmt.Sprintf("bash %s %s %s",
 		filepath.Join(global.OPS_CONFIG.Game.GameScriptPath, "rsync_script.sh"),
 		global.OPS_CONFIG.Game.GameScriptAutoPath,
 		strings.Join(ipList, ","),

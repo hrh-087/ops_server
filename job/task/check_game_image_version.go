@@ -73,7 +73,7 @@ func CheckGameImageVersion(projectId uint, hostId uint) (output string, err erro
 	}()
 
 	command := fmt.Sprintf(
-		"sh %s %s %s %s",
+		"bash %s %s %s %s",
 		filepath.Join(global.OPS_CONFIG.Game.GameScriptPath, "check_game_version.sh"),
 		global.OPS_CONFIG.Game.GameConfigDir,
 		global.OPS_CONFIG.Game.RemoteConfigDir,

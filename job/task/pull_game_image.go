@@ -47,7 +47,7 @@ func UpdateGameImage(projectId uint, hostId uint) (output string, err error) {
 	var host system.SysAssetsServer
 
 	// 拼接命令
-	command := fmt.Sprintf("sh %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptAutoPath, "pull_game_image.sh"))
+	command := fmt.Sprintf("bash %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptAutoPath, "pull_game_image.sh"))
 
 	err = global.OPS_DB.Where("id = ?", hostId).First(&host).Error
 	if err != nil {

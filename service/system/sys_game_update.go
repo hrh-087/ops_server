@@ -65,16 +65,16 @@ func (s *GameUpdateService) createHotUpdateStep(step int8, hotParams sysReq.HotU
 		updateParams.StepName = "同步相应服务器"
 		updateParams.TaskTypeName = task.HotGameRsyncHostTypeName
 		updateParams.JobId = uuid.Must(uuid.NewV4())
-		updateParams.Command = fmt.Sprintf("sh %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptPath, "hot_game_rsync_host.sh"))
+		updateParams.Command = fmt.Sprintf("bash %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptPath, "hot_game_rsync_host.sh"))
 	case 3:
 		updateParams.StepName = "同步到相应游戏服"
 		updateParams.TaskTypeName = task.HotGameRsyncServerTypeName
 		updateParams.JobId = uuid.Must(uuid.NewV4())
 
 		if hotParams.ServerType == 1 {
-			updateParams.Command = fmt.Sprintf("sh %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptAutoPath, "hot_game_rsync_server.sh game "))
+			updateParams.Command = fmt.Sprintf("bash %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptAutoPath, "hot_game_rsync_server.sh game "))
 		} else {
-			updateParams.Command = fmt.Sprintf("sh %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptAutoPath, "hot_game_rsync_server.sh game_type "))
+			updateParams.Command = fmt.Sprintf("bash %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptAutoPath, "hot_game_rsync_server.sh game_type "))
 		}
 	}
 	return

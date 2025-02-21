@@ -73,7 +73,7 @@ func StartGameServer(projectId uint, hostId uint, gameServerIds []uint) (output 
 
 	for _, gameServer := range gameServerList {
 		// 脚本命令 渠道名称 游戏服目录
-		command := fmt.Sprintf("sh %s %s %s_%d", filepath.Join(global.OPS_CONFIG.Game.GameScriptAutoPath, "start_game.sh"), gameServer.Platform.PlatformCode, gameServer.GameType.Code, gameServer.Vmid)
+		command := fmt.Sprintf("bash %s %s %s_%d", filepath.Join(global.OPS_CONFIG.Game.GameScriptAutoPath, "start_game.sh"), gameServer.Platform.PlatformCode, gameServer.GameType.Code, gameServer.Vmid)
 		outputList = append(outputList, command)
 		// windows开发端路径替换
 		command = strings.ReplaceAll(command, "\\", "/")
