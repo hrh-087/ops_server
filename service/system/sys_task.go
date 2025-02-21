@@ -63,7 +63,7 @@ func (s *SysTaskService) ExecTask(ctx *gin.Context, id int) (jobId uuid.UUID, er
 		return
 	}
 
-	if err = global.OPS_DB.WithContext(ctx).Where("server_type = 3").First(&host).Error; err != nil {
+	if err = global.OPS_DB.Where("server_type = 3").First(&host).Error; err != nil {
 		return
 	}
 

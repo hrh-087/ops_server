@@ -221,3 +221,29 @@ func (g *GameServerApi) UpdateGameConfig(c *gin.Context) {
 
 	response.OkWithMessage("更新成功", c)
 }
+
+func (g GameServerApi) ExecGameTask(c *gin.Context) {
+	var gameTask systemReq.GameTaskParams
+
+	err := c.ShouldBindJSON(&gameTask)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err = utils.Verify(gameTask, utils.GameTaskVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	jobId, err := gameServerService.ExecGameTask(c, gameTask.TaskType, gameTask.GameServerIds)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	response.OkWithDetailed(gin.H{
+		"jobId": jobId.String(),
+	}, "添加至任务至队列成功", c)
+
+}

@@ -49,4 +49,6 @@ var (
 	UpdateGameConfigVerify = Rules{"UpdateType": {NotEmpty()}}
 
 	TaskVerify = Rules{"Name": {NotEmpty()}, "TaskType": {NotEmpty()}}
+
+	GameTaskVerify = Rules{"TaskType": {NotEmpty()}, "GameServerIds": {NotEmpty()}}
 )

@@ -187,10 +187,6 @@ func (g *GameServerService) GetGameServerList(ctx context.Context, info request.
 		return resultList, total, err
 	}
 
-	if server.Name != "" {
-		db = db.Where("name like ?", "%"+server.Name+"%")
-	}
-
 	if server.PlatformId != 0 {
 		db = db.Where("platform_id = ?", server.PlatformId)
 	}
@@ -199,12 +195,16 @@ func (g *GameServerService) GetGameServerList(ctx context.Context, info request.
 		db = db.Where("game_type_id = ?", server.GameTypeId)
 	}
 
+	if server.Status != 0 {
+		db = db.Where("status = ?", server.Status)
+	}
+
 	db = db.Limit(limit).Offset(offset)
 	OrderStr := "id desc"
 
-	err = db.Preload("Platform").
+	err = db.Debug().Preload("Platform").
 		Preload("Host").
-		Preload("GameType", func(db *gorm.DB) *gorm.DB { return db.Select("ID,name") }).
+		Preload("GameType", func(db *gorm.DB) *gorm.DB { return db.Select("ID,name,code") }).
 		Order(OrderStr).Find(&resultList).Error
 	return resultList, total, err
 }
@@ -403,11 +403,14 @@ func (g *GameServerService) RsyncGameConfig(ctx *gin.Context, updateType int8, i
 
 func (g *GameServerService) ExecGameTask(ctx *gin.Context, taskType int8, ids []uint) (jobId uuid.UUID, err error) {
 	var gameServerList []system.SysGameServer
-	var taskTypeName string
+	var taskTypeName, jobName string
+	var taskList []system.JobTask
+	var job system.Job
 
 	if len(ids) == 0 {
 		return uuid.UUID{}, errors.New("选择的游戏服为空")
 	}
+
 	err = global.OPS_DB.WithContext(ctx).Where("id in ?", ids).Where("status = 2").Preload("Platform").Preload("GameType").Preload("Host").Preload("Redis").Preload("Mongo").Preload("Kafka").Find(&gameServerList).Error
 
 	if err != nil {
@@ -415,26 +418,92 @@ func (g *GameServerService) ExecGameTask(ctx *gin.Context, taskType int8, ids []
 	}
 
 	switch taskType {
-
 	case 1:
 		// 开启游戏服
 		taskTypeName = task.StartGameTypeName
+		jobName = "开启游戏服"
 	case 2:
 		// 关闭游戏服
 		taskTypeName = task.StopGameTypeName
+		jobName = "关闭游戏服"
 	case 3:
 		// 更新游戏服配置文件
 		taskTypeName = task.UpdateGameConfigTypeName
+		jobName = "更新游戏服配置文件"
 	case 4:
 		// 同步游戏服配置文件
 		taskTypeName = task.RsyncGameConfigTypeName
+		jobName = "同步游戏服配置文件"
 	case 5:
 		// 安装游戏服
 		taskTypeName = task.InstallGameServerTypeName
+		jobName = "安装游戏服"
+
 	default:
 		return uuid.UUID{}, errors.New("更新类型错误")
 	}
-	fmt.Println(taskTypeName)
 
+	mapGameServer := make(map[uint][]uint)
+
+	// 整理游戏服信息
+	for index := range gameServerList {
+		if _, ok := mapGameServer[gameServerList[index].HostId]; !ok {
+			mapGameServer[gameServerList[index].HostId] = make([]uint, 0)
+		}
+		mapGameServer[gameServerList[index].HostId] = append(mapGameServer[gameServerList[index].HostId], gameServerList[index].ID)
+	}
+
+	jobId = uuid.Must(uuid.NewV4())
+
+	for hostId, gameServerIds := range mapGameServer {
+		var t system.JobTask
+		var host system.SysAssetsServer
+
+		if err = global.OPS_DB.WithContext(ctx).First(&host, "id = ?", hostId).Error; err != nil {
+			global.OPS_LOG.Error("获取主机信息失败", zap.Error(err))
+			continue
+		}
+
+		taskId := uuid.Must(uuid.NewV4())
+		taskInfo, err := task.NewGameTask(taskTypeName, task.GameTaskParams{
+			TaskId:        taskId,
+			HostId:        hostId,
+			GameServerIds: gameServerIds,
+			ProjectId:     host.ProjectId,
+		})
+
+		if err != nil {
+			global.OPS_LOG.Error("添加任务到队列失败", zap.String("jobId", jobId.String()), zap.Error(err))
+			continue
+		}
+
+		t.JobId = jobId
+		t.AsynqId = taskInfo.ID
+		t.TaskId = taskId
+		t.Status = taskInfo.State.String()
+		t.HostName = host.ServerName
+		t.HostIp = host.PubIp
+		t.CreateAt = time.Now()
+
+		if err := global.OPS_DB.WithContext(ctx).Create(&t).Error; err != nil {
+			global.OPS_LOG.Error("创建任务失败", zap.String("jobId", jobId.String()), zap.String("taskId", taskId.String()), zap.Error(err))
+			continue
+		}
+
+		taskList = append(taskList, t)
+	}
+	job.JobId = jobId
+	job.Name = jobName
+	job.Status = 1
+	job.Type = taskTypeName
+	//job.Creator = "system"
+	job.Tasks = taskList
+
+	// 创建作业任务
+	err = JobServiceApp.CreateJob(ctx, job)
+	if err != nil {
+		global.OPS_LOG.Error("创建作业任务失败", zap.String("jobId", jobId.String()), zap.Error(err))
+		return
+	}
 	return
 }

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/gofrs/uuid/v5"
 	"github.com/hibiken/asynq"
 	"go.uber.org/zap"
 	"ops-server/global"
@@ -13,12 +12,6 @@ import (
 	"path/filepath"
 	"strings"
 )
-
-type RsyncGameScriptParams struct {
-	TaskId       uuid.UUID
-	TaskManageId uint
-	HostId       uint
-}
 
 func HandleRsyncGameScript(ctx context.Context, t *asynq.Task) (err error) {
 	var params CommonTaskParams

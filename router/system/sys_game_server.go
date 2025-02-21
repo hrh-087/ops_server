@@ -23,6 +23,7 @@ func (*GameServerRouter) InitGameServerRouter(Router *gin.RouterGroup) {
 		router.POST("server/install/", routerApi.InstallGameServer)
 		router.POST("server/rsyncConfig/", routerApi.RsyncGameConfig)
 		router.POST("server/updateConfig/", routerApi.UpdateGameConfig)
+		router.POST("server/execTask/", routerApi.ExecGameTask)
 	}
 	{
 		routerWithoutRecord.GET("server/", routerApi.GetGameServerList)
