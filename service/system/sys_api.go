@@ -7,6 +7,7 @@ import (
 	"ops-server/global"
 	"ops-server/model/common/request"
 	"ops-server/model/system"
+	systemRes "ops-server/model/system/response"
 	"strings"
 )
 
@@ -41,7 +42,6 @@ func (apiService *ApiService) GetApiGroups() (groups []string, err error) {
 
 func (apiService *ApiService) UpdateApi(api system.SysApi) (err error) {
 	var oldA system.SysApi
-	fmt.Println(api)
 	err = global.OPS_DB.First(&oldA, "id = ?", api.ID).Error
 	if oldA.Path != api.Path || oldA.Method != api.Method {
 		var duplicateApi system.SysApi
@@ -187,4 +187,105 @@ func (apiService *ApiService) GetAPIInfoList(api system.SysApi, info request.Pag
 func (apiService *ApiService) GetApiById(id int) (api system.SysApi, err error) {
 	err = global.OPS_DB.First(&api, "id = ?", id).Error
 	return
+}
+
+func (apiService *ApiService) SyncApi() (newApis, deleteApis, ignoreApis []system.SysApi, err error) {
+	newApis = make([]system.SysApi, 0)
+	deleteApis = make([]system.SysApi, 0)
+	ignoreApis = make([]system.SysApi, 0)
+	var apis []system.SysApi
+	err = global.OPS_DB.Find(&apis).Error
+	if err != nil {
+		return
+	}
+	var ignores []system.SysIgnoreApi
+	err = global.OPS_DB.Find(&ignores).Error
+	if err != nil {
+		return
+	}
+
+	for i := range ignores {
+		ignoreApis = append(ignoreApis, system.SysApi{
+			Path:        ignores[i].Path,
+			Description: "",
+			ApiGroup:    "",
+			Method:      ignores[i].Method,
+		})
+	}
+
+	var cacheApis []system.SysApi
+	for i := range global.OPS_ROUTERS {
+		ignoresFlag := false
+		for j := range ignores {
+			if ignores[j].Path == global.OPS_ROUTERS[i].Path && ignores[j].Method == global.OPS_ROUTERS[i].Method {
+				ignoresFlag = true
+			}
+		}
+		if !ignoresFlag {
+			cacheApis = append(cacheApis, system.SysApi{
+				Path:   global.OPS_ROUTERS[i].Path,
+				Method: global.OPS_ROUTERS[i].Method,
+			})
+		}
+	}
+
+	//对比数据库中的api和内存中的api，如果数据库中的api不存在于内存中，则把api放入删除数组，如果内存中的api不存在于数据库中，则把api放入新增数组
+	for i := range cacheApis {
+		var flag bool
+		// 如果存在于内存不存在于api数组中
+		for j := range apis {
+			if cacheApis[i].Path == apis[j].Path && cacheApis[i].Method == apis[j].Method {
+				flag = true
+			}
+		}
+		if !flag {
+			newApis = append(newApis, system.SysApi{
+				Path:        cacheApis[i].Path,
+				Description: "",
+				ApiGroup:    "",
+				Method:      cacheApis[i].Method,
+			})
+		}
+	}
+
+	for i := range apis {
+		var flag bool
+		// 如果存在于api数组不存在于内存
+		for j := range cacheApis {
+			if cacheApis[j].Path == apis[i].Path && cacheApis[j].Method == apis[i].Method {
+				flag = true
+			}
+		}
+		if !flag {
+			deleteApis = append(deleteApis, apis[i])
+		}
+	}
+	return
+}
+
+func (apiService *ApiService) IgnoreApi(ignoreApi system.SysIgnoreApi) (err error) {
+	if ignoreApi.Flag {
+		return global.OPS_DB.Create(&ignoreApi).Error
+	}
+	return global.OPS_DB.Unscoped().Delete(&ignoreApi, "path = ? AND method = ?", ignoreApi.Path, ignoreApi.Method).Error
+}
+
+func (apiService *ApiService) EnterSyncApi(syncApis systemRes.SysSyncApis) (err error) {
+	return global.OPS_DB.Transaction(func(tx *gorm.DB) error {
+		var txErr error
+		if syncApis.NewApis != nil && len(syncApis.NewApis) > 0 {
+			txErr = tx.Create(&syncApis.NewApis).Error
+			if txErr != nil {
+				return txErr
+			}
+		}
+		for i := range syncApis.DeleteApis {
+			CasbinServiceApp.ClearCasbin(1, syncApis.DeleteApis[i].Path, syncApis.DeleteApis[i].Method)
+			txErr = tx.Delete(&system.SysApi{}, "path = ? AND method = ?", syncApis.DeleteApis[i].Path, syncApis.DeleteApis[i].Method).Error
+			if txErr != nil {
+				return txErr
+			}
+		}
+		return nil
+	})
 }

@@ -1,6 +1,7 @@
 package global
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/hibiken/asynq"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -13,6 +14,8 @@ var (
 	OPS_CONFIG config.Server
 	//OPS_REDIS redis.UniversalClient
 	OPS_VP *viper.Viper
+
+	OPS_ROUTERS gin.RoutesInfo
 
 	// OPS_LOG
 	OPS_LOG      *zap.Logger

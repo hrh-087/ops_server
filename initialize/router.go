@@ -65,5 +65,7 @@ func Routers() *gin.Engine {
 
 	}
 
+	global.OPS_ROUTERS = Router.Routes()
+
 	return Router
 }
