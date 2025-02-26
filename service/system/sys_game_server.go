@@ -87,7 +87,7 @@ func (g *GameServerService) CreateGameServer(ctx context.Context, gameServer sys
 		}
 
 		// 加载关联数据
-		err = tx.Where("id = ?", gameServer.ID).Preload("Platform").Preload("GameType").Preload("Host").Preload("Redis").Preload("Mongo").Preload("Kafka").First(&gameServer).Error
+		err = tx.Where("id = ?", gameServer.ID).Preload("SysProject").Preload("Platform").Preload("GameType").Preload("Host").Preload("Redis").Preload("Mongo").Preload("Kafka").First(&gameServer).Error
 		if err != nil {
 			global.OPS_LOG.Error("加载游戏服关联数据失败", zap.Error(err))
 			return errors.New("加载游戏服关联数据失败")
@@ -282,12 +282,12 @@ func (g *GameServerService) UpdateGameConfig(ctx *gin.Context, updateType int8, 
 	var gameServerList []system.SysGameServer
 	switch updateType {
 	case 1:
-		err = global.OPS_DB.WithContext(ctx).Where("status = 2").Preload("Platform").Preload("GameType").Preload("Host").Preload("Redis").Preload("Mongo").Preload("Kafka").Find(&gameServerList).Error
+		err = global.OPS_DB.WithContext(ctx).Where("status = 2").Preload("SysProject").Preload("Platform").Preload("GameType").Preload("Host").Preload("Redis").Preload("Mongo").Preload("Kafka").Find(&gameServerList).Error
 	case 2:
 		if len(ids) == 0 {
 			return errors.New("选择的游戏服为空")
 		}
-		err = global.OPS_DB.WithContext(ctx).Where("id in ?", ids).Where("status = 2").Preload("Platform").Preload("GameType").Preload("Host").Preload("Redis").Preload("Mongo").Preload("Kafka").Find(&gameServerList).Error
+		err = global.OPS_DB.WithContext(ctx).Where("id in ?", ids).Where("status = 2").Preload("SysProject").Preload("Platform").Preload("GameType").Preload("Host").Preload("Redis").Preload("Mongo").Preload("Kafka").Find(&gameServerList).Error
 	default:
 		return errors.New("更新类型错误")
 	}
