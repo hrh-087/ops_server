@@ -3,10 +3,12 @@ package system
 import (
 	"context"
 	"errors"
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"ops-server/global"
 	"ops-server/model/common/request"
 	"ops-server/model/system"
+	"ops-server/utils/gm"
 	"strings"
 )
 
@@ -72,4 +74,33 @@ func (g *GamePlatformService) GetPlatformList(ctx context.Context, platform syst
 	OrderStr := "id desc"
 	err = db.Preload("SysProject").Order(OrderStr).Find(&resultList).Error
 	return resultList, total, err
+}
+
+func (g GamePlatformService) KickGameServer(ctx *gin.Context, serverId int) (err error) {
+	projectId := ctx.GetString("projectId")
+
+	if projectId == "" {
+		return
+	}
+
+	httpClient, err := gm.NewHttpClient(projectId)
+	if err != nil {
+		return
+	}
+	// 踢战斗服玩家
+	fightRes, err := httpClient.KickFightServer(serverId)
+	if err != nil {
+		return
+	} else if fightRes.Code != 0 {
+		return errors.New(fightRes.Msg)
+	}
+	// 踢游戏服玩家
+	gameRes, err := httpClient.KickGameServer(serverId)
+	if err != nil {
+		return
+	} else if gameRes.Code != 0 {
+		return errors.New(gameRes.Msg)
+	}
+
+	return
 }

@@ -151,3 +151,27 @@ func (g *GamePlatformApi) GetPlatformAll(c *gin.Context) {
 
 	response.OkWithDetailed(result, "获取成功", c)
 }
+
+func (g *GamePlatformApi) KickGameServer(c *gin.Context) {
+	var platform system.SysGamePlatform
+	err := c.ShouldBindJSON(&platform)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	serverId, err := strconv.ParseInt(platform.PlatformCode, 10, 64)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	err = platformService.KickGameServer(c, int(serverId))
+	if err != nil {
+		global.OPS_LOG.Error("踢人失败!", zap.Error(err))
+		response.FailWithMessage("踢人失败", c)
+		return
+	}
+
+	response.OkWithMessage("踢人成功", c)
+}

@@ -1,0 +1,118 @@
+package gm
+
+import (
+	"bytes"
+	"encoding/json"
+	"errors"
+	"go.uber.org/zap"
+	"io"
+	"net/http"
+	"net/url"
+	"ops-server/global"
+	"ops-server/model/system"
+	"strings"
+	"time"
+)
+
+type HttpClient struct {
+	client  *http.Client
+	headers map[string]string
+	url     string
+}
+
+type HttpResponse struct {
+	Data interface{}
+	Msg  string
+	Code int
+}
+
+// NewHttpClient 创建一个新的 HTTP 客户端，允许自定义超时时间
+func NewHttpClient(projectId string) (client *HttpClient, err error) {
+	var project system.SysProject
+	err = global.OPS_DB.First(&project, "id = ?", projectId).Error
+	if err != nil {
+		return
+	}
+
+	if project.GmUrl == "" {
+		return nil, errors.New("url is empty")
+	} else if !strings.HasPrefix(project.GmUrl, "http") {
+		return nil, errors.New("url is not http")
+	}
+
+	return &HttpClient{
+		client: &http.Client{Timeout: time.Second * 30},
+		headers: map[string]string{
+			"Content-Type": "application/json",
+		},
+		url: project.GmUrl,
+	}, nil
+}
+
+// SetHeader 设置请求头
+func (h *HttpClient) SetHeader(key, value string) {
+	h.headers[key] = value
+}
+
+// request 通用请求方法
+func (h *HttpClient) request(method, url string, body io.Reader) (response *HttpResponse, err error) {
+	bashUrl := h.url + url
+	req, err := http.NewRequest(method, bashUrl, body)
+	if err != nil {
+		return nil, err
+	}
+
+	// 设置请求头
+	for k, v := range h.headers {
+		req.Header.Set(k, v)
+	}
+
+	result, err := h.client.Do(req)
+	if err != nil {
+		global.OPS_LOG.Error("request error", zap.Error(err))
+		return nil, err
+	}
+
+	defer func() {
+		err := result.Body.Close()
+		if err != nil {
+			global.OPS_LOG.Error("request error", zap.Error(err))
+		}
+	}()
+
+	resultBody, _ := io.ReadAll(result.Body)
+	err = json.Unmarshal(resultBody, &response)
+	if err != nil {
+		global.OPS_LOG.Error("request error", zap.Error(err))
+		return
+	}
+	global.OPS_LOG.Info("request result", zap.Any("response", response))
+
+	if response.Code != 0 {
+		global.OPS_LOG.Error("request error", zap.Any("response", response))
+		return nil, errors.New(response.Msg)
+	}
+	return response, err
+}
+func (h *HttpClient) Get(uri string, params map[string]string) (*HttpResponse, error) {
+	global.OPS_LOG.Info("Get", zap.String("baseURL", h.url+uri), zap.Any("params", params))
+	// 构造查询参数
+	u, err := url.Parse(uri)
+	if err != nil {
+		return nil, err
+	}
+
+	query := u.Query()
+	for k, v := range params {
+		query.Set(k, v)
+	}
+	u.RawQuery = query.Encode()
+
+	return h.request(http.MethodGet, u.String(), nil)
+}
+
+// Post 发送 POST 请求
+func (h *HttpClient) Post(url string, data []byte) (*HttpResponse, error) {
+	global.OPS_LOG.Info("Post", zap.String("baseURL", h.url+url), zap.ByteString("data", data))
+	return h.request(http.MethodPost, url, bytes.NewBuffer(data))
+}

@@ -63,6 +63,7 @@ func Routers() *gin.Engine {
 		systemRouter.GameUpdateRouter.InitGameUpdateRouter(ProjectGroup)
 		systemRouter.SysTaskRouter.InitSysTaskRouter(ProjectGroup)
 
+		systemRouter.GmRouter.InitGmRouter(ProjectGroup)
 	}
 
 	global.OPS_ROUTERS = Router.Routes()

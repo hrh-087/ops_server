@@ -20,6 +20,7 @@ func (p *GamePlatformRouter) InitGamePlatformRouter(Router *gin.RouterGroup) {
 		router.POST("gamePlatform/", routerApi.CreatePlatform)
 		router.PUT("gamePlatform/", routerApi.UpdatePlatform)
 		router.DELETE("gamePlatform/", routerApi.DeletePlatform)
+		router.POST("gamePlatform/kick/", routerApi.KickGameServer)
 
 	}
 	{

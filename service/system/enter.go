@@ -33,4 +33,6 @@ type ServiceGroup struct {
 	OperationRecordService
 
 	SysTaskService
+
+	GmService
 }

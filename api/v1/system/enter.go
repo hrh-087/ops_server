@@ -36,6 +36,7 @@ type ApiGroup struct {
 	OperationRecordApi
 
 	SysTaskApi
+	GmApi
 }
 
 var (
@@ -69,4 +70,5 @@ var (
 	operationRecordService = service.ServiceGroupApp.SystemServiceGroup.OperationRecordService
 
 	sysTaskService = service.ServiceGroupApp.SystemServiceGroup.SysTaskService
+	gmService      = service.ServiceGroupApp.SystemServiceGroup.GmService
 )

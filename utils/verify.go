@@ -51,4 +51,7 @@ var (
 	TaskVerify = Rules{"Name": {NotEmpty()}, "TaskType": {NotEmpty()}}
 
 	GameTaskVerify = Rules{"TaskType": {NotEmpty()}, "GameServerIds": {NotEmpty()}}
+
+	// Gm
+	GmSwitchVerify = Rules{"ServerId": {NotEmpty()}, "TypeKey": {NotEmpty()}}
 )

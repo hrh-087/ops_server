@@ -31,4 +31,6 @@ type RouterGroup struct {
 	GameUpdateRouter
 
 	SysTaskRouter
+
+	GmRouter
 }
