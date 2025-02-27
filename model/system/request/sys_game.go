@@ -24,3 +24,8 @@ type GameTaskParams struct {
 	GameServerIds []uint `json:"gameServerIds"`
 	TaskType      int8   `json:"taskType"`
 }
+
+type CopyGameTypeParams struct {
+	ProjectId   uint  `json:"projectId"`
+	GameTypeIds []int `json:"gameTypeIds"`
+}

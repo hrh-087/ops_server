@@ -155,3 +155,26 @@ func (g *GameTypeApi) GetGameTypeById(c *gin.Context) {
 
 	response.OkWithDetailed(result, "获取成功", c)
 }
+
+func (g GameTypeApi) CopyGameType(c *gin.Context) {
+	var copyGameType systemReq.CopyGameTypeParams
+
+	if err := c.ShouldBindJSON(&copyGameType); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err := utils.Verify(copyGameType, utils.CopyGameTypeVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err := gameTypeService.CopyGameType(c, copyGameType.ProjectId, copyGameType.GameTypeIds); err != nil {
+		global.OPS_LOG.Error("复制失败!", zap.Error(err))
+		response.FailWithMessage("复制失败"+err.Error(), c)
+		return
+	}
+
+	response.OkWithMessage("复制成功", c)
+	return
+}

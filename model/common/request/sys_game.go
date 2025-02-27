@@ -20,7 +20,13 @@ type GameConfigFile struct {
 	RedisMeshPass string `json:"redisMeshPass"`
 	RedisMeshPort int64  `json:"meshPort"`
 	GatewayUri    string `json:"gatewayUri"`
+	FightType     string `json:"fightType"`
 }
 
 type DockerComposeFile struct {
+	ImageService     string `json:"imageService"`
+	ImageTag         string `json:"imageTag"`
+	JsonConfigVolume string `json:"jsonConfigVolume"`
+	ImageName        string `json:"imageName"`
+	ImageUri         string `json:"imageUri"`
 }

@@ -10,6 +10,7 @@ import (
 	"ops-server/global"
 	"ops-server/model/common/request"
 	"ops-server/model/system"
+	"strconv"
 	"strings"
 	"text/template"
 )
@@ -91,6 +92,7 @@ func (g *GameTypeService) GetGameTypeAll(ctx context.Context) (result []system.S
 func (g GameTypeService) GenerateConfigFile(game system.SysGameServer) (content string, err error) {
 	var dbNamePrefix string
 	var buf bytes.Buffer
+	var fightType string
 
 	if strings.TrimSpace(game.GameType.ConfigTemplate) == "" {
 		return "", errors.New("配置模板为空")
@@ -100,6 +102,12 @@ func (g GameTypeService) GenerateConfigFile(game system.SysGameServer) (content 
 		dbNamePrefix = "fight"
 	} else {
 		dbNamePrefix = game.GameType.Code
+	}
+
+	if game.GameType.Code == "fight" {
+		fightType = "default"
+	} else {
+		fightType = game.GameType.Code
 	}
 
 	templateData := request.GameConfigFile{
@@ -120,6 +128,7 @@ func (g GameTypeService) GenerateConfigFile(game system.SysGameServer) (content 
 		RedisMeshUri:  fmt.Sprintf("%s:%d", game.Redis.Host, game.Redis.Port),
 		RedisMeshPass: game.Redis.Password,
 		GatewayUri:    game.SysProject.GatewayUrl,
+		FightType:     fightType,
 	}
 
 	tmpl, err := template.New("config").Parse(game.GameType.ConfigTemplate)
@@ -137,10 +146,63 @@ func (g GameTypeService) GenerateConfigFile(game system.SysGameServer) (content 
 }
 
 func (g GameTypeService) GenerateComposeFile(game system.SysGameServer) (content string, err error) {
+	var buf bytes.Buffer
+	var imageName string
+
 	if strings.TrimSpace(game.GameType.ComposeTemplate) == "" {
 		return "", errors.New("compose模板为空")
 	}
 
-	content = game.GameType.ComposeTemplate
-	return
+	if game.GameType.IsFight {
+		imageName = "fight"
+	} else {
+		imageName = game.GameType.Code
+	}
+
+	templateData := request.DockerComposeFile{
+		ImageService:     game.GameType.Code,
+		ImageTag:         game.Platform.ImageTag,
+		JsonConfigVolume: global.OPS_CONFIG.Game.GameConfigDir,
+		ImageUri:         game.Platform.ImageUri,
+		ImageName:        imageName,
+	}
+
+	tmpl, err := template.New("config").Parse(game.GameType.ComposeTemplate)
+	if err != nil {
+		return "", err
+	}
+
+	err = tmpl.Execute(&buf, templateData)
+	if err != nil {
+		global.OPS_LOG.Error("生成docker-compose文件失败", zap.Error(err))
+		return "", errors.New("生成docker-compose文件失败")
+	}
+
+	return buf.String(), nil
+}
+
+func (g GameTypeService) CopyGameType(ctx context.Context, projectId uint, gameTypeIds []int) (err error) {
+	var gameTypeList []system.SysGameType
+
+	headerProjectId := ctx.Value("projectId").(string)
+	if headerProjectId == strconv.Itoa(int(projectId)) {
+		return errors.New("不可以复制到同一项目下")
+	}
+
+	err = global.OPS_DB.WithContext(ctx).Where("id in ?", gameTypeIds).Find(&gameTypeList).Error
+	if err != nil {
+		return
+	}
+
+	return global.OPS_DB.Transaction(func(tx *gorm.DB) error {
+		for _, gameType := range gameTypeList {
+			gameType.ID = 0
+			gameType.ProjectId = projectId
+			err = tx.Create(&gameType).Error
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }

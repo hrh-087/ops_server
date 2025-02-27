@@ -20,6 +20,7 @@ func (*GameTypeRouter) InitGameTypeRouter(Router *gin.RouterGroup) {
 		router.PUT("type/", routerApi.UpdateGameType)
 		router.DELETE("type/", routerApi.DeleteGameType)
 		router.GET("type/:id/", routerApi.GetGameTypeById)
+		router.POST("type/copyAll/", routerApi.CopyGameType)
 	}
 	{
 		routerWithoutRecord.GET("type/", routerApi.GetGameTypeList)

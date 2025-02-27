@@ -31,7 +31,11 @@ var (
 	AssetsKafkaVerify  = Rules{"Host": {NotEmpty()}, "Name": {NotEmpty()}, "PlatformId": {NotEmpty()}}
 	AssetsLbVerify     = Rules{"PlatformId": {NotEmpty()}, "CloudProduceId": {NotEmpty()}}
 
-	GameTypeVerify   = Rules{"Code": {NotEmpty()}, "Name": {NotEmpty()}, "VmidRule": {NotEmpty()}}
+	GameTypeVerify     = Rules{"Code": {NotEmpty()}, "Name": {NotEmpty()}, "VmidRule": {NotEmpty()}}
+	CopyGameTypeVerify = Rules{
+		"ProjectId":   {NotEmpty()},
+		"GameTypeIds": {NotEmpty()},
+	}
 	GameServerVerify = Rules{
 		"PlatformId": {NotEmpty()},
 		"Name":       {NotEmpty()},
