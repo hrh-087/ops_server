@@ -71,6 +71,9 @@ func (h *HttpClient) request(method, url string, body io.Reader) (response *Http
 	if err != nil {
 		global.OPS_LOG.Error("request error", zap.Error(err))
 		return nil, err
+	} else if result.StatusCode != http.StatusOK {
+		global.OPS_LOG.Error("request error", zap.Int("statusCode", result.StatusCode))
+		return nil, errors.New("request error")
 	}
 
 	defer func() {
@@ -80,7 +83,12 @@ func (h *HttpClient) request(method, url string, body io.Reader) (response *Http
 		}
 	}()
 
-	resultBody, _ := io.ReadAll(result.Body)
+	resultBody, err := io.ReadAll(result.Body)
+	if err != nil {
+		global.OPS_LOG.Error("request error", zap.Error(err))
+		return
+	}
+
 	err = json.Unmarshal(resultBody, &response)
 	if err != nil {
 		global.OPS_LOG.Error("request error", zap.Error(err))

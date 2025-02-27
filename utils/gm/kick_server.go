@@ -10,7 +10,7 @@ func (h HttpClient) KickGameServer(serverId int) (response *HttpResponse, err er
 
 	params, _ := json.Marshal(data)
 
-	response, err = h.Post("/switch/kickGame", params)
+	response, err = h.Post("/server/kickGame", params)
 	if err != nil {
 		return
 	}
@@ -26,7 +26,7 @@ func (h HttpClient) KickFightServer(serverId int) (response *HttpResponse, err e
 
 	params, _ := json.Marshal(data)
 
-	response, err = h.Post("/switch/kickFight", params)
+	response, err = h.Post("/server/kickFight", params)
 	if err != nil {
 		return
 	}
