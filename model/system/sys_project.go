@@ -12,6 +12,7 @@ type SysProject struct {
 	SvnUrl      string         `json:"svnUrl" gorm:"comment:svn地址"`
 	GmUrl       string         `json:"gmUrl" gorm:"comment:gm地址"`
 	GatewayUrl  string         `json:"gatewayUrl" gorm:"comment:网关地址"`
+	Status      int            `json:"status" gorm:"comment:项目状态 0 未初始化 1 已初始化 2 初始化失败"`
 }
 
 func (SysProject) TableName() string {

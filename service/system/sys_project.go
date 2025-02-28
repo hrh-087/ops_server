@@ -18,7 +18,7 @@ var ProjectServiceApp = new(ProjectService)
 // @description: 新增项目
 // @param: project model.SysProject
 // @ return: err error
-func (projectService *ProjectService) CreateProject(project system.SysProject) (err error) {
+func (p *ProjectService) CreateProject(project system.SysProject) (err error) {
 	if !errors.Is(global.OPS_DB.Where("project_name = ?", project.ProjectName).First(&system.SysProject{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("项目名称重复")
 	}
@@ -30,7 +30,7 @@ func (projectService *ProjectService) CreateProject(project system.SysProject) (
 // @description: 更新项目
 // @param: project model.SysProject
 // @ return: err error
-func (projectService *ProjectService) UpdateProject(project system.SysProject) (err error) {
+func (p *ProjectService) UpdateProject(project system.SysProject) (err error) {
 	var oldProject system.SysProject
 
 	err = global.OPS_DB.First(&oldProject, "id = ?", project.ID).Error
@@ -46,7 +46,7 @@ func (projectService *ProjectService) UpdateProject(project system.SysProject) (
 // @description: 获取项目列表
 // @param: project model.SysProject info request.PageInfo
 // @ return: err error
-func (projectService *ProjectService) GetProjectList(project system.SysProject, info request.PageInfo) (list interface{}, total int64, err error) {
+func (p *ProjectService) GetProjectList(project system.SysProject, info request.PageInfo) (list interface{}, total int64, err error) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	db := global.OPS_DB.Model(&system.SysProject{})
@@ -74,7 +74,7 @@ func (projectService *ProjectService) GetProjectList(project system.SysProject, 
 // @description: 根据id获取project
 // @param: id float64
 // @return: project model.SysProject, err error
-func (projectService *ProjectService) GetProjectById(id int) (project system.SysProject, err error) {
+func (p *ProjectService) GetProjectById(id int) (project system.SysProject, err error) {
 	err = global.OPS_DB.Preload("Authorities").First(&project, "id = ?", id).Error
 	return
 }
@@ -85,7 +85,7 @@ func (projectService *ProjectService) GetProjectById(id int) (project system.Sys
 // @description: 删除project
 // @param: project system.SysProject
 // @return: err error
-func (projectService *ProjectService) DeleteProject(project system.SysProject) (err error) {
+func (p *ProjectService) DeleteProject(project system.SysProject) (err error) {
 	var entity system.SysProject
 	err = global.OPS_DB.Preload("Authorities").Where("id = ?", project.ID).First(&entity).Error
 	if err != nil {
@@ -104,7 +104,7 @@ func (projectService *ProjectService) DeleteProject(project system.SysProject) (
 // @description: 获取全部项目
 // @param: project model.SysProject info request.PageInfo
 // @ return: err error
-func (projectService *ProjectService) GetAllProject() (projects []system.SysProject, err error) {
+func (p *ProjectService) GetAllProject() (projects []system.SysProject, err error) {
 
 	db := global.OPS_DB.Model(&system.SysProject{})
 	var projectList []system.SysProject
@@ -122,7 +122,7 @@ func (projectService *ProjectService) GetAllProject() (projects []system.SysProj
 // @description: 获取角色项目
 // @param:
 // @ return:
-func (projectService *ProjectService) GetAuthorityProject(info *request.GetAuthorityId) (projects []system.SysProject, err error) {
+func (p *ProjectService) GetAuthorityProject(info *request.GetAuthorityId) (projects []system.SysProject, err error) {
 
 	var projectList []system.SysProject
 	var projectAuthority []system.SysProjectAuthority
@@ -142,7 +142,7 @@ func (projectService *ProjectService) GetAuthorityProject(info *request.GetAutho
 	return projectList, err
 }
 
-func (projectService *ProjectService) SetAuthorityProject(authorityId uint, projects []system.SysProject) (err error) {
+func (p *ProjectService) SetAuthorityProject(authorityId uint, projects []system.SysProject) (err error) {
 	var authority system.SysAuthority
 	authority.AuthorityId = authorityId
 	authority.Projects = projects
@@ -150,9 +150,13 @@ func (projectService *ProjectService) SetAuthorityProject(authorityId uint, proj
 	return err
 }
 
-func (projectService *ProjectService) CheckProject(roleId, projectId string) (err error) {
+func (p *ProjectService) CheckProject(roleId, projectId string) (err error) {
 	if err = global.OPS_DB.Model(&system.SysProjectAuthority{}).Where("sys_authority_authority_id = ? AND sys_project_id = ?", roleId, projectId).First(&system.SysProjectAuthority{}).Error; err != nil {
 		return err
 	}
 	return nil
+}
+
+func (p ProjectService) name() {
+
 }
