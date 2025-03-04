@@ -1,6 +1,7 @@
 package system
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid/v5"
 	"go.uber.org/zap"
@@ -8,6 +9,7 @@ import (
 	"ops-server/job/task"
 	"ops-server/model/common/request"
 	"ops-server/model/system"
+	"strconv"
 	"time"
 )
 
@@ -58,14 +60,23 @@ func (s *SysTaskService) ExecTask(ctx *gin.Context, id int) (jobId uuid.UUID, er
 	var taskManage system.SysTask
 	var taskList []system.JobTask
 	var t system.JobTask
+
+	projectIdStr := ctx.GetString("projectId")
+	if projectIdStr == "" {
+		return uuid.UUID{}, errors.New("项目id不能为空")
+	}
+
+	projectId, err := strconv.ParseUint(projectIdStr, 10, 64)
+	if err != nil {
+		return uuid.UUID{}, errors.New("解析项目id失败")
+	}
+
 	if err = global.OPS_DB.Where("id = ?", id).First(&taskManage).Error; err != nil {
 		return
 	}
 
 	jobId = uuid.Must(uuid.NewV4())
 	taskId := uuid.Must(uuid.NewV4())
-
-	projectId := ctx.GetInt("projectId")
 
 	taskInfo, err := task.NewCommonTask(taskManage.TaskType, task.CommonTaskParams{
 		ProjectId: uint(projectId),
