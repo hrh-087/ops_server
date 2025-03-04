@@ -74,7 +74,7 @@ func HandleInitProject(ctx context.Context, t *asynq.Task) (err error) {
 		return err
 	}
 
-	params.Project.Status = 2
+	params.Project.Status = 1
 	if err := global.OPS_DB.Save(&params.Project).Error; err != nil {
 		return err
 	}
