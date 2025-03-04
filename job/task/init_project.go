@@ -39,6 +39,11 @@ func HandleInitProject(ctx context.Context, t *asynq.Task) (err error) {
 	defer func() {
 		if err != nil {
 			global.OPS_LOG.Error("初始化项目失败", zap.Error(err))
+			params.Project.Status = 2
+			if err := global.OPS_DB.Save(&params.Project).Error; err != nil {
+				global.OPS_LOG.Error("修改项目状态失败", zap.Error(err))
+			}
+
 			// 写入任务结果
 			resultList = append(resultList, err.Error())
 			WriteTaskResult(t, resultList)
