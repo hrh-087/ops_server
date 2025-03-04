@@ -46,6 +46,8 @@ func InitWorkers() {
 	mux.HandleFunc(task.RsyncGameConfigTypeName, task.HandleRsyncGameConfig)
 	// 同步游戏服脚本
 	mux.HandleFunc(task.RsyncGameScriptTypeName, task.HandleRsyncGameScript)
+	// 初始化项目
+	mux.HandleFunc(task.InitProjectTypeName, task.HandleInitProject)
 
 	if err := srv.Run(mux); err != nil {
 		global.OPS_LOG.Error("asynq task run failed", zap.Error(err))

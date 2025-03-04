@@ -90,3 +90,10 @@ game:
   hot-file-dir: /data/ops/data/ops/resource/ # 热更新文件目录
   game-config-dir: /data/game/data/ # 游戏配置文件目录
   remote-config-dir: /data/game/data/ # 远程配置文件目录
+
+
+ops:
+  host: 192.168.128.129
+  port: 22
+  user: root
+  name: "运维后台"

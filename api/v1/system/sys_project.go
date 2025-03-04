@@ -209,3 +209,25 @@ func (s *ProjectApi) SetAuthorityProject(c *gin.Context) {
 		response.OkWithMessage("添加成功", c)
 	}
 }
+
+func (s *ProjectApi) InitProject(c *gin.Context) {
+	var project system.SysProject
+	err := c.ShouldBindJSON(&project)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err := utils.Verify(project, utils.ProjectVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	_, err = projectService.InitProject(c, project)
+	if err != nil {
+		global.OPS_LOG.Error("初始化失败!", zap.Error(err))
+		response.FailWithMessage("初始化失败"+err.Error(), c)
+		return
+	}
+
+	response.OkWithMessage("已添加至初始化队列", c)
+}

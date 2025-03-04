@@ -2,16 +2,22 @@ package system
 
 import (
 	"errors"
+	"github.com/gin-gonic/gin"
+	"github.com/gofrs/uuid/v5"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"ops-server/global"
+	"ops-server/job/task"
 	"ops-server/model/common/request"
 	"ops-server/model/system"
+	"ops-server/utils"
+	"time"
 )
 
 type ProjectService struct {
 }
 
-var ProjectServiceApp = new(ProjectService)
+//var ProjectServiceApp = new(ProjectService)
 
 // CreateProject
 // @author:rh
@@ -157,6 +163,59 @@ func (p *ProjectService) CheckProject(roleId, projectId string) (err error) {
 	return nil
 }
 
-func (p ProjectService) name() {
+// InitProject
+// 初始化项目
+func (p ProjectService) InitProject(ctx *gin.Context, project system.SysProject) (jobId uuid.UUID, err error) {
 
+	var job system.Job
+	var t system.JobTask
+	var taskList []system.JobTask
+
+	if err := global.OPS_DB.First(&project, "id = ?", project.ID).Error; err != nil {
+		return uuid.UUID{}, err
+	}
+
+	jobId = uuid.Must(uuid.NewV4())
+	taskId := uuid.Must(uuid.NewV4())
+
+	taskInfo, err := task.NewInitProjectTask(task.InitProjectParams{
+		TaskId:  taskId,
+		Project: project,
+	})
+
+	if err != nil {
+		global.OPS_LOG.Error("添加任务到队列失败", zap.String("jobId", jobId.String()), zap.Error(err))
+	}
+
+	t.JobId = jobId
+	t.AsynqId = taskInfo.ID
+	t.TaskId = taskId
+	t.Status = taskInfo.State.String()
+	t.HostName = global.OPS_CONFIG.Ops.Name
+	t.HostIp = global.OPS_CONFIG.Ops.Host
+	t.CreateAt = time.Now()
+
+	if err := global.OPS_DB.Create(&t).Error; err != nil {
+		global.OPS_LOG.Error("创建任务失败", zap.String("jobId", jobId.String()), zap.String("taskId", taskId.String()), zap.Error(err))
+	}
+
+	claims, _ := utils.GetClaims(ctx)
+
+	job.JobId = jobId
+	job.Name = "初始化项目"
+	job.Status = 1
+	job.Type = task.InitProjectTypeName
+	job.Creator = claims.Username
+	job.Tasks = taskList
+	job.ProjectId = project.ID
+	job.CreateAt = time.Now()
+
+	// 创建作业任务
+	err = global.OPS_DB.Create(&job).Error
+
+	if err != nil {
+		global.OPS_LOG.Error("创建作业任务失败", zap.String("jobId", jobId.String()), zap.Error(err))
+		return
+	}
+	return
 }

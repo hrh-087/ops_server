@@ -19,7 +19,7 @@ var (
 	SetUserProjectVerify   = Rules{"ProjectId": {NotEmpty()}}
 	ChangePasswordVerify   = Rules{"Password": {NotEmpty()}, "NewPassword": {NotEmpty()}}
 
-	ProjectVerify  = Rules{"ProjectName": {NotEmpty()}}
+	ProjectVerify  = Rules{"ProjectName": {NotEmpty()}, "GatewayUrl": {NotEmpty()}, "GmUrl": {NotEmpty()}, "SvnUrl": {NotEmpty()}, "ConfigDir": {NotEmpty()}}
 	SshAuthVerify  = Rules{"User": {NotEmpty()}}
 	CloudVerify    = Rules{"CloudName": {NotEmpty()}, "RegionId": {NotEmpty()}, "RegionName": {NotEmpty()}, "SecretId": {NotEmpty()}, "SecretKey": {NotEmpty()}}
 	PlatformVerify = Rules{"PlatformCode": {NotEmpty()}, "PlatformName": {NotEmpty()}}

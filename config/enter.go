@@ -8,4 +8,5 @@ type Server struct {
 	Asynq  Asynq  `mapstructure:"asynq" json:"asynq" yaml:"asynq"`
 	Game   Game   `mapstructure:"game" json:"game" yaml:"game"`
 	Local  Local  `mapstructyre:"local" json:"local" yaml:"local"`
+	Ops    Ops    `mapstructure:"ops" json:"ops" yaml:"ops"`
 }

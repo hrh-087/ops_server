@@ -31,6 +31,8 @@ const (
 	HotGameRsyncHostTypeName   = "game:HotGameRsyncHost"   // 同步到服务器
 	HotGameRsyncServerTypeName = "game:HotGameRsyncServer" // 同步到游戏服
 
+	// 项目配置
+	InitProjectTypeName = "project:initProject" // 初始化项目
 )
 
 // 任务存储时间
