@@ -16,7 +16,6 @@ import (
 func HandleRsyncGameScript(ctx context.Context, t *asynq.Task) (err error) {
 	var params CommonTaskParams
 	var resultList []string
-	var host system.SysAssetsServer
 	var ipList []string
 
 	defer func() {
@@ -32,15 +31,11 @@ func HandleRsyncGameScript(ctx context.Context, t *asynq.Task) (err error) {
 		return err
 	}
 
-	if err = global.OPS_DB.Where("id = ?", params.HostId).First(&host).Error; err != nil {
-		return err
-	}
-
 	if err = global.OPS_DB.Model(&system.SysAssetsServer{}).Where("server_type != 3 and status = 1").Pluck("pub_ip", &ipList).Error; err != nil {
 		return err
 	}
 
-	sshConfig, err := GetSSHKey(host.ProjectId, host.PubIp, host.SSHPort)
+	sshConfig, err := GetSSHKey(params.ProjectId, global.OPS_CONFIG.Ops.Host, global.OPS_CONFIG.Ops.Port)
 	if err != nil {
 		return fmt.Errorf("获取ssh配置失败:%v", err)
 	}

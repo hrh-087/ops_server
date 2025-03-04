@@ -15,21 +15,21 @@ type SysTaskService struct {
 }
 
 func (s *SysTaskService) CreateTask(ctx *gin.Context, task system.SysTask) (err error) {
-	return global.OPS_DB.WithContext(ctx).Create(&task).Error
+	return global.OPS_DB.Create(&task).Error
 }
 
 func (s *SysTaskService) UpdateTask(ctx *gin.Context, task system.SysTask) (err error) {
-	return global.OPS_DB.WithContext(ctx).Save(&task).Error
+	return global.OPS_DB.Save(&task).Error
 }
 
 func (s *SysTaskService) DeleteTask(ctx *gin.Context, id int) (err error) {
-	return global.OPS_DB.WithContext(ctx).Where("id = ?", id).Unscoped().Delete(&system.SysTask{}).Error
+	return global.OPS_DB.Where("id = ?", id).Unscoped().Delete(&system.SysTask{}).Error
 }
 
 func (s *SysTaskService) GetTaskList(ctx *gin.Context, info request.PageInfo) (list interface{}, total int64, err error) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
-	db := global.OPS_DB.WithContext(ctx).Model(&system.SysTask{})
+	db := global.OPS_DB.Model(&system.SysTask{})
 
 	var resultList []system.SysTask
 	// 在count的时候已经执行了插件逻辑, 添加一个上下文使后续的db操作跳过插件逻辑
@@ -49,7 +49,7 @@ func (s *SysTaskService) GetTaskList(ctx *gin.Context, info request.PageInfo) (l
 }
 
 func (s *SysTaskService) GetTaskById(ctx *gin.Context, id int) (result system.SysTask, err error) {
-	err = global.OPS_DB.WithContext(ctx).Where("id = ?", id).First(&result).Error
+	err = global.OPS_DB.Where("id = ?", id).First(&result).Error
 	return
 }
 
@@ -57,23 +57,19 @@ func (s *SysTaskService) ExecTask(ctx *gin.Context, id int) (jobId uuid.UUID, er
 	var job system.Job
 	var taskManage system.SysTask
 	var taskList []system.JobTask
-	var host system.SysAssetsServer
 	var t system.JobTask
-	if err = global.OPS_DB.WithContext(ctx).Where("id = ?", id).First(&taskManage).Error; err != nil {
-		return
-	}
-
-	if err = global.OPS_DB.Where("server_type = 3").First(&host).Error; err != nil {
+	if err = global.OPS_DB.Where("id = ?", id).First(&taskManage).Error; err != nil {
 		return
 	}
 
 	jobId = uuid.Must(uuid.NewV4())
 	taskId := uuid.Must(uuid.NewV4())
 
+	projectId := ctx.GetInt("projectId")
+
 	taskInfo, err := task.NewCommonTask(taskManage.TaskType, task.CommonTaskParams{
-		ProjectId: taskManage.ProjectId,
+		ProjectId: uint(projectId),
 		TaskId:    taskId,
-		HostId:    host.ID,
 	})
 
 	if err != nil {
@@ -85,8 +81,8 @@ func (s *SysTaskService) ExecTask(ctx *gin.Context, id int) (jobId uuid.UUID, er
 	t.AsynqId = taskInfo.ID
 	t.TaskId = taskId
 	t.Status = taskInfo.State.String()
-	t.HostName = host.ServerName
-	t.HostIp = host.PubIp
+	t.HostName = global.OPS_CONFIG.Ops.Name
+	t.HostIp = global.OPS_CONFIG.Ops.Host
 	t.CreateAt = time.Now()
 
 	if err = global.OPS_DB.WithContext(ctx).Create(&t).Error; err != nil {

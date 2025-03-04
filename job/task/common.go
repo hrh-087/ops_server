@@ -10,7 +10,6 @@ import (
 type CommonTaskParams struct {
 	TaskId    uuid.UUID
 	ProjectId uint
-	HostId    uint
 }
 
 func NewCommonTask(taskType string, params CommonTaskParams) (*asynq.TaskInfo, error) {
