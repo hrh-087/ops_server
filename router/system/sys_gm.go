@@ -17,5 +17,9 @@ func (g *GmRouter) InitGmRouter(Router *gin.RouterGroup) {
 	{
 		router.POST("setSwitch/", routerApi.SetSwitch)         // 设置开关
 		router.POST("getSwitchList/", routerApi.GetSwitchList) // 获取开关列表
+		router.POST("getRankList/", routerApi.GetRankList)
+		router.POST("getRankRewardList/", routerApi.GetRankRewardList)
+		router.POST("setRankReward/", routerApi.SetRankConfig)
+
 	}
 }

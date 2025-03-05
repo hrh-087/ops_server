@@ -46,3 +46,65 @@ func (g GmApi) GetSwitchList(c *gin.Context) {
 
 	response.OkWithDetailed(data, "获取成功", c)
 }
+
+func (g GmApi) GetRankList(c *gin.Context) {
+	var rankParams request.GmRankOpenParams
+	if err := c.ShouldBindJSON(&rankParams); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err := utils.Verify(rankParams, utils.GmRankOpenVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	data, err := gmService.GetRankList(c, rankParams.ServerId)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	response.OkWithDetailed(data, "获取成功", c)
+}
+
+func (g GmApi) GetRankRewardList(c *gin.Context) {
+	var rankParams request.GmRankRewardParams
+	if err := c.ShouldBindJSON(&rankParams); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err := utils.Verify(rankParams, utils.GmRankRewardVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	data, err := gmService.GetRankRewardList(c, rankParams.ServerId, rankParams.RankId)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	response.OkWithDetailed(data, "获取成功", c)
+
+}
+
+func (g GmApi) SetRankConfig(c *gin.Context) {
+	var rankParams request.GmRankConfigParams
+	if err := c.ShouldBindJSON(&rankParams); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err := utils.Verify(rankParams, utils.GmRankConfigVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err := gmService.SetRankConfig(c, rankParams.ServerId, rankParams.RankConfig); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	response.OkWithMessage("设置成功", c)
+}

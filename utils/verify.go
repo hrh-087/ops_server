@@ -57,5 +57,8 @@ var (
 	GameTaskVerify = Rules{"TaskType": {NotEmpty()}, "GameServerIds": {NotEmpty()}}
 
 	// Gm
-	GmSwitchVerify = Rules{"ServerId": {NotEmpty()}, "TypeKey": {NotEmpty()}}
+	GmSwitchVerify     = Rules{"ServerId": {NotEmpty()}, "TypeKey": {NotEmpty()}}
+	GmRankOpenVerify   = Rules{"ServerId": {NotEmpty()}}
+	GmRankRewardVerify = Rules{"ServerId": {NotEmpty()}, "RankId": {NotEmpty()}}
+	GmRankConfigVerify = Rules{"ServerId": {NotEmpty()}, "RankConfig": {NotEmpty()}}
 )

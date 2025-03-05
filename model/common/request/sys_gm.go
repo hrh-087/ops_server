@@ -1,7 +1,45 @@
 package request
 
 type GmSwitchParams struct {
-	ServerId int    `json:"serverId" form:"serverId"`
-	TypeKey  string `json:"typeKey" form:"typeKey"`
-	State    bool   `json:"state" form:"state"`
+	ServerId int    `json:"serverId" form:"serverId"` // 渠道id
+	TypeKey  string `json:"typeKey" form:"typeKey"`   // 开关类型
+	State    bool   `json:"state" form:"state"`       // 开关状态
+}
+
+// 排行榜
+
+type GmRankOpenParams struct {
+	ServerId int `json:"serverId" form:"serverId"` // 渠道id
+}
+
+type GmRankRewardParams struct {
+	ServerId int `json:"serverId" form:"serverId"` // 渠道id
+	RankId   int `json:"rankId" form:"rankId"`     // 榜单id
+}
+
+type Reward struct {
+	// 榜单奖励
+	RewardId  string `json:"rewardId"`  // 奖励id
+	RewardNum int    `json:"rewardNum"` // 奖励数量
+}
+
+type GmRankReward struct {
+	Id      int      `json:"id"`      // 榜单奖励唯一id
+	RankId  int      `json:"rankId"`  // 榜单id
+	Rank    int      `json:"rank"`    // 榜单排名
+	Rewards []Reward `json:"rewards"` // 奖励列表
+}
+
+type GmRankConfig struct {
+	Id         int            `json:"id"`         // 榜单唯一id
+	RankId     int            `json:"rankId"`     // 榜单id
+	ShowCount  int            `json:"showCount"`  // 展示数量
+	StartTime  string         `json:"startTime"`  // 开始时间
+	EndTime    string         `json:"endTime"`    // 结束时间
+	RewardList []GmRankReward `json:"rewardList"` // 奖励列表
+}
+
+type GmRankConfigParams struct {
+	ServerId   int            `json:"serverId" form:"serverId"`     // 渠道id
+	RankConfig []GmRankConfig `json:"rankConfig" form:"rankConfig"` // 榜单列表
 }

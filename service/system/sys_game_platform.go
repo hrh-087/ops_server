@@ -77,13 +77,13 @@ func (g *GamePlatformService) GetPlatformList(ctx context.Context, platform syst
 }
 
 func (g GamePlatformService) KickGameServer(ctx *gin.Context, serverId int) (err error) {
-	projectId := ctx.GetString("projectId")
+	//projectId := ctx.GetString("projectId")
+	//
+	//if projectId == "" {
+	//	return
+	//}
 
-	if projectId == "" {
-		return
-	}
-
-	httpClient, err := gm.NewHttpClient(projectId)
+	httpClient, err := gm.NewHttpClient(ctx)
 	if err != nil {
 		return
 	}

@@ -2,6 +2,7 @@ package gm
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"go.uber.org/zap"
@@ -27,8 +28,15 @@ type HttpResponse struct {
 }
 
 // NewHttpClient 创建一个新的 HTTP 客户端，允许自定义超时时间
-func NewHttpClient(projectId string) (client *HttpClient, err error) {
+func NewHttpClient(ctx context.Context) (client *HttpClient, err error) {
 	var project system.SysProject
+
+	projectId := ctx.Value("projectId").(string)
+
+	if projectId == "" {
+		return
+	}
+
 	err = global.OPS_DB.First(&project, "id = ?", projectId).Error
 	if err != nil {
 		return
