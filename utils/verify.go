@@ -59,6 +59,6 @@ var (
 	// Gm
 	GmSwitchVerify     = Rules{"ServerId": {NotEmpty()}, "TypeKey": {NotEmpty()}}
 	GmRankOpenVerify   = Rules{"ServerId": {NotEmpty()}}
-	GmRankRewardVerify = Rules{"ServerId": {NotEmpty()}, "RankId": {NotEmpty()}}
+	GmRankRewardVerify = Rules{"ServerId": {NotEmpty()}, "Id": {NotEmpty()}}
 	GmRankConfigVerify = Rules{"ServerId": {NotEmpty()}, "RankConfig": {NotEmpty()}}
 )

@@ -87,7 +87,7 @@ func (g GmService) GetRankList(ctx *gin.Context, serverId int) (data interface{}
 
 // GetRankRewardList
 // 获取排行榜奖励配置
-func (g GmService) GetRankRewardList(ctx *gin.Context, serverId, rankId int) (data interface{}, err error) {
+func (g GmService) GetRankRewardList(ctx *gin.Context, serverId, id int) (data interface{}, err error) {
 	var rewardList []request.GmRankReward
 	var rewards []request.Reward
 	httpClient, err := gm.NewHttpClient(ctx)
@@ -95,7 +95,7 @@ func (g GmService) GetRankRewardList(ctx *gin.Context, serverId, rankId int) (da
 		return
 	}
 
-	response, err := httpClient.GetRewardConfig(serverId, rankId)
+	response, err := httpClient.GetRewardConfig(serverId, id)
 	if err != nil {
 		return
 	}

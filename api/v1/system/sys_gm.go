@@ -80,7 +80,7 @@ func (g GmApi) GetRankRewardList(c *gin.Context) {
 		return
 	}
 
-	data, err := gmService.GetRankRewardList(c, rankParams.ServerId, rankParams.RankId)
+	data, err := gmService.GetRankRewardList(c, rankParams.ServerId, rankParams.Id)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return

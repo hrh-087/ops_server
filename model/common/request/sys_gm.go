@@ -14,7 +14,7 @@ type GmRankOpenParams struct {
 
 type GmRankRewardParams struct {
 	ServerId int `json:"serverId" form:"serverId"` // 渠道id
-	RankId   int `json:"rankId" form:"rankId"`     // 榜单id
+	Id       int `json:"id" form:"id"`             // 榜单配置的唯一id
 }
 
 type Reward struct {

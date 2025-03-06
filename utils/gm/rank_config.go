@@ -22,10 +22,10 @@ func (h HttpClient) GetRankList(serverId int) (response *HttpResponse, err error
 	return
 }
 
-func (h HttpClient) GetRewardConfig(serverId, rankId int) (response *HttpResponse, err error) {
+func (h HttpClient) GetRewardConfig(serverId, id int) (response *HttpResponse, err error) {
 	data := map[string]interface{}{
 		"serverId": serverId,
-		"rankId":   rankId,
+		"id":       id,
 	}
 
 	params, _ := json.Marshal(data)
