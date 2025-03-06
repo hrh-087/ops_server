@@ -6,6 +6,7 @@ import (
 	"ops-server/model/common/request"
 	gmRes "ops-server/model/common/response"
 	"ops-server/utils/gm"
+	"time"
 )
 
 type GmService struct {
@@ -140,6 +141,21 @@ func (g GmService) SetRankConfig(ctx *gin.Context, serverId int, rankConfig []re
 		if rank.Id == 0 || rank.StartTime == "" || rank.EndTime == "" || rank.RankId == 0 || rank.ShowCount == 0 {
 			return errors.New("排行榜配置有误")
 		}
+
+		startTime, err := time.Parse("2006-01-02 15:04:05", rank.StartTime)
+		if err != nil {
+			return errors.New("开始时间配置有误,请确认格式为:(2006-01-02 15:04:05)")
+		}
+
+		endTime, err := time.Parse("2006-01-02 15:04:05", rank.EndTime)
+		if err != nil {
+			return errors.New("结束时间配置有误,请确认格式为:(2006-01-02 15:04:05)")
+		}
+
+		if endTime.Before(startTime) {
+			return errors.New("结束时间不能小于开始时间")
+		}
+
 		rankOpenConfig = append(rankOpenConfig, gmRes.RankOpenConfig{
 			ID:        rank.Id,
 			RankID:    rank.RankId,
