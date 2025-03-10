@@ -53,11 +53,11 @@ func StartGameServer(projectId uint, hostId uint, gameServerIds []uint) (output 
 
 	// 当gameServerIds为空时，获取该主机上所有游戏服
 	if len(gameServerIds) == 0 {
-		if err = global.OPS_DB.Where("host_id = ?", hostId).Preload("Platform").Preload("GameType").Find(&gameServerList).Error; err != nil {
+		if err = global.OPS_DB.Where("host_id = ? and status = 2", hostId).Preload("Platform").Preload("GameType").Find(&gameServerList).Error; err != nil {
 			return "", err
 		}
 	} else {
-		if err = global.OPS_DB.Where("id in ?", gameServerIds).Preload("Platform").Preload("GameType").Find(&gameServerList).Error; err != nil {
+		if err = global.OPS_DB.Where("id in ? and status = 2", gameServerIds).Preload("Platform").Preload("GameType").Find(&gameServerList).Error; err != nil {
 			return "", err
 		}
 	}

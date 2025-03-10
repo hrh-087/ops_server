@@ -25,7 +25,7 @@ type Reward struct {
 
 type GmRankReward struct {
 	Id      int      `json:"id"`      // 榜单奖励唯一id
-	RankId  int      `json:"rankId"`  // 榜单id
+	OpenId  int      `json:"openId"`  // 榜单id
 	Rank    int      `json:"rank"`    // 榜单排名
 	Rewards []Reward `json:"rewards"` // 奖励列表
 }
@@ -36,6 +36,7 @@ type GmRankConfig struct {
 	ShowCount  int            `json:"showCount"`  // 展示数量
 	StartTime  string         `json:"startTime"`  // 开始时间
 	EndTime    string         `json:"endTime"`    // 结束时间
+	CloseTime  string         `json:"closeTime"`  // 榜单关闭时间
 	RewardList []GmRankReward `json:"rewardList"` // 奖励列表
 }
 

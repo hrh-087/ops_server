@@ -2,10 +2,12 @@ package system
 
 import (
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"ops-server/model/common/request"
 	gmRes "ops-server/model/common/response"
 	"ops-server/utils/gm"
+	"sort"
 	"time"
 )
 
@@ -116,7 +118,7 @@ func (g GmService) GetRankRewardList(ctx *gin.Context, serverId, id int) (data i
 
 		reward.Id = int(rewardData["id"].(float64))
 		reward.Rank = int(rewardData["rank"].(float64))
-		reward.RankId = int(rewardData["rankId"].(float64))
+		reward.OpenId = int(rewardData["openId"].(float64))
 		reward.Rewards = rewards
 
 		rewardList = append(rewardList, reward)
@@ -137,46 +139,109 @@ func (g GmService) SetRankConfig(ctx *gin.Context, serverId int, rankConfig []re
 		return
 	}
 
+	checkRankConfigMap := make(map[int][]request.GmRankConfig)
+
+	// 给排行榜分组
 	for _, rank := range rankConfig {
-		if rank.Id == 0 || rank.StartTime == "" || rank.EndTime == "" || rank.RankId == 0 || rank.ShowCount == 0 {
-			return errors.New("排行榜配置有误")
+		if _, ok := checkRankConfigMap[rank.RankId]; !ok {
+			checkRankConfigMap[rank.RankId] = []request.GmRankConfig{rank}
+		} else {
+			checkRankConfigMap[rank.RankId] = append(checkRankConfigMap[rank.RankId], rank)
 		}
+	}
 
-		startTime, err := time.Parse("2006-01-02 15:04:05", rank.StartTime)
-		if err != nil {
-			return errors.New("开始时间配置有误,请确认格式为:(2006-01-02 15:04:05)")
-		}
-
-		endTime, err := time.Parse("2006-01-02 15:04:05", rank.EndTime)
-		if err != nil {
-			return errors.New("结束时间配置有误,请确认格式为:(2006-01-02 15:04:05)")
-		}
-
-		if endTime.Before(startTime) {
-			return errors.New("结束时间不能小于开始时间")
-		}
-
-		rankOpenConfig = append(rankOpenConfig, gmRes.RankOpenConfig{
-			ID:        rank.Id,
-			RankID:    rank.RankId,
-			StartTime: rank.StartTime,
-			EndTime:   rank.EndTime,
-			ShowCount: rank.ShowCount,
-		})
-
-		for _, reward := range rank.RewardList {
-
-			rewardData := make(map[string]int)
-			for _, v := range reward.Rewards {
-				rewardData[v.RewardId] = v.RewardNum
+	// 根据排行榜开始时间排序
+	for _, rankInfo := range checkRankConfigMap {
+		sort.Slice(rankInfo, func(i, j int) bool {
+			firstTime, err := time.Parse("2006-01-02 15:04:05", rankInfo[i].StartTime)
+			if err != nil {
+				return false
 			}
 
-			rankRewardConfig = append(rankRewardConfig, gmRes.RankRewardConfig{
-				ID:      reward.Id,
-				RankID:  reward.RankId,
-				Rank:    reward.Rank,
-				Rewards: rewardData,
+			secondTime, err := time.Parse("2006-01-02 15:04:05", rankInfo[j].StartTime)
+			if err != nil {
+				return false
+			}
+			return firstTime.Before(secondTime)
+		})
+	}
+
+	// 检测排行榜配置时间是否有交叉
+	for _, rankInfo := range checkRankConfigMap {
+
+		for i := 1; i < len(rankInfo); i++ {
+			// 检测时间是否有交叉
+			startTime, err := time.Parse("2006-01-02 15:04:05", rankInfo[i].StartTime)
+			if err != nil {
+				return errors.New(fmt.Sprintf("排行榜唯一id(%d)配置时间无法解析", rankInfo[i].Id))
+			}
+
+			closeTime, err := time.Parse("2006-01-02 15:04:05", rankInfo[i-1].CloseTime)
+			if err != nil {
+				return errors.New(fmt.Sprintf("排行榜唯一id(%d)配置时间无法解析", rankInfo[i-1].Id))
+			}
+
+			if startTime.Before(closeTime) {
+				fmt.Printf("startTime: %+v\n", startTime)
+				fmt.Printf("closeTime: %+v\n", closeTime)
+				fmt.Printf("Before: %+v\n", startTime.Before(closeTime))
+				fmt.Printf("rank1: %+v\n", rankInfo[i])
+				fmt.Printf("rank2: %+v\n", rankInfo[i-1])
+				return errors.New(fmt.Sprintf("排行榜id%d配置时间有交叉", rankInfo[i].RankId))
+			}
+		}
+	}
+
+	for _, rankInfo := range checkRankConfigMap {
+		for _, rank := range rankInfo {
+			if rank.Id == 0 || rank.StartTime == "" || rank.EndTime == "" || rank.RankId == 0 || rank.ShowCount == 0 || rank.CloseTime == "" {
+				return errors.New("排行榜配置有误")
+			}
+
+			startTime, err := time.Parse("2006-01-02 15:04:05", rank.StartTime)
+			if err != nil {
+				return errors.New("开始时间配置有误,请确认格式为:(2006-01-02 15:04:05)")
+			}
+
+			endTime, err := time.Parse("2006-01-02 15:04:05", rank.EndTime)
+			if err != nil {
+				return errors.New("结束时间配置有误,请确认格式为:(2006-01-02 15:04:05)")
+			}
+
+			closeTime, err := time.Parse("2006-01-02 15:04:05", rank.CloseTime)
+			if err != nil {
+				return errors.New("关闭时间配置有误,请确认格式为:(2006-01-02 15:04:05)")
+			}
+
+			if endTime.Before(startTime) {
+				return errors.New("结束时间不能小于开始时间")
+			} else if closeTime.Before(endTime) {
+				return errors.New("关闭时间不能小于结束时间")
+			}
+
+			rankOpenConfig = append(rankOpenConfig, gmRes.RankOpenConfig{
+				ID:        rank.Id,
+				RankID:    rank.RankId,
+				StartTime: rank.StartTime,
+				EndTime:   rank.EndTime,
+				CloseTime: rank.CloseTime,
+				ShowCount: rank.ShowCount,
 			})
+
+			for _, reward := range rank.RewardList {
+
+				rewardData := make(map[string]int)
+				for _, v := range reward.Rewards {
+					rewardData[v.RewardId] = v.RewardNum
+				}
+
+				rankRewardConfig = append(rankRewardConfig, gmRes.RankRewardConfig{
+					ID:      reward.Id,
+					OpenId:  reward.OpenId,
+					Rank:    reward.Rank,
+					Rewards: rewardData,
+				})
+			}
 		}
 	}
 

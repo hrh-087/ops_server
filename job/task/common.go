@@ -26,6 +26,7 @@ type GameTaskParams struct {
 	HostId        uint
 	GameServerIds []uint
 	ProjectId     uint
+	Version       string
 }
 
 func NewGameTask(taskType string, params GameTaskParams) (*asynq.TaskInfo, error) {

@@ -3,11 +3,9 @@ package task
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/hibiken/asynq"
 	"go.uber.org/zap"
-	"gorm.io/gorm"
 	"ops-server/global"
 	"ops-server/model/system"
 	"ops-server/utils"
@@ -30,7 +28,7 @@ func HandleCheckGameImageVersion(ctx context.Context, t *asynq.Task) (err error)
 		return err
 	}
 
-	output, err := CheckGameImageVersion(params.ProjectId, params.HostId)
+	output, err := CheckGameImageVersion(params.ProjectId, params.Version)
 
 	// 不管执行成功还是失败都要写入结果
 	resultList = append(resultList, output)
@@ -44,14 +42,13 @@ func HandleCheckGameImageVersion(ctx context.Context, t *asynq.Task) (err error)
 	return err
 }
 
-func CheckGameImageVersion(projectId uint, hostId uint) (output string, err error) {
-	var host system.SysAssetsServer
+func CheckGameImageVersion(projectId uint, version string) (output string, err error) {
+	var project system.SysProject
 	var hostIpList []string
 
-	err = global.OPS_DB.Where("id = ?", hostId).First(&host).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return "", errors.New("未添加后台服务器")
-	} else if err != nil {
+	// 获取项目信息
+	err = global.OPS_DB.Where("id = ?", projectId).First(&project).Error
+	if err != nil {
 		return "", err
 	}
 
@@ -61,7 +58,7 @@ func CheckGameImageVersion(projectId uint, hostId uint) (output string, err erro
 		return "", err
 	}
 
-	sshClient, err := GetSSHConn(projectId, host.PubIp, host.SSHPort)
+	sshClient, err := GetSSHConn(projectId, global.OPS_CONFIG.Ops.Host, global.OPS_CONFIG.Ops.Port)
 	if err != nil {
 		return "", err
 	}
@@ -73,10 +70,9 @@ func CheckGameImageVersion(projectId uint, hostId uint) (output string, err erro
 	}()
 
 	command := fmt.Sprintf(
-		"bash %s %s %s %s",
+		"bash %s %s %s",
 		filepath.Join(global.OPS_CONFIG.Game.GameScriptPath, "check_game_version.sh"),
-		global.OPS_CONFIG.Game.GameConfigDir,
-		global.OPS_CONFIG.Game.RemoteConfigDir,
+		version,
 		strings.Join(hostIpList, ","),
 	)
 

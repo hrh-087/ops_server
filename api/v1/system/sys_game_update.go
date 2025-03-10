@@ -27,13 +27,14 @@ func (*GameUpdateApi) CreateGameUpdate(c *gin.Context) {
 		return
 	}
 
-	err := gameUpdateService.CreateGameUpdate(c, updateParams.GameUpdate, updateParams.HotUpdateParams)
+	updateId, err := gameUpdateService.CreateGameUpdate(c, updateParams.GameUpdate, updateParams.HotUpdateParams)
 	if err != nil {
 		response.FailWithMessage("创建失败:"+err.Error(), c)
 		return
 	}
 
-	response.OkWithMessage("创建成功", c)
+	//response.OkWithMessage("创建成功", c)
+	response.OkWithDetailed(gin.H{"id": updateId}, "创建成功", c)
 }
 
 func (*GameUpdateApi) UpdateGameUpdate(c *gin.Context) {
@@ -151,4 +152,15 @@ func (*GameUpdateApi) ExecUpdateTask(c *gin.Context) {
 	}
 
 	response.OkWithDetailed(gin.H{"jobId": jobId.String()}, "执行成功", c)
+}
+
+func (*GameUpdateApi) GetSvnUpdateConfigInfo(c *gin.Context) {
+
+	result, err := gameUpdateService.GetSvnUpdateConfigInfo(c)
+	if err != nil {
+		response.FailWithMessage("获取失败:"+err.Error(), c)
+		return
+	}
+
+	response.OkWithDetailed(result, "获取成功", c)
 }

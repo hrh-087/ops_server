@@ -19,6 +19,7 @@ func (g *GameUpdateRouter) InitGameUpdateRouter(Router *gin.RouterGroup) {
 		router.PUT("gameUpdate/", routerApi.UpdateGameUpdate)
 		router.DELETE("gameUpdate/", routerApi.DeleteGameUpdate)
 		router.POST("gameUpdate/exec/", routerApi.ExecUpdateTask)
+		router.POST("gameUpdate/svnInfo/", routerApi.GetSvnUpdateConfigInfo)
 	}
 
 	{
