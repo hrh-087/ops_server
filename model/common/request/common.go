@@ -30,5 +30,5 @@ type IdsReq struct {
 }
 
 type UploadConfigParams struct {
-	Data map[string]interface{} `json:"data"`
+	Data map[string][]interface{} `json:"data"`
 }

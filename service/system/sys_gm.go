@@ -1,10 +1,12 @@
 package system
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"ops-server/global"
 	"ops-server/model/common/request"
 	gmRes "ops-server/model/common/response"
 	"ops-server/utils/gm"
@@ -284,34 +286,24 @@ func (g GmService) SetRankConfig(ctx *gin.Context, serverId int, rankConfig []re
 }
 
 // 上传游戏服策划配置
-func (g GmService) UploadGameConfig(ctx *gin.Context, data map[string]interface{}) (err error) {
+func (g GmService) UploadGameConfig(ctx *gin.Context, data map[string][]interface{}) (err error) {
+
+	projectId := ctx.GetString("projectId")
+	if projectId == "" {
+		return errors.New("获取项目id失败")
+	}
+
+	itemConfig := "item" + "_" + projectId
 
 	for k, v := range data {
-		fmt.Println(v)
-		switch k {
-		case "rank":
-			var rankList []request.Rank
+		rankData, err := json.Marshal(v)
+		if err != nil {
+			return err
+		}
 
-			err = json.Unmarshal([]byte(v.(string)), &rankList)
-			if err != nil {
-				return errors.New("解析rank表失败")
-			}
-
-			for _, rank := range rankList {
-				fmt.Printf("rank: %+v\n", rank)
-			}
-
-		case "item":
-
-			var itemList []request.Item
-			err = json.Unmarshal([]byte(v.(string)), &itemList)
-			if err != nil {
-				return errors.New("解析item表失败")
-			}
-
-			for _, item := range itemList {
-				fmt.Printf("item: %+v\n", item)
-			}
+		err = global.OPS_REDIS.HSet(context.Background(), itemConfig, k, string(rankData)).Err()
+		if err != nil {
+			return err
 		}
 	}
 	return err
