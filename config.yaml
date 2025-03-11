@@ -58,7 +58,7 @@ system:
   iplimit-count: 15000
   iplimit-time: 3600
   use-multipoint: false # 暂未处理多点登录  默认为false
-  use-redis: false
+  use-redis: true
   use-mongo: false
 
 zap:

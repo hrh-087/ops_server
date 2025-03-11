@@ -110,18 +110,18 @@ func (g GmApi) SetRankConfig(c *gin.Context) {
 }
 
 func (g GmApi) UploadGameConfig(c *gin.Context) {
-	var uploadParams request.UploadFileParams
+	var uploadParams request.UploadConfigParams
 	if err := c.ShouldBindJSON(&uploadParams); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
 
-	if err := utils.Verify(uploadParams, utils.FileNameVerify); err != nil {
+	if err := utils.Verify(uploadParams, utils.GmUpdateConfigVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
 
-	if err := gmService.UploadGameConfig(c, uploadParams.FileName); err != nil {
+	if err := gmService.UploadGameConfig(c, uploadParams.Data); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}

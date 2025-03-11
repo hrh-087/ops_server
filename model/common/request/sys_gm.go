@@ -44,3 +44,14 @@ type GmRankConfigParams struct {
 	ServerId   int            `json:"serverId" form:"serverId"`     // 渠道id
 	RankConfig []GmRankConfig `json:"rankConfig" form:"rankConfig"` // 榜单列表
 }
+
+type Rank struct {
+	RankId   int    `json:"rankId"`
+	RankName string `json:"rankName"`
+	RankType int    `json:"rankType"`
+}
+
+type Item struct {
+	ItemId   string `json:"itemId"`
+	ItemName string `json:"itemName"`
+}

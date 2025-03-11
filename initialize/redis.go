@@ -29,6 +29,7 @@ func Redis() {
 		global.OPS_LOG.Error("redis connect ping failed, err:", zap.Error(err))
 		panic(err)
 	} else {
+
 		global.OPS_LOG.Info("redis connect ping response:", zap.String("pong", pong))
 		global.OPS_REDIS = client
 	}

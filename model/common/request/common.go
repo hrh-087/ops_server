@@ -29,6 +29,6 @@ type IdsReq struct {
 	Ids []int `json:"ids" form:"ids"`
 }
 
-type UploadFileParams struct {
-	FileName string `json:"fileName" form:"fileName"`
+type UploadConfigParams struct {
+	Data map[string]interface{} `json:"data"`
 }
