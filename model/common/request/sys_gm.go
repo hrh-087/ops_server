@@ -26,7 +26,7 @@ type Reward struct {
 type GmRankReward struct {
 	Id      int      `json:"id"`      // 榜单奖励唯一id
 	OpenId  int      `json:"openId"`  // 榜单id
-	Rank    int      `json:"rank"`    // 榜单排名
+	Rank    string   `json:"rank"`    // 榜单排名
 	Rewards []Reward `json:"rewards"` // 奖励列表
 }
 

@@ -2,7 +2,7 @@ package core
 
 import (
 	"fmt"
-	"log"
+	"go.uber.org/zap"
 	"ops-server/global"
 	"ops-server/initialize"
 )
@@ -14,6 +14,14 @@ type server interface {
 func RunWindowsServer() {
 	if global.OPS_CONFIG.System.UseRedis || global.OPS_CONFIG.System.UseMultipoint {
 		//initialize.Gorm()
+		initialize.Redis()
+	}
+
+	if global.OPS_CONFIG.System.UseMongo {
+		//err := initialize.Mongo.Initialization()
+		//if err != nil {
+		//	zap.L().Error(fmt.Sprintf("%+v", err))
+		//}
 	}
 
 	if global.OPS_DB != nil {
@@ -24,5 +32,7 @@ func RunWindowsServer() {
 
 	s := initServer(address, Router)
 
-	log.Fatal(s.ListenAndServe().Error())
+	global.OPS_LOG.Info("server run success on ", zap.String("address", address))
+
+	global.OPS_LOG.Error(s.ListenAndServe().Error())
 }

@@ -61,4 +61,7 @@ var (
 	GmRankOpenVerify   = Rules{"ServerId": {NotEmpty()}}
 	GmRankRewardVerify = Rules{"ServerId": {NotEmpty()}, "Id": {NotEmpty()}}
 	GmRankConfigVerify = Rules{"ServerId": {NotEmpty()}, "RankConfig": {NotEmpty()}}
+
+	// 文件上传
+	FileNameVerify = Rules{"FileName": {NotEmpty()}}
 )

@@ -44,12 +44,12 @@ local:
   store-path: ./resource/
 
 redis:
-  addr: 192.168.128.129:55561
-  password: "pineapple"
+  addr: 192.168.128.129:6379
+  password: ""
   db: 1
   useCluster: false
   clusterAddrs:
-    - 172.21.0.3:7000
+    - 192.168.128.129:6379
 
 system:
   db-type: mysql

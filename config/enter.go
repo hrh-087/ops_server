@@ -9,4 +9,5 @@ type Server struct {
 	Game   Game   `mapstructure:"game" json:"game" yaml:"game"`
 	Local  Local  `mapstructyre:"local" json:"local" yaml:"local"`
 	Ops    Ops    `mapstructure:"ops" json:"ops" yaml:"ops"`
+	Redis  Redis  `mapstructure:"redis" json:"redis" yaml:"redis"`
 }
