@@ -1,6 +1,7 @@
 package system
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -238,15 +239,22 @@ func (g GmService) SetRankConfig(ctx *gin.Context, serverId int, rankConfig []re
 
 			// 获取排名
 			if len(rankInfo) > 1 {
-				for _, rank := range rankInfo {
-					rewardRank, err := strconv.ParseInt(rank, 10, 64)
-					if err != nil {
-						return errors.New("解析排行榜排名失败")
-					}
+				startRewardRank, err := strconv.ParseInt(rankInfo[0], 10, 64)
+				if err != nil {
+					return errors.New("解析排行榜排名失败")
+				}
+
+				endRewardRank, err := strconv.ParseInt(rankInfo[1], 10, 64)
+				if err != nil {
+					return errors.New("解析排行榜排名失败")
+				}
+
+				for i := startRewardRank; i <= endRewardRank; i++ {
+
 					rankRewardConfig = append(rankRewardConfig, gmRes.RankRewardConfig{
 						ID:      rewardId,
 						OpenId:  reward.OpenId,
-						Rank:    int(rewardRank),
+						Rank:    int(i),
 						Rewards: rewardData,
 					})
 					rewardId++
@@ -276,7 +284,35 @@ func (g GmService) SetRankConfig(ctx *gin.Context, serverId int, rankConfig []re
 }
 
 // 上传游戏服策划配置
-func (g GmService) UploadGameConfig(ctx *gin.Context, fileName string) (err error) {
-	fmt.Println(fileName)
+func (g GmService) UploadGameConfig(ctx *gin.Context, data map[string]interface{}) (err error) {
+
+	for k, v := range data {
+		fmt.Println(v)
+		switch k {
+		case "rank":
+			var rankList []request.Rank
+
+			err = json.Unmarshal([]byte(v.(string)), &rankList)
+			if err != nil {
+				return errors.New("解析rank表失败")
+			}
+
+			for _, rank := range rankList {
+				fmt.Printf("rank: %+v\n", rank)
+			}
+
+		case "item":
+
+			var itemList []request.Item
+			err = json.Unmarshal([]byte(v.(string)), &itemList)
+			if err != nil {
+				return errors.New("解析item表失败")
+			}
+
+			for _, item := range itemList {
+				fmt.Printf("item: %+v\n", item)
+			}
+		}
+	}
 	return err
 }
