@@ -4,7 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/pkg/sftp"
+	"go.uber.org/zap"
 	"golang.org/x/crypto/ssh"
+	"ops-server/global"
 	"os"
 )
 
@@ -60,7 +62,9 @@ func ExecuteSSHCommand(client *ssh.Client, command string) (string, error) {
 	defer session.Close()
 
 	// 执行命令并获取输出
+	global.OPS_LOG.Info("执行命令", zap.String("command", command))
 	output, err := session.CombinedOutput(command)
+	global.OPS_LOG.Info("执行命令结果", zap.String("result", string(output)))
 	if err != nil {
 		return string(output), fmt.Errorf("failed to execute command: %w", err)
 	}
