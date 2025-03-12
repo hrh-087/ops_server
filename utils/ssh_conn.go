@@ -56,7 +56,6 @@ func NewSSHClient(config *SShConfig) (client *ssh.Client, err error) {
 // 执行远程命令
 func ExecuteSSHCommand(client *ssh.Client, command string) (string, error) {
 	session, err := client.NewSession()
-	global.OPS_LOG.Info("执行命令", zap.Any("session", session))
 	if err != nil {
 		return "", fmt.Errorf("failed to create session: %w", err)
 	}

@@ -444,8 +444,8 @@ func (s *GameUpdateService) ExecUpdateTask(ctx *gin.Context, id int) (jobId uuid
 			if len(gameServerList) > 0 {
 				for _, gameServer := range gameServerList {
 					var t system.JobTask
-					taskId := uuid.Must(uuid.NewV4())
 
+					taskId := uuid.Must(uuid.NewV4())
 					taskInfo, err := task.NewUpdateGameTask(updateParams[gameUpdate.Step].TaskTypeName, task.NormalUpdateGameParams{
 						TaskId:      taskId,
 						ProjectId:   gameUpdate.ProjectId,
@@ -454,6 +454,7 @@ func (s *GameUpdateService) ExecUpdateTask(ctx *gin.Context, id int) (jobId uuid
 						HotFilePath: hotFilePath,
 						GameType:    gameServer.GameType.Code,
 						GameVmid:    gameServer.Vmid,
+						Host:        gameServer.Host,
 					})
 					if err != nil {
 						global.OPS_LOG.Error("添加任务到队列失败", zap.String("jobId", jobId.String()), zap.Error(err))

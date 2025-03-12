@@ -8,6 +8,7 @@ import (
 	"github.com/hibiken/asynq"
 	"go.uber.org/zap"
 	"ops-server/global"
+	"ops-server/model/system"
 	"ops-server/utils"
 	"path/filepath"
 	"strings"
@@ -22,8 +23,8 @@ import (
 //}
 
 type NormalUpdateGameParams struct {
-	TaskId uuid.UUID
-	//Host        system.SysAssetsServer
+	TaskId      uuid.UUID
+	Host        system.SysAssetsServer
 	ServerType  int8
 	ProjectId   uint
 	HotFilePath string
@@ -142,7 +143,7 @@ func HandleHotGameRsyncServer(ctx context.Context, t *asynq.Task) error {
 		command = fmt.Sprintf("bash %s %s /tmp/%s/", filepath.Join(global.OPS_CONFIG.Game.GameScriptAutoPath, "hot_game_rsync_server.sh game_type "), params.GameType, params.HotFileName)
 	}
 
-	sshClient, err := GetSSHConn(params.ProjectId, global.OPS_CONFIG.Ops.Host, global.OPS_CONFIG.Ops.Port)
+	sshClient, err := GetSSHConn(params.ProjectId, params.Host.PubIp, params.Host.SSHPort)
 	if err != nil {
 		resultList = append(resultList, "ssh连接失败")
 		global.OPS_LOG.Error("ssh连接失败", zap.Error(err))
