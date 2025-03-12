@@ -155,6 +155,7 @@ func HandleHotGameRsyncServer(ctx context.Context, t *asynq.Task) error {
 
 	resultList = append(resultList, fmt.Sprintf("执行命令:%s", command))
 	output, err := utils.ExecuteSSHCommand(sshClient, command)
+	global.OPS_LOG.Info("执行命令", zap.String("command", command), zap.String("output", output))
 	resultList = append(resultList, output)
 	if err != nil {
 		global.OPS_LOG.Error("执行命令失败", zap.Error(err))
