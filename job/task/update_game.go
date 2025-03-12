@@ -137,7 +137,7 @@ func HandleHotGameRsyncServer(ctx context.Context, t *asynq.Task) error {
 	}
 
 	if params.ServerType == 1 {
-		command = fmt.Sprintf("bash %s %s_%d %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptAutoPath, "hot_game_rsync_server.sh game "), params.GameType, params.GameVmid, params.HotFileName)
+		command = fmt.Sprintf("bash %s %s_%d /tmp/%s/", filepath.Join(global.OPS_CONFIG.Game.GameScriptAutoPath, "hot_game_rsync_server.sh game "), params.GameType, params.GameVmid, params.HotFileName)
 	} else {
 		command = fmt.Sprintf("bash %s %s /tmp/%s/", filepath.Join(global.OPS_CONFIG.Game.GameScriptAutoPath, "hot_game_rsync_server.sh game_type "), params.GameType, params.HotFileName)
 	}
