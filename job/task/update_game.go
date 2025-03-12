@@ -96,7 +96,7 @@ func HandleHotGameRsyncHost(ctx context.Context, t *asynq.Task) error {
 		return err
 	}
 
-	command := fmt.Sprintf("bash %s %s %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptPath, "hot_game_rsync_host.sh"), params.HotFileName, params.IpList)
+	command := fmt.Sprintf("bash %s /tmp/%s %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptPath, "hot_game_rsync_host.sh"), params.HotFileName, params.IpList)
 
 	sshClient, err := GetSSHConn(params.ProjectId, global.OPS_CONFIG.Ops.Host, global.OPS_CONFIG.Ops.Port)
 	if err != nil {
