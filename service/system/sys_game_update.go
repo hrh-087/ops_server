@@ -60,22 +60,16 @@ func (s *GameUpdateService) createHotUpdateStep(step int8, hotParams sysReq.HotU
 		updateParams.StepName = "解压热更包"
 		updateParams.TaskTypeName = task.HotGameUnzipFileTypeName
 		updateParams.JobId = uuid.Must(uuid.NewV4())
-		updateParams.Command = "unzip -o %s -d /tmp/%s"
 	case 2:
 		updateParams.StepName = "同步相应服务器"
 		updateParams.TaskTypeName = task.HotGameRsyncHostTypeName
 		updateParams.JobId = uuid.Must(uuid.NewV4())
-		updateParams.Command = fmt.Sprintf("bash %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptPath, "hot_game_rsync_host.sh"))
+
 	case 3:
 		updateParams.StepName = "同步到相应游戏服"
 		updateParams.TaskTypeName = task.HotGameRsyncServerTypeName
 		updateParams.JobId = uuid.Must(uuid.NewV4())
 
-		if hotParams.ServerType == 1 {
-			updateParams.Command = fmt.Sprintf("bash %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptAutoPath, "hot_game_rsync_server.sh game "))
-		} else {
-			updateParams.Command = fmt.Sprintf("bash %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptAutoPath, "hot_game_rsync_server.sh game_type "))
-		}
 	}
 	return
 }
@@ -348,37 +342,8 @@ func (s *GameUpdateService) ExecUpdateTask(ctx *gin.Context, id int) (jobId uuid
 		}
 	//热更
 	case 2:
-		var hostIdList []int
+		//var hostIdList []int
 		var gameServerList []*system.SysGameServer
-
-		// 获取执行主机
-		switch gameUpdate.Step {
-		case 1, 2:
-			err = global.OPS_DB.WithContext(ctx).Model(&system.SysAssetsServer{}).Where("status = ? and server_type = ?", 1, 3).Limit(1).Pluck("id", &hostIdList).Error
-			if err == gorm.ErrRecordNotFound {
-				return jobId, errors.New("未添加后台服务器")
-			}
-		case 3:
-			var gameTypeList []int
-			if err = json.Unmarshal([]byte(gameUpdate.ServerList), &gameTypeList); err != nil {
-				return
-			}
-
-			switch gameUpdate.ServerType {
-			case 1:
-				// 游戏服
-				err = global.OPS_DB.Debug().WithContext(ctx).Model(&system.SysGameServer{}).Preload("GameType").Preload("Host").Where("status = ? and id in ?", 2, gameTypeList).Find(&gameServerList).Error
-				if err != nil {
-					return
-				}
-			case 2:
-				// 游戏服类型
-				err = global.OPS_DB.Debug().WithContext(ctx).Model(&system.SysGameServer{}).Preload("GameType").Preload("Host").Where("status = ? and game_type_id in ?", 2, gameTypeList).Find(&gameServerList).Group("game_type_id,host_id").Error
-				if err != nil {
-					return
-				}
-			}
-		}
 
 		// 获取热更文件信息，替换文件路径
 		hotFilePath := strings.ReplaceAll(gameUpdate.HotFile, "resource", global.OPS_CONFIG.Game.HotFileDir)
@@ -387,10 +352,15 @@ func (s *GameUpdateService) ExecUpdateTask(ctx *gin.Context, id int) (jobId uuid
 			return jobId, errors.New("热更文件不能为空")
 		}
 
-		if len(hostIdList) > 0 {
+		// 获取执行主机
+		switch gameUpdate.Step {
+		case 1, 2:
+			//err = global.OPS_DB.WithContext(ctx).Model(&system.SysAssetsServer{}).Where("status = ? and server_type = ?", 1, 3).Limit(1).Pluck("id", &hostIdList).Error
+			//if err == gorm.ErrRecordNotFound {
+			//	return jobId, errors.New("未添加后台服务器")
+			//}
 			var serverList []system.SysGameServer
 			var commandParams []string
-			var command string
 
 			if gameUpdate.Step == 2 {
 				var gameTypeList []int
@@ -417,92 +387,97 @@ func (s *GameUpdateService) ExecUpdateTask(ctx *gin.Context, id int) (jobId uuid
 					commandParams = append(commandParams, server.Host.PubIp)
 				}
 				// 拼接命令
-				command = fmt.Sprintf("%s /tmp/%s %s", updateParams[gameUpdate.Step].Command, hotFileName, strings.Join(commandParams, ","))
-
-			} else if gameUpdate.Step == 1 {
-				command = fmt.Sprintf(updateParams[gameUpdate.Step].Command, hotFilePath, hotFileName)
-			} else {
-				command = updateParams[gameUpdate.Step].Command
 			}
 
-			for _, hostId := range hostIdList {
-				var t system.JobTask
-				var host system.SysAssetsServer
-				taskId := uuid.Must(uuid.NewV4())
-				if err = global.OPS_DB.WithContext(ctx).First(&host, "id = ?", hostId).Error; err != nil {
-					global.OPS_LOG.Error("获取主机信息失败", zap.Error(err))
-					continue
-				}
+			var t system.JobTask
+			//var host system.SysAssetsServer
+			taskId := uuid.Must(uuid.NewV4())
 
-				taskInfo, err := task.NewUpdateGameTask(updateParams[gameUpdate.Step].TaskTypeName, task.NormalUpdateGameParams{
-					Host:    host,
-					TaskId:  taskId,
-					Command: command,
-					Params:  updateParams[gameUpdate.Step].Params,
-				})
+			taskInfo, err := task.NewUpdateGameTask(updateParams[gameUpdate.Step].TaskTypeName, task.NormalUpdateGameParams{
+				TaskId:      taskId,
+				ProjectId:   gameUpdate.ProjectId,
+				ServerType:  gameUpdate.ServerType,
+				HotFileName: hotFileName,
+				HotFilePath: hotFilePath,
+				IpList:      strings.Join(commandParams, ","),
+			})
 
-				if err != nil {
-					global.OPS_LOG.Error("添加任务到队列失败", zap.String("jobId", jobId.String()), zap.Error(err))
-					continue
-				}
-
-				t.JobId = jobId
-				t.AsynqId = taskInfo.ID
-				t.TaskId = taskId
-				t.Status = taskInfo.State.String()
-				t.HostName = host.ServerName
-				t.HostIp = host.PubIp
-				t.CreateAt = time.Now()
-
-				if err := global.OPS_DB.WithContext(ctx).Create(&t).Error; err != nil {
-					global.OPS_LOG.Error("创建任务失败", zap.String("jobId", jobId.String()), zap.String("taskId", taskId.String()), zap.Error(err))
-					continue
-				}
-
-				taskList = append(taskList, t)
+			if err != nil {
+				global.OPS_LOG.Error("添加任务到队列失败", zap.String("jobId", jobId.String()), zap.Error(err))
 			}
-		} else if len(gameServerList) > 0 {
-			for _, gameServer := range gameServerList {
-				var t system.JobTask
-				var command string
 
-				taskId := uuid.Must(uuid.NewV4())
-				// 根据热更类型拼接命令
-				if gameUpdate.ServerType == 1 {
-					command = fmt.Sprintf("%s %s_%d /tmp/%s/", updateParams[gameUpdate.Step].Command, gameServer.GameType.Code, gameServer.Vmid, hotFileName)
-				} else if gameUpdate.ServerType == 2 {
-					command = fmt.Sprintf("%s %s /tmp/%s/", updateParams[gameUpdate.Step].Command, gameServer.GameType.Code, hotFileName)
-				} else {
-					return jobId, errors.New("无法识别游戏服热更类型")
-				}
+			t.JobId = jobId
+			t.AsynqId = taskInfo.ID
+			t.TaskId = taskId
+			t.Status = taskInfo.State.String()
+			t.HostName = global.OPS_CONFIG.Ops.Name
+			t.HostIp = global.OPS_CONFIG.Ops.Host
+			t.CreateAt = time.Now()
 
-				taskInfo, err := task.NewUpdateGameTask(updateParams[gameUpdate.Step].TaskTypeName, task.NormalUpdateGameParams{
-					Host:    gameServer.Host,
-					TaskId:  taskId,
-					Command: command,
-					Params:  updateParams[gameUpdate.Step].Params,
-				})
+			if err := global.OPS_DB.WithContext(ctx).Create(&t).Error; err != nil {
+				global.OPS_LOG.Error("创建任务失败", zap.String("jobId", jobId.String()), zap.String("taskId", taskId.String()), zap.Error(err))
+			}
+
+			taskList = append(taskList, t)
+
+		case 3:
+			var gameTypeList []int
+			if err = json.Unmarshal([]byte(gameUpdate.ServerList), &gameTypeList); err != nil {
+				return
+			}
+
+			switch gameUpdate.ServerType {
+			case 1:
+				// 游戏服
+				err = global.OPS_DB.Debug().WithContext(ctx).Model(&system.SysGameServer{}).Preload("GameType").Preload("Host").Where("status = ? and id in ?", 2, gameTypeList).Find(&gameServerList).Error
 				if err != nil {
-					global.OPS_LOG.Error("添加任务到队列失败", zap.String("jobId", jobId.String()), zap.Error(err))
-					continue
+					return
 				}
-
-				t.JobId = jobId
-				t.AsynqId = taskInfo.ID
-				t.TaskId = taskId
-				t.Status = taskInfo.State.String()
-				t.HostName = gameServer.Host.ServerName
-				t.HostIp = gameServer.Host.PubIp
-				t.CreateAt = time.Now()
-
-				if err := global.OPS_DB.WithContext(ctx).Create(&t).Error; err != nil {
-					global.OPS_LOG.Error("创建任务失败", zap.String("jobId", jobId.String()), zap.String("taskId", taskId.String()), zap.Error(err))
-					continue
+			case 2:
+				// 游戏服类型
+				err = global.OPS_DB.Debug().WithContext(ctx).Model(&system.SysGameServer{}).Preload("GameType").Preload("Host").Where("status = ? and game_type_id in ?", 2, gameTypeList).Find(&gameServerList).Group("game_type_id,host_id").Error
+				if err != nil {
+					return
 				}
+			}
 
-				taskList = append(taskList, t)
+			if len(gameServerList) > 0 {
+				for _, gameServer := range gameServerList {
+					var t system.JobTask
+					taskId := uuid.Must(uuid.NewV4())
+
+					taskInfo, err := task.NewUpdateGameTask(updateParams[gameUpdate.Step].TaskTypeName, task.NormalUpdateGameParams{
+						TaskId:      taskId,
+						ProjectId:   gameUpdate.ProjectId,
+						ServerType:  gameUpdate.ServerType,
+						HotFileName: hotFileName,
+						HotFilePath: hotFilePath,
+						GameType:    gameServer.GameType.Code,
+						GameVmid:    gameServer.Vmid,
+					})
+					if err != nil {
+						global.OPS_LOG.Error("添加任务到队列失败", zap.String("jobId", jobId.String()), zap.Error(err))
+						continue
+					}
+
+					t.JobId = jobId
+					t.AsynqId = taskInfo.ID
+					t.TaskId = taskId
+					t.Status = taskInfo.State.String()
+					t.HostName = gameServer.Host.ServerName
+					t.HostIp = gameServer.Host.PubIp
+					t.CreateAt = time.Now()
+
+					if err := global.OPS_DB.WithContext(ctx).Create(&t).Error; err != nil {
+						global.OPS_LOG.Error("创建任务失败", zap.String("jobId", jobId.String()), zap.String("taskId", taskId.String()), zap.Error(err))
+						continue
+					}
+
+					taskList = append(taskList, t)
+				}
 			}
 		}
+
 	// 热更配置文件
 	case 3:
 		var t system.JobTask

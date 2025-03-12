@@ -8,8 +8,8 @@ import (
 	"github.com/hibiken/asynq"
 	"go.uber.org/zap"
 	"ops-server/global"
-	"ops-server/model/system"
 	"ops-server/utils"
+	"path/filepath"
 	"strings"
 )
 
@@ -22,10 +22,15 @@ import (
 //}
 
 type NormalUpdateGameParams struct {
-	TaskId  uuid.UUID
-	Host    system.SysAssetsServer
-	Command string
-	Params  string
+	TaskId uuid.UUID
+	//Host        system.SysAssetsServer
+	ServerType  int8
+	ProjectId   uint
+	HotFilePath string
+	HotFileName string
+	IpList      string
+	GameType    string
+	GameVmid    int64
 }
 
 func NewUpdateGameTask(taskTypeName string, params interface{}) (*asynq.TaskInfo, error) {
@@ -36,207 +41,6 @@ func NewUpdateGameTask(taskTypeName string, params interface{}) (*asynq.TaskInfo
 	task := NewTask(taskTypeName, payload)
 	return global.AsynqClinet.Enqueue(task)
 }
-
-// 更新游戏服镜像
-//func HandleUpdateGameImage(ctx context.Context, t *asynq.Task) error {
-//	var resultList []string
-//	var params NormalUpdateGameParams
-//
-//	err := json.Unmarshal(t.Payload(), &params)
-//	if err != nil {
-//		resultList = append(resultList, "参数解析失败")
-//		WriteTaskResult(t, resultList)
-//		return err
-//	}
-//
-//	sshClient, err := GetSSHConn(params.Host.ProjectId, params.Host.PubIp, params.Host.SSHPort)
-//	if err != nil {
-//		resultList = append(resultList, "ssh连接失败")
-//		global.OPS_LOG.Error("ssh连接失败", zap.Error(err))
-//		WriteTaskResult(t, resultList)
-//		return err
-//	}
-//	defer func() {
-//		err := sshClient.Close()
-//		if err != nil {
-//			global.OPS_LOG.Error("ssh连接关闭失败", zap.Error(err))
-//		}
-//	}()
-//
-//	// windows开发端路径替换
-//	params.Command = strings.ReplaceAll(params.Command, "\\", "/")
-//
-//	resultList = append(resultList, fmt.Sprintf("执行命令:%s", params.Command))
-//	output, err := utils.ExecuteSSHCommand(sshClient, params.Command)
-//	if err != nil {
-//		resultList = append(resultList, output)
-//		global.OPS_LOG.Error("执行命令失败", zap.Error(err))
-//		WriteTaskResult(t, resultList)
-//		return err
-//	}
-//
-//	resultList = append(resultList, output)
-//	WriteTaskResult(t, resultList)
-//
-//	return nil
-//}
-
-// 关闭游戏服
-//func HandleStopGame(ctx context.Context, t *asynq.Task) error {
-//	var resultList []string
-//	var params NormalUpdateGameParams
-//
-//	err := json.Unmarshal(t.Payload(), &params)
-//	if err != nil {
-//		resultList = append(resultList, "参数解析失败")
-//		WriteTaskResult(t, resultList)
-//		return err
-//	}
-//
-//	sshClient, err := GetSSHConn(params.Host.ProjectId, params.Host.PubIp, params.Host.SSHPort)
-//	if err != nil {
-//		resultList = append(resultList, "ssh连接失败")
-//		global.OPS_LOG.Error("ssh连接失败", zap.Error(err))
-//		WriteTaskResult(t, resultList)
-//		return err
-//	}
-//	defer sshClient.Close()
-//
-//	// windows开发端路径替换
-//	params.Command = strings.ReplaceAll(params.Command, "\\", "/")
-//
-//	resultList = append(resultList, fmt.Sprintf("执行命令:%s", params.Command))
-//	output, err := utils.ExecuteSSHCommand(sshClient, params.Command)
-//	if err != nil {
-//		resultList = append(resultList, output)
-//		global.OPS_LOG.Error("执行命令失败", zap.Error(err))
-//		WriteTaskResult(t, resultList)
-//		return err
-//	}
-//
-//	resultList = append(resultList, output)
-//	WriteTaskResult(t, resultList)
-//	return nil
-//}
-
-// 更新游戏服配置
-//func HandleUpdateGameJsonData(ctx context.Context, t *asynq.Task) error {
-//	var resultList []string
-//	var params NormalUpdateGameParams
-//
-//	err := json.Unmarshal(t.Payload(), &params)
-//	if err != nil {
-//		resultList = append(resultList, "参数解析失败")
-//		WriteTaskResult(t, resultList)
-//		return err
-//	}
-//
-//	sshClient, err := GetSSHConn(params.Host.ProjectId, params.Host.PubIp, params.Host.SSHPort)
-//	if err != nil {
-//		resultList = append(resultList, "ssh连接失败")
-//		global.OPS_LOG.Error("ssh连接失败", zap.Error(err))
-//		WriteTaskResult(t, resultList)
-//		return err
-//	}
-//	defer func() {
-//		err := sshClient.Close()
-//		if err != nil {
-//			global.OPS_LOG.Error("ssh连接关闭失败", zap.Error(err))
-//		}
-//	}()
-//
-//	// windows开发端路径替换
-//	params.Command = strings.ReplaceAll(params.Command, "\\", "/")
-//
-//	resultList = append(resultList, fmt.Sprintf("执行命令:%s", params.Command))
-//	output, err := utils.ExecuteSSHCommand(sshClient, params.Command)
-//	if err != nil {
-//		resultList = append(resultList, output)
-//		global.OPS_LOG.Error("执行命令失败", zap.Error(err))
-//		WriteTaskResult(t, resultList)
-//		return err
-//	}
-//
-//	resultList = append(resultList, output)
-//	WriteTaskResult(t, resultList)
-//	return nil
-//}
-
-// 开启游戏服
-//func HandleStartGame(ctx context.Context, t *asynq.Task) error {
-//	var resultList []string
-//	var params NormalUpdateGameParams
-//
-//	err := json.Unmarshal(t.Payload(), &params)
-//	if err != nil {
-//		resultList = append(resultList, "参数解析失败")
-//		WriteTaskResult(t, resultList)
-//		return err
-//	}
-//
-//	sshClient, err := GetSSHConn(params.Host.ProjectId, params.Host.PubIp, params.Host.SSHPort)
-//	if err != nil {
-//		resultList = append(resultList, "ssh连接失败")
-//		global.OPS_LOG.Error("ssh连接失败", zap.Error(err))
-//		WriteTaskResult(t, resultList)
-//		return err
-//	}
-//	defer sshClient.Close()
-//
-//	// windows开发端路径替换
-//	params.Command = strings.ReplaceAll(params.Command, "\\", "/")
-//
-//	resultList = append(resultList, fmt.Sprintf("执行命令:%s", params.Command))
-//	output, err := utils.ExecuteSSHCommand(sshClient, params.Command)
-//	if err != nil {
-//		resultList = append(resultList, output)
-//		global.OPS_LOG.Error("执行命令失败", zap.Error(err))
-//		WriteTaskResult(t, resultList)
-//		return err
-//	}
-//
-//	resultList = append(resultList, output)
-//	WriteTaskResult(t, resultList)
-//	return nil
-//}
-
-// 检查版本号
-//func HandleCheckGameVersion(ctx context.Context, t *asynq.Task) error {
-//	var resultList []string
-//	var params NormalUpdateGameParams
-//
-//	err := json.Unmarshal(t.Payload(), &params)
-//	if err != nil {
-//		resultList = append(resultList, "参数解析失败")
-//		WriteTaskResult(t, resultList)
-//		return err
-//	}
-//
-//	sshClient, err := GetSSHConn(params.Host.ProjectId, params.Host.PubIp, params.Host.SSHPort)
-//	if err != nil {
-//		resultList = append(resultList, "ssh连接失败")
-//		global.OPS_LOG.Error("ssh连接失败", zap.Error(err))
-//		WriteTaskResult(t, resultList)
-//		return err
-//	}
-//	defer sshClient.Close()
-//
-//	// windows开发端路径替换
-//	params.Command = strings.ReplaceAll(params.Command, "\\", "/")
-//
-//	resultList = append(resultList, fmt.Sprintf("执行命令:%s", params.Command))
-//	output, err := utils.ExecuteSSHCommand(sshClient, params.Command)
-//	if err != nil {
-//		resultList = append(resultList, output)
-//		global.OPS_LOG.Error("执行命令失败", zap.Error(err))
-//		WriteTaskResult(t, resultList)
-//		return err
-//	}
-//
-//	resultList = append(resultList, output)
-//	WriteTaskResult(t, resultList)
-//	return nil
-//}
 
 // 热更
 // 解压安装包
@@ -252,7 +56,9 @@ func HandleHotGameUnzipFile(ctx context.Context, t *asynq.Task) error {
 		return err
 	}
 
-	sshClient, err := GetSSHConn(params.Host.ProjectId, params.Host.PubIp, params.Host.SSHPort)
+	command := fmt.Sprintf("unzip -o %s -d /tmp/%s", params.HotFilePath, params.HotFileName)
+
+	sshClient, err := GetSSHConn(params.ProjectId, global.OPS_CONFIG.Ops.Host, global.OPS_CONFIG.Ops.Port)
 	if err != nil {
 		resultList = append(resultList, "ssh连接失败")
 		global.OPS_LOG.Error("ssh连接失败", zap.Error(err))
@@ -261,11 +67,10 @@ func HandleHotGameUnzipFile(ctx context.Context, t *asynq.Task) error {
 	}
 	defer sshClient.Close()
 
-	// windows开发端路径替换
-	params.Command = strings.ReplaceAll(params.Command, "\\", "/")
+	command = strings.ReplaceAll(command, "\\", "/")
 
-	resultList = append(resultList, fmt.Sprintf("执行命令:%s", params.Command))
-	output, err := utils.ExecuteSSHCommand(sshClient, params.Command)
+	resultList = append(resultList, fmt.Sprintf("执行命令:%s", command))
+	output, err := utils.ExecuteSSHCommand(sshClient, command)
 	if err != nil {
 		resultList = append(resultList, output)
 		global.OPS_LOG.Error("执行命令失败", zap.Error(err))
@@ -291,7 +96,9 @@ func HandleHotGameRsyncHost(ctx context.Context, t *asynq.Task) error {
 		return err
 	}
 
-	sshClient, err := GetSSHConn(params.Host.ProjectId, params.Host.PubIp, params.Host.SSHPort)
+	command := fmt.Sprintf("bash %s %s %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptPath, "hot_game_rsync_host.sh"), params.HotFileName, params.IpList)
+
+	sshClient, err := GetSSHConn(params.ProjectId, global.OPS_CONFIG.Ops.Host, global.OPS_CONFIG.Ops.Port)
 	if err != nil {
 		resultList = append(resultList, "ssh连接失败")
 		global.OPS_LOG.Error("ssh连接失败", zap.Error(err))
@@ -300,11 +107,10 @@ func HandleHotGameRsyncHost(ctx context.Context, t *asynq.Task) error {
 	}
 	defer sshClient.Close()
 
-	// windows开发端路径替换
-	params.Command = strings.ReplaceAll(params.Command, "\\", "/")
+	command = strings.ReplaceAll(command, "\\", "/")
 
-	resultList = append(resultList, fmt.Sprintf("执行命令:%s", params.Command))
-	output, err := utils.ExecuteSSHCommand(sshClient, params.Command)
+	resultList = append(resultList, fmt.Sprintf("执行命令:%s", command))
+	output, err := utils.ExecuteSSHCommand(sshClient, command)
 	if err != nil {
 		resultList = append(resultList, output)
 		global.OPS_LOG.Error("执行命令失败", zap.Error(err))
@@ -320,6 +126,7 @@ func HandleHotGameRsyncHost(ctx context.Context, t *asynq.Task) error {
 // 同步热更文件到相应游戏服
 func HandleHotGameRsyncServer(ctx context.Context, t *asynq.Task) error {
 	var resultList []string
+	var command string
 	var params NormalUpdateGameParams
 
 	err := json.Unmarshal(t.Payload(), &params)
@@ -329,7 +136,13 @@ func HandleHotGameRsyncServer(ctx context.Context, t *asynq.Task) error {
 		return err
 	}
 
-	sshClient, err := GetSSHConn(params.Host.ProjectId, params.Host.PubIp, params.Host.SSHPort)
+	if params.ServerType == 1 {
+		command = fmt.Sprintf("bash %s %s_%d %s", filepath.Join(global.OPS_CONFIG.Game.GameScriptAutoPath, "hot_game_rsync_server.sh game "), params.GameType, params.GameVmid, params.HotFileName)
+	} else {
+		command = fmt.Sprintf("bash %s %s /tmp/%s/", filepath.Join(global.OPS_CONFIG.Game.GameScriptAutoPath, "hot_game_rsync_server.sh game_type "), params.GameType, params.HotFileName)
+	}
+
+	sshClient, err := GetSSHConn(params.ProjectId, global.OPS_CONFIG.Ops.Host, global.OPS_CONFIG.Ops.Port)
 	if err != nil {
 		resultList = append(resultList, "ssh连接失败")
 		global.OPS_LOG.Error("ssh连接失败", zap.Error(err))
@@ -338,11 +151,10 @@ func HandleHotGameRsyncServer(ctx context.Context, t *asynq.Task) error {
 	}
 	defer sshClient.Close()
 
-	// windows开发端路径替换
-	params.Command = strings.ReplaceAll(params.Command, "\\", "/")
+	command = strings.ReplaceAll(command, "\\", "/")
 
-	resultList = append(resultList, fmt.Sprintf("执行命令:%s", params.Command))
-	output, err := utils.ExecuteSSHCommand(sshClient, params.Command)
+	resultList = append(resultList, fmt.Sprintf("执行命令:%s", command))
+	output, err := utils.ExecuteSSHCommand(sshClient, command)
 	if err != nil {
 		resultList = append(resultList, output)
 		global.OPS_LOG.Error("执行命令失败", zap.Error(err))
