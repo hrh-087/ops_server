@@ -219,6 +219,13 @@ func HandleInstallServer(ctx context.Context, t *asynq.Task) (err error) {
 		}
 	}
 
+	// 安装游戏服需要同步配置文件
+	output, err := RsyncGameJsonConfig(gameServer.ProjectId, gameServer.HostId)
+	resultList = append(resultList, output)
+	if err != nil {
+		return fmt.Errorf("同步配置文件失败:%v", err)
+	}
+
 	resultList = append(resultList, "安装成功")
 	WriteTaskResult(t, resultList)
 

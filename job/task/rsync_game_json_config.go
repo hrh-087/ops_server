@@ -28,7 +28,7 @@ func HandleRsyncGameJsonConfig(ctx context.Context, t *asynq.Task) (err error) {
 		return err
 	}
 
-	output, err := RsyncGameJsonConfig(params.ProjectId)
+	output, err := RsyncGameJsonConfig(params.ProjectId, 0)
 
 	// 不管执行成功还是失败都要写入结果
 	resultList = append(resultList, output)
@@ -42,7 +42,7 @@ func HandleRsyncGameJsonConfig(ctx context.Context, t *asynq.Task) (err error) {
 	return err
 }
 
-func RsyncGameJsonConfig(projectId uint) (output string, err error) {
+func RsyncGameJsonConfig(projectId uint, hostId uint) (output string, err error) {
 	var project system.SysProject
 	var hostIpList []string
 
@@ -52,10 +52,18 @@ func RsyncGameJsonConfig(projectId uint) (output string, err error) {
 		return "", err
 	}
 
-	// 获取游戏服主机
-	err = global.OPS_DB.Model(&system.SysAssetsServer{}).Where("project_id = ? and server_type = 1", projectId).Pluck("pub_ip", &hostIpList).Error
-	if err != nil {
-		return "", err
+	if hostId == 0 {
+		// 获取游戏服主机
+		//err = global.OPS_DB.Model(&system.SysAssetsServer{}).Where("project_id = ? and server_type = 1", projectId).Pluck("pub_ip", &hostIpList).Error
+		err = global.OPS_DB.Model(&system.SysGameServer{}).Select("host.pub_ip").Joins("join sys_assets_servers as host on host.id = sys_game_servers.host_id").Group("host_id").Find(&hostIpList).Error
+		if err != nil {
+			return "", err
+		}
+	} else {
+		err = global.OPS_DB.Model(&system.SysAssetsServer{}).Where("id = ?", hostId).Pluck("pub_ip", &hostIpList).Error
+		if err != nil {
+			return "", err
+		}
 	}
 
 	sshClient, err := GetSSHConn(projectId, global.OPS_CONFIG.Ops.Host, global.OPS_CONFIG.Ops.Port)
