@@ -52,6 +52,6 @@ type Rank struct {
 }
 
 type Item struct {
-	ItemId   string `json:"itemId"`
-	ItemName string `json:"itemName"`
+	ItemId   int         `json:"itemId"`
+	ItemName interface{} `json:"itemName"`
 }

@@ -16,6 +16,7 @@ func (s *BaseRouter) InitBaseRouter(Router *gin.RouterGroup) gin.IRouter {
 		baseRouter.POST("login/", baseApi.Login)
 		baseRouter.POST("logout/", baseApi.Logout)
 		baseRouter.POST("uploadFile/", baseApi.UploadFile)
+		baseRouter.GET("generateExcel/", baseApi.GenerateExcel)
 	}
 	return baseRouter
 }

@@ -128,3 +128,20 @@ func (g GmApi) UploadGameConfig(c *gin.Context) {
 
 	response.OkWithMessage("上传成功", c)
 }
+
+func (g GmApi) GetItemConfigInfo(c *gin.Context) {
+	var params request.GmItemConfigParams
+	if err := c.ShouldBindJSON(&params); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	data, err := gmService.GetItemConfigInfo(c, params.ItemType)
+
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	response.OkWithDetailed(data, "获取成功", c)
+}

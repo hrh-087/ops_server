@@ -21,5 +21,6 @@ func (g *GmRouter) InitGmRouter(Router *gin.RouterGroup) {
 		router.POST("getRankRewardList/", routerApi.GetRankRewardList)
 		router.POST("setRankReward/", routerApi.SetRankConfig)
 		router.POST("uploadGameConfig/", routerApi.UploadGameConfig)
+		router.POST("getItemConfigInfo/", routerApi.GetItemConfigInfo)
 	}
 }

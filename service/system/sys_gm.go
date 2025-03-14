@@ -122,7 +122,7 @@ func (g GmService) GetRankRewardList(ctx *gin.Context, serverId, id int) (data i
 		}
 
 		reward.Id = int(rewardData["id"].(float64))
-		reward.Rank = rewardData["rank"].(string)
+		reward.Rank = strconv.Itoa(int(rewardData["rank"].(float64)))
 		reward.OpenId = int(rewardData["openId"].(float64))
 		reward.Rewards = rewards
 
@@ -287,7 +287,6 @@ func (g GmService) SetRankConfig(ctx *gin.Context, serverId int, rankConfig []re
 
 // 上传游戏服策划配置
 func (g GmService) UploadGameConfig(ctx *gin.Context, data map[string][]interface{}) (err error) {
-
 	projectId := ctx.GetString("projectId")
 	if projectId == "" {
 		return errors.New("获取项目id失败")
@@ -306,5 +305,68 @@ func (g GmService) UploadGameConfig(ctx *gin.Context, data map[string][]interfac
 			return err
 		}
 	}
+
 	return err
+}
+
+func (g GmService) GetItemConfigInfo(ctx *gin.Context, itemType string) (data interface{}, err error) {
+	projectId := ctx.GetString("projectId")
+	if projectId == "" {
+		return nil, errors.New("获取项目id失败")
+	}
+
+	itemConfig := "item" + "_" + projectId
+
+	//if itemType == "" {
+	//	configData := make(map[string]interface{})
+	//	allConfigData, err := global.OPS_REDIS.HGetAll(context.Background(), itemConfig).Result()
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//
+	//	for k, v := range allConfigData {
+	//		switch k {
+	//		case "rank":
+	//			var rankList []request.Rank
+	//			if err = json.Unmarshal([]byte(v), &rankList); err != nil {
+	//				return nil, err
+	//			}
+	//			configData["rank"] = rankList
+	//		case "item":
+	//			var itemList []request.Item
+	//			if err = json.Unmarshal([]byte(v), &itemList); err != nil {
+	//				return nil, err
+	//			}
+	//			configData["item"] = itemList
+	//		default:
+	//			configData[k] = v
+	//		}
+	//	}
+	//
+	//	return configData, nil
+	//}
+
+	configData, err := global.OPS_REDIS.HGet(context.Background(), itemConfig, itemType).Result()
+	if err != nil {
+		return nil, err
+	}
+
+	switch itemType {
+	case "item":
+		var itemList []request.Item
+		if err = json.Unmarshal([]byte(configData), &itemList); err != nil {
+			return nil, err
+		}
+
+		return itemList, nil
+	case "rank":
+		var rankList []request.Rank
+		if err = json.Unmarshal([]byte(configData), &rankList); err != nil {
+			return nil, err
+		}
+		return rankList, nil
+
+	}
+
+	return
 }

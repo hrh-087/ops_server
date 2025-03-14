@@ -32,3 +32,7 @@ type IdsReq struct {
 type UploadConfigParams struct {
 	Data map[string][]interface{} `json:"data"`
 }
+
+type GmItemConfigParams struct {
+	ItemType string `json:"itemType"`
+}
