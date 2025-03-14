@@ -36,3 +36,7 @@ type UploadConfigParams struct {
 type GmItemConfigParams struct {
 	ItemType string `json:"itemType"`
 }
+
+type ExcelTypeParams struct {
+	ExcelType string `json:"excelType" form:"excelType"`
+}

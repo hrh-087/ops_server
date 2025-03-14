@@ -7,6 +7,7 @@ import (
 	"github.com/xuri/excelize/v2"
 	"net/http"
 	"ops-server/global"
+	"ops-server/model/common/request"
 	"ops-server/model/common/response"
 	"ops-server/utils"
 	"path/filepath"
@@ -58,6 +59,24 @@ func (*BaseApi) UploadFile(c *gin.Context) {
 
 func (*BaseApi) GenerateExcel(c *gin.Context) {
 
+	var params request.ExcelTypeParams
+
+	if err := c.ShouldBindQuery(&params); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": "获取参数失败"})
+		return
+	}
+
+	if err := utils.Verify(params, utils.ExcelTypeVerify); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": "参数验证失败"})
+		return
+	}
+
+	projectId := c.GetString("projectId")
+	if projectId == "" {
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": "获取项目ID失败"})
+		return
+	}
+
 	// 创建 Excel
 	f := excelize.NewFile()
 	annotationMap := make(map[string]string)
@@ -68,8 +87,8 @@ func (*BaseApi) GenerateExcel(c *gin.Context) {
 		return
 	}
 
-	excelType := "item"
-	switch excelType {
+	//excelType := "item"
+	switch params.ExcelType {
 	case "item":
 		sheetIndex := 0
 		for key, value := range itemData {

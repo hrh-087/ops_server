@@ -65,4 +65,5 @@ var (
 
 	// 文件上传
 	//FileNameVerify = Rules{"FileName": {NotEmpty()}}
+	ExcelTypeVerify = Rules{"ExcelType": {NotEmpty()}}
 )
