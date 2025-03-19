@@ -18,7 +18,7 @@ func NewCommonTask(taskType string, params CommonTaskParams) (*asynq.TaskInfo, e
 		return nil, err
 	}
 	task := NewTask(taskType, payload)
-	return global.AsynqClinet.Enqueue(task)
+	return global.AsynqClient.Enqueue(task)
 }
 
 type GameTaskParams struct {
@@ -35,5 +35,5 @@ func NewGameTask(taskType string, params GameTaskParams) (*asynq.TaskInfo, error
 		return nil, err
 	}
 	task := NewTask(taskType, payload)
-	return global.AsynqClinet.Enqueue(task)
+	return global.AsynqClient.Enqueue(task)
 }

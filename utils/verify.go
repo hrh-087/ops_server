@@ -56,6 +56,8 @@ var (
 
 	GameTaskVerify = Rules{"TaskType": {NotEmpty()}, "GameServerIds": {NotEmpty()}}
 
+	CronTaskVerify = Rules{"TaskTypeName": {NotEmpty()}, "Name": {NotEmpty()}, "Type": {NotEmpty()}}
+
 	// Gm
 	GmSwitchVerify       = Rules{"ServerId": {NotEmpty()}, "TypeKey": {NotEmpty()}}
 	GmRankOpenVerify     = Rules{"ServerId": {NotEmpty()}}

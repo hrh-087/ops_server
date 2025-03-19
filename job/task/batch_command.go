@@ -23,7 +23,7 @@ func NewBatchCommand(params BatchCommand) (*asynq.TaskInfo, error) {
 		return nil, err
 	}
 	task := NewTask(BatchCommandTypeName, payload)
-	return global.AsynqClinet.Enqueue(task)
+	return global.AsynqClient.Enqueue(task)
 }
 
 func HandleBatchCommand(ctx context.Context, t *asynq.Task) error {

@@ -33,6 +33,9 @@ const (
 
 	// 项目配置
 	InitProjectTypeName = "project:initProject" // 初始化项目
+
+	// 定时任务
+	CronCloseMatchBlockTypeName = "cron:closeMatchBlock"
 )
 
 // 任务存储时间

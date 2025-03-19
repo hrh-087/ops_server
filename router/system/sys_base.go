@@ -11,13 +11,17 @@ type BaseRouter struct {
 
 func (s *BaseRouter) InitBaseRouter(Router *gin.RouterGroup) {
 	baseRouter := Router.Group("base").Use(middleware.ProjectAuth())
+	baseRouterWithOutProject := Router.Group("base")
 	baseApi := v1.ApiGroupApp.SystemApiGroup.BaseApi
 
 	{
-		baseRouter.POST("login/", baseApi.Login)
-		baseRouter.POST("logout/", baseApi.Logout)
-		baseRouter.POST("uploadFile/", baseApi.UploadFile)
 		baseRouter.GET("generateExcel/", baseApi.GenerateExcel)
+	}
+
+	{
+		baseRouterWithOutProject.POST("login/", baseApi.Login)
+		baseRouterWithOutProject.POST("logout/", baseApi.Logout)
+		baseRouterWithOutProject.POST("uploadFile/", baseApi.UploadFile)
 	}
 	//return baseRouter
 }

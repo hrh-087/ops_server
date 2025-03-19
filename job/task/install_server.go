@@ -29,7 +29,7 @@ func NewInstallServerTask(params InstallServerParams) (*asynq.TaskInfo, error) {
 		return nil, err
 	}
 	task := NewTask(InstallGameServerTypeName, payload)
-	return global.AsynqClinet.Enqueue(task)
+	return global.AsynqClient.Enqueue(task)
 }
 
 func HandleInstallServer(ctx context.Context, t *asynq.Task) (err error) {

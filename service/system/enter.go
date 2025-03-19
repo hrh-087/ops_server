@@ -31,8 +31,10 @@ type ServiceGroup struct {
 	GameUpdateService
 	// 操作记录
 	OperationRecordService
-
+	// 任务管理
 	SysTaskService
-
+	// Gm
 	GmService
+	// 定时任务
+	CronTaskService
 }

@@ -40,7 +40,7 @@ func NewUpdateGameTask(taskTypeName string, params interface{}) (*asynq.TaskInfo
 		return nil, err
 	}
 	task := NewTask(taskTypeName, payload)
-	return global.AsynqClinet.Enqueue(task)
+	return global.AsynqClient.Enqueue(task)
 }
 
 // 热更

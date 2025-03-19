@@ -37,6 +37,8 @@ type ApiGroup struct {
 
 	SysTaskApi
 	GmApi
+
+	CronTaskApi
 }
 
 var (
@@ -69,6 +71,7 @@ var (
 	gameUpdateService      = service.ServiceGroupApp.SystemServiceGroup.GameUpdateService
 	operationRecordService = service.ServiceGroupApp.SystemServiceGroup.OperationRecordService
 
-	sysTaskService = service.ServiceGroupApp.SystemServiceGroup.SysTaskService
-	gmService      = service.ServiceGroupApp.SystemServiceGroup.GmService
+	sysTaskService  = service.ServiceGroupApp.SystemServiceGroup.SysTaskService
+	gmService       = service.ServiceGroupApp.SystemServiceGroup.GmService
+	cronTaskService = service.ServiceGroupApp.SystemServiceGroup.CronTaskService
 )

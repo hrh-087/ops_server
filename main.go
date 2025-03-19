@@ -6,6 +6,7 @@ import (
 	"ops-server/global"
 	"ops-server/initialize"
 	"ops-server/job/inspector"
+	"ops-server/job/scheduler"
 	"ops-server/job/server"
 	"ops-server/job/workers"
 )
@@ -22,7 +23,8 @@ func main() {
 	global.OPS_DB = initialize.Gorm()
 	// 异步队列
 	global.AsynqInspect = inspector.NewAsynqInspector()
-	global.AsynqClinet = server.NewAsynqClinet()
+	global.AsynqClient = server.NewAsynqClinet()
+	global.AsynqScheduler = scheduler.NewAsynqScheduler()
 
 	if global.OPS_DB != nil {
 		// 初始化表

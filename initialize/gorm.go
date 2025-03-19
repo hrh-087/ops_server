@@ -54,10 +54,15 @@ func RegisterTables() {
 		system.JobTask{},
 		system.JobCommand{},
 		system.GameUpdate{},
+
 		// 操作记录
 		system.SysOperationRecord{},
+
 		// 任务管理
 		system.SysTask{},
+
+		// 定时任务
+		system.CronTask{},
 	)
 	if err != nil {
 		panic("register table failed")

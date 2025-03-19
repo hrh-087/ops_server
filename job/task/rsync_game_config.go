@@ -26,7 +26,7 @@ func NewRsyncGameConfigTask(params RsyncGameConfigParams) (*asynq.TaskInfo, erro
 		return nil, err
 	}
 	task := NewTask(RsyncGameConfigTypeName, payload)
-	return global.AsynqClinet.Enqueue(task)
+	return global.AsynqClient.Enqueue(task)
 }
 
 func HandleRsyncGameConfig(ctx context.Context, t *asynq.Task) (err error) {

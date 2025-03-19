@@ -25,7 +25,7 @@ func NewInitProjectTask(params InitProjectParams) (*asynq.TaskInfo, error) {
 		return nil, err
 	}
 	task := NewTask(InitProjectTypeName, payload)
-	return global.AsynqClinet.Enqueue(task)
+	return global.AsynqClient.Enqueue(task)
 }
 
 func HandleInitProject(ctx context.Context, t *asynq.Task) (err error) {

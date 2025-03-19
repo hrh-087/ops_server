@@ -19,7 +19,8 @@ var (
 	OPS_ROUTERS gin.RoutesInfo
 
 	// OPS_LOG
-	OPS_LOG      *zap.Logger
-	AsynqClinet  *asynq.Client
-	AsynqInspect *asynq.Inspector
+	OPS_LOG        *zap.Logger
+	AsynqClient    *asynq.Client
+	AsynqInspect   *asynq.Inspector
+	AsynqScheduler *asynq.Scheduler
 )

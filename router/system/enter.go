@@ -33,4 +33,6 @@ type RouterGroup struct {
 	SysTaskRouter
 
 	GmRouter
+
+	CronTaskRouter
 }
