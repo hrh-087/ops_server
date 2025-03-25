@@ -82,6 +82,7 @@ asynq:
   retention: 7 # 保留天数
   concurrency: 10 # 并发数
   timeout: 600 # 任务执行超时时间 单位秒
+  tz: Asia/Shanghai # 时区
 
 game:
   game-path: /data/game/ # 游戏安装目录

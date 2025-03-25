@@ -14,7 +14,7 @@ type CronTask struct {
 
 	Tasks []JobTask `json:"tasks" gorm:"foreignKey:JobId;references:CronTaskId"`
 
-	CronTaskId   uuid.UUID `json:"cronTaskId" gorm:"primary_key"`
+	CronTaskId   uuid.UUID `json:"cronTaskId" form:"cronTaskId" gorm:"primary_key"`
 	TaskId       string    `json:"taskId" gorm:"index;comment:任务id"`
 	Name         string    `json:"name" gorm:"comment:任务名称"`
 	TaskTypeName string    `json:"taskTypeName" gorm:"comment:任务类型名称"`

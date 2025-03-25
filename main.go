@@ -39,5 +39,10 @@ func main() {
 		workers.InitWorkers()
 	}()
 
+	// 运行定时任务消费者
+	go func() {
+		scheduler.InitScheduler()
+	}()
+
 	core.RunWindowsServer()
 }

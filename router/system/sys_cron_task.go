@@ -19,7 +19,7 @@ func (CronTaskRouter) InitCronTaskRouter(Router *gin.RouterGroup) {
 		router.POST("cron/", routerApi.CreateCronTask)
 		router.PUT("cron/", routerApi.UpdateCronTask)
 		router.DELETE("cron/", routerApi.DeleteCronTask)
-		//router.POST("cron/exec/", routerApi.ExecCronTask)
+		router.POST("cron/exec/", routerApi.ExecCronTask)
 	}
 
 	{

@@ -1,6 +1,7 @@
 package task
 
 import (
+	"encoding/json"
 	"errors"
 	"github.com/hibiken/asynq"
 	"go.uber.org/zap"
@@ -54,6 +55,27 @@ func taskTimeout() asynq.Option {
 func NewTask(serverType string, payload []byte, opts ...asynq.Option) *asynq.Task {
 	opts = append(opts, retention(), retryCount(), taskTimeout())
 	return asynq.NewTask(serverType, payload, opts...)
+}
+
+func NewOnceTask(serverType string, params interface{}, opts ...asynq.Option) (*asynq.TaskInfo, error) {
+	payload, err := json.Marshal(params)
+	if err != nil {
+		return nil, err
+	}
+
+	task := NewTask(serverType, payload)
+
+	return global.AsynqClient.Enqueue(task, opts...)
+}
+
+func NewCronTask(serverType string, params interface{}, cron string, opts ...asynq.Option) (string, error) {
+	payload, err := json.Marshal(params)
+	if err != nil {
+		return "", err
+	}
+	task := NewTask(serverType, payload)
+
+	return global.AsynqScheduler.Register(cron, task, opts...)
 }
 
 func WriteTaskResult(t *asynq.Task, result []string) {

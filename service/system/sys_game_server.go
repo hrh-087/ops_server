@@ -496,7 +496,6 @@ func (g *GameServerService) ExecGameTask(ctx *gin.Context, taskType int8, ids []
 	job.Name = jobName
 	job.Status = 1
 	job.Type = taskTypeName
-	//job.Creator = "system"
 	job.Tasks = taskList
 
 	// 创建作业任务
