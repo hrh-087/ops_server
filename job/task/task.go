@@ -63,9 +63,9 @@ func NewOnceTask(serverType string, params interface{}, opts ...asynq.Option) (*
 		return nil, err
 	}
 
-	task := NewTask(serverType, payload)
+	task := NewTask(serverType, payload, opts...)
 
-	return global.AsynqClient.Enqueue(task, opts...)
+	return global.AsynqClient.Enqueue(task)
 }
 
 func NewCronTask(serverType string, params interface{}, cron string, opts ...asynq.Option) (string, error) {
@@ -73,9 +73,9 @@ func NewCronTask(serverType string, params interface{}, cron string, opts ...asy
 	if err != nil {
 		return "", err
 	}
-	task := NewTask(serverType, payload)
+	task := NewTask(serverType, payload, opts...)
 
-	return global.AsynqScheduler.Register(cron, task, opts...)
+	return global.AsynqScheduler.Register(cron, task)
 }
 
 func WriteTaskResult(t *asynq.Task, result []string) {

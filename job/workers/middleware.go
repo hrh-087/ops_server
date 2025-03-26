@@ -117,7 +117,7 @@ func CronMiddleware(h asynq.Handler) asynq.Handler {
 			if cronJob.Type == 1 {
 				// 一次性任务只执行一次后关闭任务
 				cronJob.Status = 2
-				if err = global.OPS_DB.WithContext(ctx).Save(&cronJob).Error; err != nil {
+				if err = global.OPS_DB.Save(&cronJob).Error; err != nil {
 					global.OPS_LOG.Error("更新cronTaskId失败", zap.Error(err))
 				}
 			}
@@ -149,6 +149,13 @@ func CronMiddleware(h asynq.Handler) asynq.Handler {
 			}
 
 		case 2:
+
+			queue, ok := asynq.GetQueueName(ctx)
+			if !ok {
+				global.OPS_LOG.Error("获取队列名称失败", zap.Error(err))
+				return err
+			}
+
 			// 周期性任务
 			task.TaskId = uuid.Must(uuid.NewV4())
 			task.JobId = cronJob.CronTaskId
@@ -156,9 +163,10 @@ func CronMiddleware(h asynq.Handler) asynq.Handler {
 			task.Status = asynq.TaskStatePending.String()
 			task.HostName = global.OPS_CONFIG.Ops.Name
 			task.HostIp = global.OPS_CONFIG.Ops.Host
+			task.Queue = queue
 			task.CreateAt = time.Now()
 
-			if err = global.OPS_DB.WithContext(ctx).Create(&task).Error; err != nil {
+			if err = global.OPS_DB.Create(&task).Error; err != nil {
 				global.OPS_LOG.Error("创建任务失败", zap.String("CronTaskId", cronJob.CronTaskId.String()), zap.String("taskId", task.TaskId.String()), zap.Error(err))
 				return err
 			}

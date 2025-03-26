@@ -121,7 +121,7 @@ func (c CronTaskService) ExecCronTask(ctx *gin.Context, cronTask system.CronTask
 			return errors.New("TaskId为空, 请先开启任务")
 		}
 		if old.Type == 2 {
-			// todo 重启服务的话需要重载定时任务
+
 			err = global.AsynqScheduler.Unregister(old.TaskId)
 			if err != nil {
 				global.OPS_LOG.Error("关闭周期性定时任务失败", zap.Error(err))
@@ -131,9 +131,11 @@ func (c CronTaskService) ExecCronTask(ctx *gin.Context, cronTask system.CronTask
 			//if old.ExecTime.Before(time.Now()) {
 			//	return errors.New("任务已执行")
 			//}
-			err = global.AsynqInspect.DeleteTask("cron", old.TaskId)
+
+			// 取消任务
+			err = JobTaskServiceApp.CancelJobTask("cron", old.TaskId)
 			if err != nil {
-				global.OPS_LOG.Error("关闭一次性定时任务失败", zap.Error(err))
+				global.OPS_LOG.Error("取消一次性定时任务失败", zap.Error(err))
 				return err
 			}
 		}
@@ -181,6 +183,7 @@ func (c CronTaskService) ExecCronTask(ctx *gin.Context, cronTask system.CronTask
 			t.HostName = global.OPS_CONFIG.Ops.Name
 			t.HostIp = global.OPS_CONFIG.Ops.Host
 			t.CreateAt = time.Now()
+			t.Queue = taskInfo.Queue
 
 			if err := global.OPS_DB.WithContext(ctx).Create(&t).Error; err != nil {
 				global.OPS_LOG.Error("创建任务失败", zap.String("CronTaskId", old.CronTaskId.String()), zap.String("taskId", taskId.String()), zap.Error(err))

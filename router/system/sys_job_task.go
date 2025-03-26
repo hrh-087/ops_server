@@ -18,5 +18,6 @@ func (s *JobTaskRouter) InitJobTaskRouter(Router *gin.RouterGroup) {
 	}
 	{
 		routerWithoutRecord.POST("task/result/", routerApi.GetJobTaskResult)
+		routerWithoutRecord.GET("task/", routerApi.GetJobTaskList)
 	}
 }
