@@ -41,7 +41,7 @@ func (j *JobTaskService) GetJobTaskList(ctx *gin.Context, info request.PageInfo,
 func (j *JobTaskService) GetJobTaskResult(jobTask system.JobTask) (result string, err error) {
 	taskInfo, err := global.AsynqInspect.GetTaskInfo(jobTask.Queue, jobTask.AsynqId)
 	if err != nil {
-		global.OPS_LOG.Error("任务结果不存在或已回收", zap.String("asynqId", jobTask.AsynqId), zap.Error(err))
+		global.OPS_LOG.Error("任务结果不存在或已回收", zap.String("asynqId", jobTask.AsynqId), zap.String("queue", jobTask.Queue), zap.Error(err))
 		return "", errors.New("任务结果不存在或已回收")
 	}
 	return string(taskInfo.Result), err
