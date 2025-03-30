@@ -55,12 +55,12 @@ func RsyncGameJsonConfig(projectId uint, hostId uint) (output string, err error)
 	if hostId == 0 {
 		// 获取游戏服主机
 		//err = global.OPS_DB.Model(&system.SysAssetsServer{}).Where("project_id = ? and server_type = 1", projectId).Pluck("pub_ip", &hostIpList).Error
-		err = global.OPS_DB.Model(&system.SysGameServer{}).Select("host.pub_ip").Joins("join sys_assets_servers as host on host.id = sys_game_servers.host_id").Group("host_id").Find(&hostIpList).Error
+		err = global.OPS_DB.Model(&system.SysGameServer{}).Select("host.pub_ip").Joins("join sys_assets_servers as host on host.id = sys_game_servers.host_id").Where("project_id = ? and server_type = 1", projectId).Group("host_id").Find(&hostIpList).Error
 		if err != nil {
 			return "", err
 		}
 	} else {
-		err = global.OPS_DB.Model(&system.SysAssetsServer{}).Where("id = ?", hostId).Pluck("pub_ip", &hostIpList).Error
+		err = global.OPS_DB.Model(&system.SysAssetsServer{}).Where("id = ? and project_id = ?", hostId, projectId).Pluck("pub_ip", &hostIpList).Error
 		if err != nil {
 			return "", err
 		}
