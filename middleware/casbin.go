@@ -20,6 +20,9 @@ func CasbinHandler() gin.HandlerFunc {
 		path := c.Request.URL.Path
 
 		obj := strings.TrimPrefix(path, global.OPS_CONFIG.System.RouterPrefix)
+
+		// 去掉api权限认证
+		c.Next()
 		// 获取请求方法
 		act := c.Request.Method
 		// 获取用户的角色

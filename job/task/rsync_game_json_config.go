@@ -60,7 +60,7 @@ func RsyncGameJsonConfig(projectId uint, hostId uint) (output string, err error)
 			return "", err
 		}
 	} else {
-		err = global.OPS_DB.Model(&system.SysAssetsServer{}).Where("id = ? and project_id = ?", hostId, projectId).Pluck("pub_ip", &hostIpList).Error
+		err = global.OPS_DB.Model(&system.SysAssetsServer{}).Where("id = ? and project_id = ? and server_type = 1", hostId, projectId).Pluck("pub_ip", &hostIpList).Error
 		if err != nil {
 			return "", err
 		}

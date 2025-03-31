@@ -559,7 +559,7 @@ func (s GameUpdateService) GetSvnUpdateConfigInfo(ctx *gin.Context) (result stri
 
 	//command := fmt.Sprintf("svn log -v -r BASE:HEAD --xml --username luguanlin --password lgl2023 %s", project.ConfigDir)
 	//command := fmt.Sprintf("svn log -v -r 10400:HEAD --xml --username luguanlin --password lgl2023 %s", project.ConfigDir)
-	command := fmt.Sprintf("cd %s && svn diff -r BASE:HEAD --summarize --username luguanlin --password lgl2023", project.ConfigDir)
+	command := fmt.Sprintf("cd %s && svn diff -r COMMITTED:HEAD --summarize --username luguanlin --password lgl2023", project.ConfigDir)
 
 	return utils.ExecuteSSHCommand(client, command)
 	//if err != nil {
