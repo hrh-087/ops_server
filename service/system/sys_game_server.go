@@ -139,7 +139,7 @@ func (g *GameServerService) DeleteGameServer(ctx context.Context, id int) (err e
 	return global.OPS_DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var gameServer system.SysGameServer
 		var listenerList []system.SysAssetsListener
-		if err = tx.Preload("GameType").Preload("Platform").Where("id = ?", id).First(&gameServer).Error; err != nil {
+		if err = tx.Preload("GameType").Preload("Platform").Preload("Host").Where("id = ?", id).First(&gameServer).Error; err != nil {
 			return err
 		}
 
