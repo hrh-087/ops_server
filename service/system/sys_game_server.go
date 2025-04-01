@@ -12,6 +12,7 @@ import (
 	"ops-server/job/task"
 	"ops-server/model/common/request"
 	"ops-server/model/system"
+	"ops-server/utils"
 	"ops-server/utils/cloud"
 	cloudRequest "ops-server/utils/cloud/request"
 	"time"
@@ -138,12 +139,12 @@ func (g *GameServerService) DeleteGameServer(ctx context.Context, id int) (err e
 	return global.OPS_DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var gameServer system.SysGameServer
 		var listenerList []system.SysAssetsListener
-		if err := tx.Preload("GameType").Preload("Platform").Where("id = ?", id).First(&gameServer).Error; err != nil {
+		if err = tx.Preload("GameType").Preload("Platform").Where("id = ?", id).First(&gameServer).Error; err != nil {
 			return err
 		}
 
 		listenerName := fmt.Sprintf("%s_%s_%d", gameServer.Platform.PlatformCode, gameServer.GameType.Code, gameServer.Vmid)
-		if err := tx.Preload("Lb").Preload("Lb.CloudProduce").Where("name = ?", listenerName).Find(&listenerList).Error; err != nil {
+		if err = tx.Preload("Lb").Preload("Lb.CloudProduce").Where("name = ?", listenerName).Find(&listenerList).Error; err != nil {
 			return err
 		}
 
@@ -155,14 +156,48 @@ func (g *GameServerService) DeleteGameServer(ctx context.Context, id int) (err e
 				Region:     listener.Lb.CloudProduce.RegionId,
 				ListenerId: listener.InstanceId,
 			}
-			if err := cloud.DeleteListener(deleteBackendMemberParams); err != nil {
+			if err = cloud.DeleteListener(deleteBackendMemberParams); err != nil {
 				global.OPS_LOG.Error("删除监听器失败", zap.Error(err), zap.String("listenerName", listenerName), zap.String("instanceId", listener.InstanceId))
 				return err
 			}
 
-			if err := tx.Unscoped().Delete(&listener).Error; err != nil {
+			if err = tx.Unscoped().Delete(&listener).Error; err != nil {
 				return err
 			}
+		}
+
+		// 删除相应的游戏服目录
+
+		sshConfig, err := task.GetSSHKey(gameServer.ProjectId, gameServer.Host.PubIp, gameServer.Host.SSHPort)
+		if err != nil {
+			return fmt.Errorf("获取ssh配置失败:%v", err)
+		}
+
+		sshClient, err := utils.NewSSHClient(&sshConfig)
+		if err != nil {
+			return fmt.Errorf("ssh连接失败:%v", err)
+		}
+		defer func() {
+			if err := sshClient.Close(); err != nil {
+				global.OPS_LOG.Error("ssh关闭失败", zap.Error(err))
+			}
+		}()
+
+		gameDir := fmt.Sprintf("%s/%s/%s_%d",
+			global.OPS_CONFIG.Game.GamePath,
+			gameServer.Platform.PlatformCode,
+			gameServer.GameType.Code,
+			gameServer.Vmid,
+		)
+
+		if gameDir == "/" {
+			return errors.New("游戏服目录为根目录,无法删除")
+		}
+
+		command := fmt.Sprintf("[ -d %s ] && mv  %s /tmp/", gameDir, gameDir)
+		_, err = utils.ExecuteSSHCommand(sshClient, command)
+		if err != nil {
+			return fmt.Errorf("删除游戏服目录失败:%v", err)
 		}
 
 		return tx.Delete(&gameServer).Error
