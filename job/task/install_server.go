@@ -45,7 +45,7 @@ func HandleInstallServer(ctx context.Context, t *asynq.Task) (err error) {
 		return fmt.Errorf("参数解析失败:%v", err)
 	}
 
-	if err = global.OPS_DB.Preload("Platform").Preload("GameType").Preload("Host").Where("id = ?", params.GameServerId).First(&gameServer).Error; err != nil {
+	if err = global.OPS_DB.Preload("SysProject").Preload("Platform").Preload("GameType").Preload("Host").Where("id = ?", params.GameServerId).First(&gameServer).Error; err != nil {
 		return fmt.Errorf("获取游戏服信息失败:%v", err)
 	}
 	if gameServer.Status == 1 || gameServer.Status == 2 {
@@ -224,6 +224,69 @@ func HandleInstallServer(ctx context.Context, t *asynq.Task) (err error) {
 	resultList = append(resultList, output)
 	if err != nil {
 		return fmt.Errorf("同步配置文件失败:%v", err)
+	}
+	// 当项目为测试项目时，需要添加通知钉钉的脚本
+	if gameServer.SysProject.IsTest {
+		restartNoticeScript := `
+#!/bin/bash
+
+webhook_url="%s"
+
+# Function to send webhook notification with file content
+send_webhook() {
+    payload="$1"
+    curl -X POST -H "Content-Type: application/json" -d "$payload" "$webhook_url"
+}
+
+# 获取 docker compose ps 的输出并提取 IMAGE 和 STATUS 列
+docker_ps_output=$(docker compose ps $(docker compose config --services) --format json)
+
+# 解析 JSON 数据并分别提取 IMAGE 和 STATUS 列
+Image_branch=$(echo "$docker_ps_output" | jq -r '.Image')
+Status_str=$(echo "$docker_ps_output" | jq -r '.Status')
+Status=$(echo "$Status_str" | perl -pe 's/ //g')
+Image=$(echo "$Image_branch" | cut -d':' -f1)
+Tag=$(echo "$Image_branch" | cut -d':' -f2)
+
+echo $Image_branch
+echo $Image
+echo $Status
+echo $Tag
+
+# 获取 docker images 的 JSON 输出
+docker_images_output=$(docker images | grep "$Image" | grep "$Tag")
+
+# 准备要发送的数据
+data="Images and their statuses with creation dates:\n"
+echo $docker_images_output
+target=$(echo "$docker_images_output" | awk '{print $(NF-3)$(NF-2)$(NF-1)}')
+echo $target
+
+data="{\"msgtype\":\"text\",\"text\":{\"content\":\"image:$Image_branch,created:$target,status:$Status\"}}"
+echo $data
+
+send_webhook $data
+`
+		restartScript := `
+docker compose down
+docker compose pull
+docker compose up -d
+docker compose ps -a
+
+sh restartNoticeDing.sh 
+`
+
+		restartNoticeCommand := fmt.Sprintf("echo '%s' > %s/restartNoticeDing.sh", fmt.Sprintf(restartNoticeScript, gameServer.SysProject.WebHook), gameServerDir)
+		_, err = utils.ExecuteSSHCommand(sshClient, restartNoticeCommand)
+		if err != nil {
+			return fmt.Errorf("创建重启通知脚本失败:%v", err)
+		}
+
+		restartCommand := fmt.Sprintf("echo '%s' > %s/restart.sh", restartScript, gameServerDir)
+		_, err = utils.ExecuteSSHCommand(sshClient, restartCommand)
+		if err != nil {
+			return fmt.Errorf("创建重启脚本失败:%v", err)
+		}
 	}
 
 	resultList = append(resultList, "安装成功")
