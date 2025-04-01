@@ -42,6 +42,7 @@ excel:
 local:
   path: ./resource/
   store-path: ./resource/
+  json-dir: ./json_dir
 
 redis:
   addr: 192.168.128.129:6379

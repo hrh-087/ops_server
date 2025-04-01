@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"go.uber.org/zap"
 	"ops-server/core"
 	"ops-server/global"
@@ -9,11 +10,19 @@ import (
 	"ops-server/job/scheduler"
 	"ops-server/job/server"
 	"ops-server/job/workers"
+	_ "ops-server/source/system" // 加载初始数据
 )
 
 func main() {
+	var config string
+	var operate string
+
+	flag.StringVar(&config, "c", "", "选择配置文件")
+	flag.StringVar(&operate, "o", "", "执行操作 worker 开启异步任务 scheduler 开启定时任务 initData 加载初始化数据 exportData 导出数据")
+	flag.Parse()
+
 	// 初始化Viper 读取配置文件
-	global.OPS_VP = core.Viper()
+	global.OPS_VP = core.Viper(config)
 	// 初始化jwt过期时间
 	//initialize.OtherInit()
 	// 初始化zap日志库
@@ -34,15 +43,28 @@ func main() {
 		defer db.Close()
 	}
 
-	// 运行asynq消费者
-	go func() {
+	switch operate {
+	case "worker":
+		// 运行asynq消费者
 		workers.InitWorkers()
-	}()
-
-	// 运行定时任务消费者
-	go func() {
+	case "scheduler":
+		// 运行定时任务消费者
 		scheduler.InitScheduler()
-	}()
+	case "initData":
+		err := initialize.InitDBServiceApp.InitData()
+		if err != nil {
+			global.OPS_LOG.Error("初始化数据失败", zap.Error(err))
+			panic(err)
+		}
+	case "exportData":
+		// 导出api跟菜单数据
+		err := initialize.ExportData()
+		if err != nil {
+			global.OPS_LOG.Error("导出数据失败", zap.Error(err))
+			panic(err)
+		}
+	default:
+		core.RunWindowsServer()
+	}
 
-	core.RunWindowsServer()
 }
