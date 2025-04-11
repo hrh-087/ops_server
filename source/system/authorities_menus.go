@@ -38,8 +38,8 @@ func (i *initMenuAuthority) InitializeData(ctx context.Context) (next context.Co
 	if !ok {
 		return ctx, errors.Wrap(initialize.ErrMissingDependentContext, "创建 [菜单-权限] 关联失败, 未找到权限表初始化数据")
 	}
-	menus, ok := ctx.Value(initMenu{}.InitializerName()).([]sysModel.SysBaseMenu)
-	if !ok {
+	var menus []sysModel.SysBaseMenu
+	if err := db.Model(&sysModel.SysBaseMenu{}).Find(&menus).Error; err != nil {
 		return next, errors.Wrap(errors.New(""), "创建 [菜单-权限] 关联失败, 未找到菜单表初始化数据")
 	}
 	next = ctx

@@ -43,6 +43,7 @@ type SubInitializer interface {
 // TypedDBInitHandler 执行传入的 initializer
 type TypedDBInitHandler interface {
 	//WriteConfig(ctx context.Context) error               // 回写配置
+	InitTables(ctx context.Context, inits initSlice) error
 	InitData(ctx context.Context, inits initSlice) error // 建数据 handler
 }
 
@@ -106,6 +107,10 @@ func (initDBService *InitDBService) InitData() (err error) {
 
 	ctx = context.WithValue(ctx, "db", global.OPS_DB)
 
+	if err = initHandler.InitTables(ctx, initializers); err != nil {
+		return err
+	}
+
 	if err = initHandler.InitData(ctx, initializers); err != nil {
 		return err
 	}
@@ -113,6 +118,23 @@ func (initDBService *InitDBService) InitData() (err error) {
 	initializers = initSlice{}
 	cache = map[string]*orderedInitializer{}
 	return err
+}
+
+// createTables 创建表（默认 dbInitHandler.initTables 行为）
+func createTables(ctx context.Context, inits initSlice) error {
+	next, cancel := context.WithCancel(ctx)
+	defer func(c func()) { c() }(cancel)
+	for _, init := range inits {
+		if init.TableCreated(next) {
+			continue
+		}
+		if n, err := init.MigrateTable(next); err != nil {
+			return err
+		} else {
+			next = n
+		}
+	}
+	return nil
 }
 
 /* -- sortable interface -- */

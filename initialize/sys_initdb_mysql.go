@@ -11,6 +11,10 @@ func NewMysqlInitHandler() *MysqlInitHandler {
 	return &MysqlInitHandler{}
 }
 
+func (h MysqlInitHandler) InitTables(ctx context.Context, inits initSlice) error {
+	return createTables(ctx, inits)
+}
+
 func (h MysqlInitHandler) InitData(ctx context.Context, inits initSlice) error {
 	next, cancel := context.WithCancel(ctx)
 	defer func(c func()) { c() }(cancel)

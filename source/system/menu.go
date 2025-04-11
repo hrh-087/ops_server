@@ -101,14 +101,21 @@ func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, er
 		menuList = append(menuList, entity)
 	}
 
-	for _, menu := range menuList {
-		err = createMenu(db, &menu, 0)
+	//menuData, err := json.MarshalIndent(menuList, "", "  ")
+	//if err != nil {
+	//	return ctx, errors.Wrap(err, sysModel.SysBaseMenu{}.TableName()+"json序列化失败!")
+	//}
+	//fmt.Println(string(menuData))
+
+	for menuIndex := range menuList {
+		err = createMenu(db, &menuList[menuIndex], 0)
 		if err != nil {
 			return ctx, errors.Wrap(err, sysModel.SysBaseMenu{}.TableName()+"表数据初始化失败!")
 		}
+
 	}
 
-	next = context.WithValue(ctx, i.InitializerName(), entities)
+	next = context.WithValue(ctx, i.InitializerName(), menuList)
 	return next, nil
 }
 
@@ -130,17 +137,17 @@ func getMenuChildrenList(menu sysModel.SysBaseMenu, allMenu []sysModel.SysBaseMe
 func createMenu(db *gorm.DB, menu *sysModel.SysBaseMenu, parentId uint) error {
 	menu.ID = 0
 	menu.ParentId = parentId
-	err := db.Create(menu).Error
+	err := db.Debug().Create(menu).Error
 	if err != nil {
 		return err
 	}
 
-	if len(menu.Children) >= 1 {
-		for _, child := range menu.Children {
-			err = createMenu(db, &child, menu.ID)
-			if err != nil {
-				return err
-			}
+	fmt.Println("创建菜单:", menu.Title, "ID:", menu.ID)
+
+	for i := range menu.Children {
+		err = createMenu(db, &menu.Children[i], menu.ID)
+		if err != nil {
+			return err
 		}
 	}
 
