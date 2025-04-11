@@ -24,10 +24,11 @@ func Routers() *gin.Engine {
 
 	ProjectGroup := Router.Group(global.OPS_CONFIG.System.RouterPrefix)
 
-	PrivateGroup.Use(middleware.JwtAuth()).Use(middleware.CasbinHandler())
-	//PrivateGroup.Use(middleware.JwtAuth())
+	//PrivateGroup.Use(middleware.JwtAuth()).Use(middleware.CasbinHandler())
+	PrivateGroup.Use(middleware.JwtAuth())
 
-	ProjectGroup.Use(middleware.JwtAuth()).Use(middleware.ProjectAuth()).Use(middleware.CasbinHandler())
+	//ProjectGroup.Use(middleware.JwtAuth()).Use(middleware.ProjectAuth()).Use(middleware.CasbinHandler())
+	ProjectGroup.Use(middleware.JwtAuth()).Use(middleware.ProjectAuth())
 
 	{
 		systemRouter.BaseRouter.InitBaseRouter(PublicGroup) // 注册基础功能路由 不做鉴权

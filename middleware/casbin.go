@@ -22,7 +22,7 @@ func CasbinHandler() gin.HandlerFunc {
 		obj := strings.TrimPrefix(path, global.OPS_CONFIG.System.RouterPrefix)
 
 		// 去掉api权限认证
-		c.Next()
+		//c.Next()
 		// 获取请求方法
 		act := c.Request.Method
 		// 获取用户的角色
