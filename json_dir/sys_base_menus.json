@@ -849,5 +849,51 @@
     "children": null,
     "parameters": null,
     "menuBtn": null
+  },
+  {
+    "ID": 49,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "parentId": 42,
+    "path": "jqj",
+    "name": "jqj",
+    "hidden": false,
+    "component": "gm/jqj",
+    "sort": 1,
+    "meta": {
+      "activeName": "",
+      "keepAlive": false,
+      "defaultMenu": false,
+      "title": "剑气劫",
+      "icon": "",
+      "closeTab": false
+    },
+    "authoritys": null,
+    "children": null,
+    "parameters": null,
+    "menuBtn": null
+  },
+  {
+    "ID": 50,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "parentId": 49,
+    "path": "dimension-push",
+    "name": "dimension-push",
+    "hidden": false,
+    "component": "gm/jqj/dimension-push",
+    "sort": 0,
+    "meta": {
+      "activeName": "",
+      "keepAlive": false,
+      "defaultMenu": false,
+      "title": "维度推送",
+      "icon": "",
+      "closeTab": false
+    },
+    "authoritys": null,
+    "children": null,
+    "parameters": null,
+    "menuBtn": null
   }
 ]

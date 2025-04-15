@@ -88,7 +88,7 @@ func (g *GameServerService) CreateGameServer(ctx context.Context, gameServer sys
 		}
 
 		// 加载关联数据
-		err = tx.Where("id = ?", gameServer.ID).Preload("SysProject").Preload("Platform").Preload("GameType").Preload("Host").Preload("Redis").Preload("Mongo").Preload("Kafka").First(&gameServer).Error
+		err = tx.Where("id = ?", gameServer.ID).Preload("SysProject").Preload("Platform").Preload("GameType").Preload("Host.Cloud").Preload("Redis").Preload("Mongo").Preload("Kafka").First(&gameServer).Error
 		if err != nil {
 			global.OPS_LOG.Error("加载游戏服关联数据失败", zap.Error(err))
 			return errors.New("加载游戏服关联数据失败")
@@ -143,61 +143,63 @@ func (g *GameServerService) DeleteGameServer(ctx context.Context, id int) (err e
 			return err
 		}
 
-		listenerName := fmt.Sprintf("%s_%s_%d", gameServer.Platform.PlatformCode, gameServer.GameType.Code, gameServer.Vmid)
-		if err = tx.Preload("Lb").Preload("Lb.CloudProduce").Where("name = ?", listenerName).Find(&listenerList).Error; err != nil {
-			return err
-		}
-
-		for _, listener := range listenerList {
-
-			deleteBackendMemberParams := cloudRequest.Listener{
-				AK:         listener.Lb.CloudProduce.SecretId,
-				SK:         listener.Lb.CloudProduce.SecretKey,
-				Region:     listener.Lb.CloudProduce.RegionId,
-				ListenerId: listener.InstanceId,
-			}
-			if err = cloud.DeleteListener(deleteBackendMemberParams); err != nil {
-				global.OPS_LOG.Error("删除监听器失败", zap.Error(err), zap.String("listenerName", listenerName), zap.String("instanceId", listener.InstanceId))
+		if gameServer.Status == 2 {
+			listenerName := fmt.Sprintf("%s_%s_%d", gameServer.Platform.PlatformCode, gameServer.GameType.Code, gameServer.Vmid)
+			if err = tx.Preload("Lb").Preload("Lb.CloudProduce").Where("name = ?", listenerName).Find(&listenerList).Error; err != nil {
 				return err
 			}
 
-			if err = tx.Unscoped().Delete(&listener).Error; err != nil {
-				return err
+			for _, listener := range listenerList {
+
+				deleteBackendMemberParams := cloudRequest.Listener{
+					AK:         listener.Lb.CloudProduce.SecretId,
+					SK:         listener.Lb.CloudProduce.SecretKey,
+					Region:     listener.Lb.CloudProduce.RegionId,
+					ListenerId: listener.InstanceId,
+				}
+				if err = cloud.DeleteListener(deleteBackendMemberParams); err != nil {
+					global.OPS_LOG.Error("删除监听器失败", zap.Error(err), zap.String("listenerName", listenerName), zap.String("instanceId", listener.InstanceId))
+					return err
+				}
+
+				if err = tx.Unscoped().Delete(&listener).Error; err != nil {
+					return err
+				}
 			}
-		}
 
-		// 删除相应的游戏服目录
+			// 删除相应的游戏服目录
 
-		sshConfig, err := task.GetSSHKey(gameServer.ProjectId, gameServer.Host.PubIp, gameServer.Host.SSHPort)
-		if err != nil {
-			return fmt.Errorf("获取ssh配置失败:%v", err)
-		}
-
-		sshClient, err := utils.NewSSHClient(&sshConfig)
-		if err != nil {
-			return fmt.Errorf("ssh连接失败:%v", err)
-		}
-		defer func() {
-			if err := sshClient.Close(); err != nil {
-				global.OPS_LOG.Error("ssh关闭失败", zap.Error(err))
+			sshConfig, err := task.GetSSHKey(gameServer.ProjectId, gameServer.Host.PubIp, gameServer.Host.SSHPort)
+			if err != nil {
+				return fmt.Errorf("获取ssh配置失败:%v", err)
 			}
-		}()
 
-		gameDir := fmt.Sprintf("%s/%s/%s_%d",
-			global.OPS_CONFIG.Game.GamePath,
-			gameServer.Platform.PlatformCode,
-			gameServer.GameType.Code,
-			gameServer.Vmid,
-		)
+			sshClient, err := utils.NewSSHClient(&sshConfig)
+			if err != nil {
+				return fmt.Errorf("ssh连接失败:%v", err)
+			}
+			defer func() {
+				if err := sshClient.Close(); err != nil {
+					global.OPS_LOG.Error("ssh关闭失败", zap.Error(err))
+				}
+			}()
 
-		if gameDir == "/" {
-			return errors.New("游戏服目录为根目录,无法删除")
-		}
+			gameDir := fmt.Sprintf("%s/%s/%s_%d",
+				global.OPS_CONFIG.Game.GamePath,
+				gameServer.Platform.PlatformCode,
+				gameServer.GameType.Code,
+				gameServer.Vmid,
+			)
 
-		command := fmt.Sprintf("[ -d %s ] && mv  %s /tmp/", gameDir, gameDir)
-		_, err = utils.ExecuteSSHCommand(sshClient, command)
-		if err != nil {
-			return fmt.Errorf("删除游戏服目录失败:%v", err)
+			if gameDir == "/" {
+				return errors.New("游戏服目录为根目录,无法删除")
+			}
+
+			command := fmt.Sprintf("[ -d %s ] && mv  %s /tmp/", gameDir, gameDir)
+			_, err = utils.ExecuteSSHCommand(sshClient, command)
+			if err != nil {
+				return fmt.Errorf("删除游戏服目录失败:%v", err)
+			}
 		}
 
 		return tx.Delete(&gameServer).Error
@@ -255,7 +257,7 @@ func (g *GameServerService) InstallGameServer(ctx *gin.Context, ids request.IdsR
 	var gameServerList []*system.SysGameServer
 
 	// 获取需要安装的游戏服
-	err = global.OPS_DB.WithContext(ctx).Preload("GameType").Preload("Host").Where("id in ?", ids.Ids).Find(&gameServerList).Error
+	err = global.OPS_DB.WithContext(ctx).Preload("GameType").Preload("Host.Cloud").Where("id in ?", ids.Ids).Find(&gameServerList).Error
 	if err != nil {
 		global.OPS_LOG.Error("获取游戏服失败", zap.Error(err))
 		return
@@ -317,12 +319,12 @@ func (g *GameServerService) UpdateGameConfig(ctx *gin.Context, updateType int8, 
 	var gameServerList []system.SysGameServer
 	switch updateType {
 	case 1:
-		err = global.OPS_DB.WithContext(ctx).Where("status = 2").Preload("SysProject").Preload("Platform").Preload("GameType").Preload("Host").Preload("Redis").Preload("Mongo").Preload("Kafka").Find(&gameServerList).Error
+		err = global.OPS_DB.WithContext(ctx).Where("status = 2").Preload("SysProject").Preload("Platform").Preload("GameType").Preload("Host.Cloud").Preload("Redis").Preload("Mongo").Preload("Kafka").Find(&gameServerList).Error
 	case 2:
 		if len(ids) == 0 {
 			return errors.New("选择的游戏服为空")
 		}
-		err = global.OPS_DB.WithContext(ctx).Where("id in ?", ids).Where("status = 2").Preload("SysProject").Preload("Platform").Preload("GameType").Preload("Host").Preload("Redis").Preload("Mongo").Preload("Kafka").Find(&gameServerList).Error
+		err = global.OPS_DB.WithContext(ctx).Where("id in ?", ids).Where("status = 2").Preload("SysProject").Preload("Platform").Preload("GameType").Preload("Host.Cloud").Preload("Redis").Preload("Mongo").Preload("Kafka").Find(&gameServerList).Error
 	default:
 		return errors.New("更新类型错误")
 	}

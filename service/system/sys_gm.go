@@ -23,7 +23,7 @@ type GmService struct {
 // 设置gm开关
 func (g GmService) SetSwitch(ctx *gin.Context, serverId int, typeKey string, state bool) (msg string, err error) {
 
-	httpClient, err := gm.NewHttpClient(ctx)
+	httpClient, err := gm.NewHttpClient(ctx, strconv.Itoa(serverId))
 	//httpClient, err := gm.NewHttpClient("http://10.3.21.48:10060")
 	if err != nil {
 		return
@@ -54,7 +54,7 @@ func (g GmService) GetSwitchList(ctx *gin.Context, serverId int) (data interface
 	//	return
 	//}
 
-	httpClient, err := gm.NewHttpClient(ctx)
+	httpClient, err := gm.NewHttpClient(ctx, strconv.Itoa(serverId))
 	if err != nil {
 		return
 	}
@@ -79,7 +79,7 @@ func (g GmService) GetSwitchList(ctx *gin.Context, serverId int) (data interface
 // 获取排行榜列表
 func (g GmService) GetRankList(ctx *gin.Context, serverId int) (data interface{}, err error) {
 
-	httpClient, err := gm.NewHttpClient(ctx)
+	httpClient, err := gm.NewHttpClient(ctx, strconv.Itoa(serverId))
 	if err != nil {
 		return
 	}
@@ -97,7 +97,7 @@ func (g GmService) GetRankList(ctx *gin.Context, serverId int) (data interface{}
 func (g GmService) GetRankRewardList(ctx *gin.Context, serverId, id int) (data interface{}, err error) {
 	var rewardList []request.GmRankReward
 	var rewards []request.Reward
-	httpClient, err := gm.NewHttpClient(ctx)
+	httpClient, err := gm.NewHttpClient(ctx, strconv.Itoa(serverId))
 	if err != nil {
 		return
 	}
@@ -139,7 +139,7 @@ func (g GmService) SetRankConfig(ctx *gin.Context, serverId int, rankConfig []re
 	var rankOpenConfig []gmRes.RankOpenConfig
 	var rankRewardConfig []gmRes.RankRewardConfig
 
-	httpClient, err := gm.NewHttpClient(ctx)
+	httpClient, err := gm.NewHttpClient(ctx, strconv.Itoa(serverId))
 	if err != nil {
 		return
 	}
@@ -369,4 +369,14 @@ func (g GmService) GetItemConfigInfo(ctx *gin.Context, itemType string) (data in
 	}
 
 	return
+}
+
+func (g GmService) DimensionPush(ctx *gin.Context, serverList []string) (err error) {
+	httpClient, err := gm.NewHttpClient(ctx, "default")
+	if err != nil {
+		return err
+	}
+	_, err = httpClient.DimensionPush(serverList)
+
+	return err
 }

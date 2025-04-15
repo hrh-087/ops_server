@@ -142,8 +142,6 @@ func createMenu(db *gorm.DB, menu *sysModel.SysBaseMenu, parentId uint) error {
 		return err
 	}
 
-	fmt.Println("创建菜单:", menu.Title, "ID:", menu.ID)
-
 	for i := range menu.Children {
 		err = createMenu(db, &menu.Children[i], menu.ID)
 		if err != nil {

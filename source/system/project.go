@@ -60,14 +60,10 @@ func (i *initProject) InitializeData(ctx context.Context) (next context.Context,
 
 	entities := []sysModel.SysProject{
 		{
-			ProjectName:     "初始项目",
-			SvnUrl:          "svn://127.0.0.1/ops/",
-			GmUrl:           "http://127.0.0.1:8080/",
-			GatewayUrl:      "http://127.0.0.1:8080/",
-			ClientSvnUrl:    "svn://127.0.0.1/ops/",
-			ClientConfigDir: "config/",
-			ConfigDir:       "config/",
-			IsTest:          false,
+			ProjectName: "初始项目",
+			SvnUrl:      "svn://127.0.0.1/ops/",
+			ConfigDir:   "config/",
+			IsTest:      false,
 		},
 	}
 	if err = db.Create(&entities).Error; err != nil {

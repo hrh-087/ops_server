@@ -145,3 +145,18 @@ func (g GmApi) GetItemConfigInfo(c *gin.Context) {
 
 	response.OkWithDetailed(data, "获取成功", c)
 }
+
+func (g GmApi) DimensionPush(c *gin.Context) {
+	var params request.DimensionPushParams
+	if err := c.ShouldBindJSON(&params); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err := gmService.DimensionPush(c, params.ServerList); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	response.OkWithMessage("推送成功", c)
+}

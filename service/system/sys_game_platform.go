@@ -9,6 +9,7 @@ import (
 	"ops-server/model/common/request"
 	"ops-server/model/system"
 	"ops-server/utils/gm"
+	"strconv"
 	"strings"
 )
 
@@ -93,7 +94,7 @@ func (g GamePlatformService) KickGameServer(ctx *gin.Context, serverId int) (err
 	//	return
 	//}
 
-	httpClient, err := gm.NewHttpClient(ctx)
+	httpClient, err := gm.NewHttpClient(ctx, strconv.Itoa(serverId))
 	if err != nil {
 		return
 	}

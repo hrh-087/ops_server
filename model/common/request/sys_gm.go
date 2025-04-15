@@ -55,3 +55,8 @@ type Item struct {
 	ItemId   int         `json:"itemId"`
 	ItemName interface{} `json:"itemName"`
 }
+
+// 维度推送
+type DimensionPushParams struct {
+	ServerList []string `json:"platformList" form:"platformList"` // 推送的服务器列表
+}

@@ -19,6 +19,7 @@ type HttpClient struct {
 	client  *http.Client
 	headers map[string]string
 	url     string
+	param   map[string]string
 }
 
 type HttpResponse struct {
@@ -28,23 +29,30 @@ type HttpResponse struct {
 }
 
 // NewHttpClient 创建一个新的 HTTP 客户端，允许自定义超时时间
-func NewHttpClient(ctx context.Context) (client *HttpClient, err error) {
-	var project system.SysProject
+func NewHttpClient(ctx context.Context, platform string) (client *HttpClient, err error) {
+	var gamePlatform system.SysGamePlatform
+	var gmUrl string
 
-	projectId := ctx.Value("projectId").(string)
+	if platform == "default" {
+		gmUrl = global.OPS_CONFIG.Default.GmUrl
+	} else {
+		projectId := ctx.Value("projectId").(string)
 
-	if projectId == "" {
-		return
+		if projectId == "" {
+			return
+		}
+
+		err = global.OPS_DB.First(&gamePlatform, "project_id = ? and platform_code = ?", projectId, platform).Error
+		if err != nil {
+			return
+		}
+
+		gmUrl = gamePlatform.GmUrl
 	}
 
-	err = global.OPS_DB.First(&project, "id = ?", projectId).Error
-	if err != nil {
-		return
-	}
-
-	if project.GmUrl == "" {
+	if gmUrl == "" {
 		return nil, errors.New("url is empty")
-	} else if !strings.HasPrefix(project.GmUrl, "http") {
+	} else if !strings.HasPrefix(gmUrl, "http") {
 		return nil, errors.New("url is not http")
 	}
 
@@ -53,7 +61,7 @@ func NewHttpClient(ctx context.Context) (client *HttpClient, err error) {
 		headers: map[string]string{
 			"Content-Type": "application/json",
 		},
-		url: project.GmUrl,
+		url: gmUrl,
 	}, nil
 }
 
@@ -128,7 +136,22 @@ func (h *HttpClient) Get(uri string, params map[string]string) (*HttpResponse, e
 }
 
 // Post 发送 POST 请求
-func (h *HttpClient) Post(url string, data []byte) (*HttpResponse, error) {
-	global.OPS_LOG.Info("Post", zap.String("baseURL", h.url+url), zap.ByteString("data", data))
-	return h.request(http.MethodPost, url, bytes.NewBuffer(data))
+func (h *HttpClient) Post(uri string, data []byte) (*HttpResponse, error) {
+	global.OPS_LOG.Info("Post", zap.String("baseURL", h.url+uri), zap.ByteString("data", data))
+	if h.param != nil {
+		u, err := url.Parse(uri)
+		if err != nil {
+			return nil, err
+		}
+
+		query := u.Query()
+		for k, v := range h.param {
+			query.Set(k, v)
+		}
+		u.RawQuery = query.Encode()
+
+		return h.request(http.MethodPost, u.String(), bytes.NewBuffer(data))
+	}
+
+	return h.request(http.MethodPost, uri, bytes.NewBuffer(data))
 }

@@ -99,3 +99,7 @@ ops:
   port: 22
   user: root
   name: "运维后台"
+
+
+default:
+  gm-url: http://116.205.247.197:8004/
