@@ -50,15 +50,15 @@ func (i *initMenu) TableCreated(ctx context.Context) bool {
 }
 
 func (i *initMenu) DataInserted(ctx context.Context) bool {
-	db, ok := ctx.Value("db").(*gorm.DB)
-	if !ok {
-		return false
-	}
-	if errors.Is(db.Where("path = ?", "system").First(&sysModel.SysBaseMenu{}).Error, gorm.ErrRecordNotFound) { // 判断是否存在数据
-		return false
-	}
-	return true
-	//return false
+	//db, ok := ctx.Value("db").(*gorm.DB)
+	//if !ok {
+	//	return false
+	//}
+	//if errors.Is(db.Where("path = ?", "system").First(&sysModel.SysBaseMenu{}).Error, gorm.ErrRecordNotFound) { // 判断是否存在数据
+	//	return false
+	//}
+	//return true
+	return false
 }
 
 func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, err error) {
@@ -137,9 +137,14 @@ func getMenuChildrenList(menu sysModel.SysBaseMenu, allMenu []sysModel.SysBaseMe
 func createMenu(db *gorm.DB, menu *sysModel.SysBaseMenu, parentId uint) error {
 	menu.ID = 0
 	menu.ParentId = parentId
-	err := db.Debug().Create(menu).Error
-	if err != nil {
-		return err
+
+	err := db.First(&menu, "name = ? and path = ?", menu.Name, menu.Path).Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		err = db.Create(menu).Error
+		if err != nil {
+			return err
+		}
 	}
 
 	for i := range menu.Children {

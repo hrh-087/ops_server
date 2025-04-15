@@ -131,10 +131,10 @@ func (g GameTypeService) GenerateConfigFile(game system.SysGameServer) (content 
 		FightType:      fightType,
 		LtsGroupId:     game.Platform.LtsLogGroupId,
 		LtsStreamId:    game.Platform.LtsLogStreamId,
-		SecretKey:      game.Host.Cloud.SecretKey,
-		AccessKey:      game.Host.Cloud.SecretId,
-		CloudProjectId: game.Host.Cloud.CloudProjectId,
-		CloudRegionId:  game.Host.Cloud.RegionId,
+		SecretKey:      game.Platform.CloudSecretKey,
+		AccessKey:      game.Platform.CloudSecretId,
+		CloudProjectId: game.Platform.CloudProjectId,
+		CloudRegionId:  game.Platform.CloudRegionId,
 	}
 
 	tmpl, err := template.New("config").Parse(game.GameType.ConfigTemplate)

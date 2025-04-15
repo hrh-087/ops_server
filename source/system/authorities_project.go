@@ -40,7 +40,7 @@ func (i *initProjectAuthority) DataInserted(ctx context.Context) bool {
 		if ret.Error != nil {
 			return false
 		}
-		return len(auth.SysBaseMenus) > 0
+		return len(auth.Projects) > 0
 	}
 	return false
 }

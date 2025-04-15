@@ -7,10 +7,17 @@ type SysGamePlatform struct {
 	PlatformDescribe string `json:"platformDescribe" gorm:"comment:平台描述"`
 	ImageTag         string `json:"imageTag" gorm:"镜像tag"`
 	ImageUri         string `json:"imageUri" gorm:"镜像uri"`
-	LtsLogGroupId    string `json:"ltsLogGroupId" gorm:"comment:日志组id"`
-	LtsLogStreamId   string `json:"ltsLogStreamId" gorm:"comment:日志流id"`
-	GmUrl            string `json:"gmUrl" gorm:"comment:gm地址"`
-	GatewayUrl       string `json:"gatewayUrl" gorm:"comment:网关地址"`
+	// lts配置
+	LtsLogGroupId  string `json:"ltsLogGroupId" gorm:"comment:日志组id"`
+	LtsLogStreamId string `json:"ltsLogStreamId" gorm:"comment:日志流id"`
+	CloudRegionId  string `json:"cloudRegionId" gorm:"comment:云区域id"`
+	CloudProjectId string `json:"cloudProjectId" gorm:"comment:云项目id"`
+	CloudSecretId  string `json:"cloudSecretId" gorm:"comment:云secretId"`
+	CloudSecretKey string `json:"cloudSecretKey" gorm:"comment:云secretKey"`
+
+	// gm地址
+	GmUrl      string `json:"gmUrl" gorm:"comment:gm地址"`
+	GatewayUrl string `json:"gatewayUrl" gorm:"comment:网关地址"`
 }
 
 func (s *SysGamePlatform) TableName() string {
