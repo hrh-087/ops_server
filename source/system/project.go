@@ -45,7 +45,7 @@ func (i *initProject) DataInserted(ctx context.Context) bool {
 	if !ok {
 		return false
 	}
-	if errors.Is(db.Where("project_name = ?", "初始项目").First(&sysModel.SysProject{}).Error, gorm.ErrRecordNotFound) { // 判断是否存在数据
+	if errors.Is(db.First(&sysModel.SysProject{}).Error, gorm.ErrRecordNotFound) { // 判断是否存在数据
 		return false
 	}
 	return true
