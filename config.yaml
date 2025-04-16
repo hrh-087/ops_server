@@ -103,3 +103,4 @@ ops:
 
 default:
   gm-url: http://116.205.247.197:8004/
+  online-gm-url: http://116.205.247.197:8004/
