@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"go.uber.org/zap"
 	"io"
 	"net/http"
@@ -144,12 +145,17 @@ func (h *HttpClient) Post(uri string, data []byte) (*HttpResponse, error) {
 			return nil, err
 		}
 
-		query := u.Query()
+		//query := u.Query()
+		//for k, v := range h.param {
+		//	query.Set(k, v)
+		//}
+		//u.RawQuery = query.Encode()
+		var rawQuery []string
 		for k, v := range h.param {
-			query.Set(k, v)
+			rawQuery = append(rawQuery, k+"="+v)
 		}
-		u.RawQuery = query.Encode()
-
+		u.RawQuery = strings.Join(rawQuery, "&")
+		fmt.Println(u.String())
 		return h.request(http.MethodPost, u.String(), bytes.NewBuffer(data))
 	}
 
