@@ -144,16 +144,16 @@ func (h *HttpClient) Post(uri string, data []byte) (*HttpResponse, error) {
 			return nil, err
 		}
 
-		//query := u.Query()
-		//for k, v := range h.param {
-		//	query.Set(k, v)
-		//}
-		//u.RawQuery = query.Encode()
-		var rawQuery []string
+		query := u.Query()
 		for k, v := range h.param {
-			rawQuery = append(rawQuery, k+"="+v)
+			query.Set(k, v)
 		}
-		u.RawQuery = strings.Join(rawQuery, "&")
+		u.RawQuery = query.Encode()
+		//var rawQuery []string
+		//for k, v := range h.param {
+		//	rawQuery = append(rawQuery, k+"="+v)
+		//}
+		//u.RawQuery = strings.Join(rawQuery, "&")
 		return h.request(http.MethodPost, u.String(), bytes.NewBuffer(data))
 	}
 
