@@ -35,6 +35,8 @@ func NewHttpClient(ctx context.Context, platform string) (client *HttpClient, er
 
 	if platform == "default" {
 		gmUrl = global.OPS_CONFIG.Default.GmUrl
+	} else if platform == "online" {
+		gmUrl = global.OPS_CONFIG.Default.OnlineGmUrl
 	} else {
 		projectId := ctx.Value("projectId").(string)
 
@@ -110,10 +112,10 @@ func (h *HttpClient) request(method, url string, body io.Reader) (response *Http
 		global.OPS_LOG.Error("request error", zap.Error(err))
 		return
 	}
-	global.OPS_LOG.Info("request result", zap.Any("response", response))
+	global.OPS_LOG.Info("request result", zap.String("response", string(resultBody)))
 
 	if response.Code != 0 {
-		global.OPS_LOG.Error("request error", zap.Any("response", response))
+		global.OPS_LOG.Error("request error", zap.String("response", string(resultBody)))
 		return nil, errors.New(response.Msg)
 	}
 	return response, err

@@ -22,6 +22,8 @@ func (g *GmRouter) InitGmRouter(Router *gin.RouterGroup) {
 		router.POST("setRankReward/", routerApi.SetRankConfig)
 		router.POST("uploadGameConfig/", routerApi.UploadGameConfig)
 		router.POST("getItemConfigInfo/", routerApi.GetItemConfigInfo)
-		router.POST("dimensionPush/", routerApi.DimensionPush) // 维度推送
+		router.POST("dimensionPush/", routerApi.DimensionPush)       // 维度推送
+		router.POST("getAccountInfo/", routerApi.GetPlayerId)        // 获取玩家账号信息
+		router.POST("importPlayerData/", routerApi.ImportPlayerData) // 导入玩家数据
 	}
 }

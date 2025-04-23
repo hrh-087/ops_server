@@ -59,11 +59,12 @@ var (
 	CronTaskVerify = Rules{"TaskTypeName": {NotEmpty()}, "Name": {NotEmpty()}, "Type": {NotEmpty()}}
 
 	// Gm
-	GmSwitchVerify       = Rules{"ServerId": {NotEmpty()}, "TypeKey": {NotEmpty()}}
-	GmRankOpenVerify     = Rules{"ServerId": {NotEmpty()}}
-	GmRankRewardVerify   = Rules{"ServerId": {NotEmpty()}, "Id": {NotEmpty()}}
-	GmRankConfigVerify   = Rules{"ServerId": {NotEmpty()}, "RankConfig": {NotEmpty()}}
-	GmUpdateConfigVerify = Rules{"Data": {NotEmpty()}}
+	GmSwitchVerify           = Rules{"ServerId": {NotEmpty()}, "TypeKey": {NotEmpty()}}
+	GmRankOpenVerify         = Rules{"ServerId": {NotEmpty()}}
+	GmRankRewardVerify       = Rules{"ServerId": {NotEmpty()}, "Id": {NotEmpty()}}
+	GmRankConfigVerify       = Rules{"ServerId": {NotEmpty()}, "RankConfig": {NotEmpty()}}
+	GmUpdateConfigVerify     = Rules{"Data": {NotEmpty()}}
+	GmImportPlayerDataVerify = Rules{"Account": {NotEmpty()}, "ImportId": {NotEmpty()}, "OutputPlayerId": {NotEmpty()}, "PlatformCode": {NotEmpty()}}
 
 	// 文件上传
 	//FileNameVerify = Rules{"FileName": {NotEmpty()}}

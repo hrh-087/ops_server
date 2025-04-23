@@ -60,3 +60,11 @@ type Item struct {
 type DimensionPushParams struct {
 	ServerList []string `json:"platformList" form:"platformList"` // 推送的服务器列表
 }
+
+// 导号
+type ImportPlayerDataParams struct {
+	PlatformCode   string `json:"platformCode" form:"platformCode"`
+	Account        string `json:"account" form:"account"`               // 账号
+	ImportId       string `json:"importId" form:"importId"`             // 导入的account表id
+	OutputPlayerId string `json:"outputPlayerId" form:"outputPlayerId"` // 导出的玩家id
+}
