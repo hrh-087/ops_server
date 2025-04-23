@@ -25,7 +25,7 @@ func (h HttpClient) ExportPlayerData(playerId string) (response *HttpResponse, e
 	}
 
 	data := map[string]interface{}{
-		"playerId": id,
+		"outputPlayerId": id,
 	}
 
 	params, _ := json.Marshal(data)
