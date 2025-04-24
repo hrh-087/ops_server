@@ -25,6 +25,7 @@ func InitWorkers() {
 	)
 
 	mux := asynq.NewServeMux()
+	mux.Use(GetExecTimeMiddleware)
 
 	gameMux := asynq.NewServeMux()
 	gameMux.Use(GetExecTimeMiddleware)
