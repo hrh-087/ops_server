@@ -21,7 +21,7 @@ func (*SysGameType) TableName() string {
 
 type SysGameServer struct {
 	ProjectModel
-	PlatformId uint            `from:"platformId" json:"platformId" gorm:"comment:渠道id"`
+	PlatformId uint            `form:"platformId" json:"platformId" gorm:"comment:渠道id"`
 	Platform   SysGamePlatform `json:"platform" gorm:"foreignKey:PlatformId;references:ID"`
 
 	Name        string `form:"name" json:"name" gorm:"comment:名称"`
