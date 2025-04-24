@@ -13,7 +13,7 @@ type AssetsKafkaService struct {
 }
 
 func (a *AssetsKafkaService) CreateKafka(ctx context.Context, kafka system.SysAssetsKafka) (err error) {
-	if !errors.Is(global.OPS_DB.WithContext(ctx).Where("host = ?", kafka.Host).First(&system.SysAssetsKafka{}).Error, gorm.ErrRecordNotFound) {
+	if !errors.Is(global.OPS_DB.WithContext(ctx).Where("name = ?", kafka.Name).First(&system.SysAssetsKafka{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("记录已存在,请检查后重新添加")
 	}
 	err = global.OPS_DB.WithContext(ctx).Create(&kafka).Error
