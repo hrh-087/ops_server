@@ -219,3 +219,37 @@ func (p ProjectService) InitProject(ctx *gin.Context, project system.SysProject)
 	}
 	return
 }
+
+func (p ProjectService) SetProjectAuthorities(id uint, authorityIds []uint) (err error) {
+	return global.OPS_DB.Transaction(func(tx *gorm.DB) error {
+		var project system.SysProject
+
+		//if len(authorityIds) == 0 {
+		//	return errors.New("用户组不能为空")
+		//}
+
+		TxErr := tx.Where("id = ?", id).First(&project).Error
+		if TxErr != nil {
+			global.OPS_LOG.Debug(TxErr.Error())
+			return errors.New("查询用户数据失败")
+		}
+		TxErr = tx.Delete(&[]system.SysProjectAuthority{}, "sys_project_id = ?", id).Error
+		if TxErr != nil {
+			return TxErr
+		}
+		var useAuthority []system.SysProjectAuthority
+		for _, v := range authorityIds {
+			useAuthority = append(useAuthority, system.SysProjectAuthority{
+				SysProjectId:            id,
+				SysAuthorityAuthorityId: v,
+			})
+		}
+		TxErr = tx.Create(&useAuthority).Error
+		if TxErr != nil {
+			return TxErr
+		}
+
+		// 返回 nil 提交事务
+		return nil
+	})
+}

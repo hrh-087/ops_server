@@ -21,6 +21,7 @@ func (p *ProjectRouter) InitProjectRouter(Router *gin.RouterGroup) {
 		projectRouter.DELETE("deleteProject/", projectRouterApi.DeleteProject)
 		projectRouter.POST("getProjectById/", projectRouterApi.GetProjectById)
 		projectRouter.POST("setAuthorityProject/", projectRouterApi.SetAuthorityProject)
+		projectRouter.POST("setProjectAuthority/", projectRouterApi.SetProjectAuthority)
 		projectRouter.POST("initProject/", projectRouterApi.InitProject)
 	}
 	{

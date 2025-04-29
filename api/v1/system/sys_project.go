@@ -210,6 +210,22 @@ func (s *ProjectApi) SetAuthorityProject(c *gin.Context) {
 	}
 }
 
+func (s ProjectApi) SetProjectAuthority(c *gin.Context) {
+	var sua systemReq.SetUserAuthorities
+	err := c.ShouldBindJSON(&sua)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err := projectService.SetProjectAuthorities(sua.ID, sua.AuthorityIds); err != nil {
+		global.OPS_LOG.Error("修改失败!", zap.Error(err))
+		response.FailWithMessage("修改失败", c)
+	} else {
+		response.OkWithMessage("修改成功", c)
+	}
+}
+
 func (s *ProjectApi) InitProject(c *gin.Context) {
 	var project system.SysProject
 	err := c.ShouldBindJSON(&project)
