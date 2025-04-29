@@ -33,10 +33,10 @@ func HandleCheckGameImageVersion(ctx context.Context, t *asynq.Task) (err error)
 	// 不管执行成功还是失败都要写入结果
 	resultList = append(resultList, output)
 	if err != nil {
-		global.OPS_LOG.Error("同步配置文件失败", zap.Error(err))
+		global.OPS_LOG.Error("检查版本失败", zap.Error(err))
 		return err
 	}
-	resultList = append(resultList, "同步配置文件成功")
+	resultList = append(resultList, "检查版本成功")
 	WriteTaskResult(t, resultList)
 
 	return err
