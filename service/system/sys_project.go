@@ -101,6 +101,39 @@ func (p *ProjectService) DeleteProject(project system.SysProject) (err error) {
 		if len(entity.Authorities) > 0 {
 			return errors.New("此角色有用户正在使用此项目,请解除绑定后再试")
 		}
+
+		// 删除项目关联的gameServer
+		if err = tx.Delete(&system.SysGameServer{}, "project_id = ?", entity.ID).Error; err != nil {
+			return err
+		}
+		if err = tx.Delete(&system.SysGamePlatform{}, "project_id = ?", entity.ID).Error; err != nil {
+			return err
+		}
+		if err = tx.Delete(&system.SysGameType{}, "project_id = ?", entity.ID).Error; err != nil {
+			return err
+		}
+		if err = tx.Delete(&system.SysAssetsServer{}, "project_id = ?", entity.ID).Error; err != nil {
+			return err
+		}
+		if err = tx.Delete(&system.SysAssetsListener{}, "project_id = ?", entity.ID).Error; err != nil {
+			return err
+		}
+		if err = tx.Delete(&system.SysAssetsLb{}, "project_id = ?", entity.ID).Error; err != nil {
+			return err
+		}
+		if err = tx.Delete(&system.SysAssetsRedis{}, "project_id = ?", entity.ID).Error; err != nil {
+			return err
+		}
+		if err = tx.Delete(&system.SysAssetsMysql{}, "project_id = ?", entity.ID).Error; err != nil {
+			return err
+		}
+		if err = tx.Delete(&system.SysAssetsMongo{}, "project_id = ?", entity.ID).Error; err != nil {
+			return err
+		}
+		if err = tx.Delete(&system.SysAssetsKafka{}, "project_id = ?", entity.ID).Error; err != nil {
+			return err
+		}
+
 		return tx.Delete(&system.SysProject{}, "id = ?", entity.ID).Error
 	})
 }
