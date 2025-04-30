@@ -60,3 +60,22 @@ func (h HwElb) DeleteListenerForce(client *elb.ElbClient, listenerId string) err
 	}
 	return err
 }
+
+func (h HwElb) GetListenerList(client *elb.ElbClient, lbId string) (*model.ListListenersResponse, error) {
+
+	listLoadBalancerId := []string{lbId}
+	limit := int32(2000)
+
+	request := &model.ListListenersRequest{
+		LoadbalancerId: &listLoadBalancerId,
+		Limit:          &limit,
+	}
+
+	response, err := client.ListListeners(request)
+	if err != nil {
+		global.OPS_LOG.Error("获取负载均衡监听列表失败:", zap.String("listenerId", lbId), zap.Error(err))
+		return nil, err
+	}
+
+	return response, err
+}

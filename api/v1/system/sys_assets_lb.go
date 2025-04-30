@@ -46,6 +46,28 @@ func (a *AssetsLbApi) RsyncLbListener(c *gin.Context) {
 	response.OkWithMessage("同步华为云负载均衡监听器成功", c)
 }
 
+func (a *AssetsLbApi) DeleteCloudListener(c *gin.Context) {
+	var lb system.SysAssetsLb
+	err := c.ShouldBindJSON(&lb)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err = utils.Verify(lb, utils.AssetsLbVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	err = assetsLbService.DeleteCloudListener(c, lb)
+	if err != nil {
+		response.FailWithMessage("删除华为云负载均衡监听器失败", c)
+		return
+	}
+
+	response.OkWithMessage("删除华为云负载均衡监听器成功", c)
+}
+
 func (a *AssetsLbApi) WriteLBDataIntoRedis(c *gin.Context) {
 	err := assetsLbService.WriteLBDataIntoRedis(c)
 	if err != nil {

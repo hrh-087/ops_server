@@ -57,15 +57,10 @@ func (s *AssetsLbService) DeleteAssetsLb(ctx *gin.Context, id int) (err error) {
 func (s *AssetsLbService) RsyncAssetsCloudLb(ctx *gin.Context, assetsLb system.SysAssetsLb) (err error) {
 	var hwElb elb.HwElb
 	var cloudProduce system.SysCloudProduce
-	var platform system.SysGamePlatform
 
 	if err = global.OPS_DB.WithContext(ctx).Where("id = ?", assetsLb.CloudProduceId).First(&cloudProduce).Error; err != nil {
 		global.OPS_LOG.Error("获取云平台信息失败:", zap.Error(err))
 		return errors.New("获取云平台信息失败")
-	}
-	if err = global.OPS_DB.WithContext(ctx).Where("id = ?", assetsLb.PlatformId).First(&platform).Error; err != nil {
-		global.OPS_LOG.Error("获取游戏平台信息失败:", zap.Error(err))
-		return errors.New("获取游戏平台信息失败")
 	}
 
 	client := elb.NewHwElb(hw_cloud.HWCloud{
@@ -134,7 +129,6 @@ func (s *AssetsLbService) RsyncLbListener(ctx *gin.Context) (err error) {
 		for _, gameServer := range gameServerList {
 			// 跳过非战斗服跟游戏服
 			if !gameServer.GameType.IsFight && gameServer.GameType.Code != "game" {
-				fmt.Printf("跳过非战斗服跟游戏服: %s\n", gameServer.Name)
 				continue
 			}
 
@@ -205,6 +199,69 @@ func (s *AssetsLbService) RsyncLbListener(ctx *gin.Context) (err error) {
 
 	return
 }
+
+func (s *AssetsLbService) DeleteCloudListener(ctx *gin.Context, assetsLb system.SysAssetsLb) (err error) {
+	var cloudLb system.SysAssetsLb
+	var hwElb elb.HwElb
+	var cloudProduce system.SysCloudProduce
+
+	err = global.OPS_DB.WithContext(ctx).Preload("Listener").First(&cloudLb, "id = ?", assetsLb.ID).Error
+	if err != nil {
+		global.OPS_LOG.Error("获取负载均衡信息失败:", zap.Error(err))
+		return errors.New("获取负载均衡信息失败")
+	}
+
+	if err = global.OPS_DB.WithContext(ctx).First(&cloudProduce, "id = ?", cloudLb.CloudProduceId).Error; err != nil {
+		global.OPS_LOG.Error("获取云商信息失败:", zap.Error(err))
+		return errors.New("获取云商信息失败")
+	}
+
+	client := elb.NewHwElb(hw_cloud.HWCloud{
+		AK:     cloudProduce.SecretId,
+		SK:     cloudProduce.SecretKey,
+		Region: cloudProduce.RegionId,
+	})
+
+	if client == nil {
+		global.OPS_LOG.Error("初始化云商信息失败")
+		return errors.New("初始化云商信息失败")
+	}
+
+	cloudListenerList, err := hwElb.GetListenerList(client, cloudLb.InstanceId)
+	if err != nil {
+		global.OPS_LOG.Error("获取云负载均衡监听器列表失败:", zap.Error(err))
+		return
+	}
+
+	for _, cloudListener := range *cloudListenerList.Listeners {
+		backendList, err := hwElb.ListBackendPolls(client, cloudListener.Id)
+		if err != nil {
+			return errors.New("获取负载均衡后端服务器组失败")
+		}
+
+		// 遍历后端服务器组删除监听器绑定的后端服务器
+		for _, poll := range *backendList.Pools {
+			if err = hwElb.BatchDeleteMembers(client, poll.Id, poll.Members); err != nil {
+				return errors.New("删除负载均衡后端服务器失败")
+			}
+			if err = hwElb.DeleteBackendPoll(client, poll.Id); err != nil {
+				return errors.New("删除负载均衡后端服务器组失败")
+			}
+		}
+		// 删除监听器
+		if err = hwElb.DeleteListenerForce(client, cloudListener.Id); err != nil {
+			return errors.New("删除负载均衡监听器失败")
+		}
+
+		// 删除数据库记录
+		if err = global.OPS_DB.WithContext(ctx).Where("instance_id = ?", cloudListener.Id).Delete(&system.SysAssetsListener{}).Error; err != nil {
+			global.OPS_LOG.Error("删除负载均衡监听器失败:", zap.Error(err))
+			return errors.New("删除负载均衡监听器失败")
+		}
+	}
+	return
+}
+
 func (s *AssetsLbService) WriteLBDataIntoRedis(ctx *gin.Context) (err error) {
 
 	var lbList []system.SysAssetsLb

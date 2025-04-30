@@ -21,6 +21,7 @@ func (*AssetsLbRouter) InitAssetsLbRouter(Router *gin.RouterGroup) {
 		router.POST("lb/writeRedis/", routerApi.WriteLBDataIntoRedis)
 		router.DELETE("lb/", routerApi.DeleteAssetsLb)
 		router.GET("lb/:id/", routerApi.GetAssetsLbById)
+		router.POST("lb/deleteCloudListener/", routerApi.DeleteCloudListener)
 	}
 
 	{
