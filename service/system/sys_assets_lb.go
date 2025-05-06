@@ -254,7 +254,7 @@ func (s *AssetsLbService) DeleteCloudListener(ctx *gin.Context, assetsLb system.
 		}
 
 		// 删除数据库记录
-		if err = global.OPS_DB.WithContext(ctx).Where("instance_id = ?", cloudListener.Id).Delete(&system.SysAssetsListener{}).Error; err != nil {
+		if err = global.OPS_DB.WithContext(ctx).Where("instance_id = ?", cloudListener.Id).Unscoped().Delete(&system.SysAssetsListener{}).Error; err != nil {
 			global.OPS_LOG.Error("删除负载均衡监听器失败:", zap.Error(err))
 			return errors.New("删除负载均衡监听器失败")
 		}

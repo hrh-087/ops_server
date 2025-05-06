@@ -24,6 +24,7 @@ func (*GameServerRouter) InitGameServerRouter(Router *gin.RouterGroup) {
 		router.POST("server/rsyncConfig/", routerApi.RsyncGameConfig)
 		router.POST("server/updateConfig/", routerApi.UpdateGameConfig)
 		router.POST("server/execTask/", routerApi.ExecGameTask)
+		router.POST("server/generatePrometheusConfig/", routerApi.GeneratePrometheusGameServerConfig)
 	}
 	{
 		routerWithoutRecord.GET("server/", routerApi.GetGameServerList)

@@ -40,3 +40,8 @@ type GmItemConfigParams struct {
 type ExcelTypeParams struct {
 	ExcelType string `json:"excelType" form:"excelType"`
 }
+
+type PrometheusConfig struct {
+	Targets []string          `json:"targets"`
+	Labels  map[string]string `json:"labels"`
+}

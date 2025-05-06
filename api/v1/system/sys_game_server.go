@@ -247,3 +247,12 @@ func (g GameServerApi) ExecGameTask(c *gin.Context) {
 	}, "添加至任务至队列成功", c)
 
 }
+
+func (g GameServerApi) GeneratePrometheusGameServerConfig(c *gin.Context) {
+	err := gameServerService.GeneratePrometheusGameServerConfig(c, false)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	response.OkWithMessage("生成成功", c)
+}

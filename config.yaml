@@ -104,3 +104,7 @@ ops:
 default:
   gm-url: http://116.205.247.197:8004/
   online-gm-url: http://116.205.247.197:8004/
+
+prometheus:
+  addr: 127.0.0.1:9090
+  game-server-json-dir: ./resource/

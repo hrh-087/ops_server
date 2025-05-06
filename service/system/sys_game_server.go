@@ -2,6 +2,7 @@ package system
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -15,6 +16,7 @@ import (
 	"ops-server/utils"
 	"ops-server/utils/cloud"
 	cloudRequest "ops-server/utils/cloud/request"
+	"strconv"
 	"time"
 )
 
@@ -542,4 +544,52 @@ func (g *GameServerService) ExecGameTask(ctx *gin.Context, taskType int8, ids []
 		return
 	}
 	return
+}
+
+func (g GameServerService) GeneratePrometheusGameServerConfig(ctx *gin.Context, isMaintenance bool) (err error) {
+	var gameServerList []system.SysGameServer
+	var prometheusConfig []request.PrometheusConfig
+
+	err = global.OPS_DB.WithContext(ctx).Where("status = 2").Preload("SysProject").Preload("Platform").Preload("GameType").Preload("Host").Find(&gameServerList).Error
+	if err != nil {
+		global.OPS_LOG.Error("获取游戏服信息失败:", zap.Error(err))
+		return errors.New("获取游戏服信息失败")
+	}
+
+	for _, gameServer := range gameServerList {
+		var config request.PrometheusConfig
+		var targets []string
+
+		labels := make(map[string]string)
+		if gameServer.SysProject.ProjectCode == "jqj" {
+			targets = append(targets, fmt.Sprintf("%s:%d", gameServer.Host.PrivateIp, gameServer.HttpPort))
+		} else {
+			targets = append(targets, fmt.Sprintf("%s:%d", gameServer.Host.PubIp, gameServer.HttpPort))
+		}
+
+		labels["platform"] = gameServer.Platform.PlatformCode
+		labels["job"] = gameServer.SysProject.ProjectCode
+		labels["hostname"] = gameServer.Host.ServerName
+		labels["gamename"] = fmt.Sprintf("%s_%d", gameServer.GameType.Code, gameServer.Vmid)
+		labels["isMaintenance"] = strconv.FormatBool(isMaintenance)
+
+		config.Targets = targets
+		config.Labels = labels
+
+		prometheusConfig = append(prometheusConfig, config)
+	}
+
+	jsonData, err := json.MarshalIndent(prometheusConfig, "", "  ")
+	if err != nil {
+		global.OPS_LOG.Error("json序列化失败:", zap.Error(err))
+		return errors.New("json序列化失败")
+	}
+
+	_, err = utils.CreateFile(global.OPS_CONFIG.Prometheus.GameServerJsonDir, "game_server.json", string(jsonData))
+	if err != nil {
+		global.OPS_LOG.Error("生成文件失败:", zap.Error(err))
+		return errors.New("生成文件失败")
+	}
+
+	return err
 }
