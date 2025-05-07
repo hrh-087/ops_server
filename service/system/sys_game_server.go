@@ -321,7 +321,7 @@ func (g *GameServerService) UpdateGameConfig(ctx *gin.Context, updateType int8, 
 	var gameServerList []system.SysGameServer
 	switch updateType {
 	case 1:
-		err = global.OPS_DB.WithContext(ctx).Where("status = 2").Preload("SysProject").Preload("Platform").Preload("GameType").Preload("Host").Preload("Redis").Preload("Mongo").Preload("Kafka").Find(&gameServerList).Error
+		err = global.OPS_DB.WithContext(ctx).Where("status != 3").Preload("SysProject").Preload("Platform").Preload("GameType").Preload("Host").Preload("Redis").Preload("Mongo").Preload("Kafka").Find(&gameServerList).Error
 	case 2:
 		if len(ids) == 0 {
 			return errors.New("选择的游戏服为空")
