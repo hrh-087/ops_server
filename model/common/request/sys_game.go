@@ -27,6 +27,9 @@ type GameConfigFile struct {
 	SecretKey      string `json:"secretKey"`      // lts的secretkey
 	CloudProjectId string `json:"cloudProjectId"` // lts的云项目id
 	CloudRegionId  string `json:"cloudRegionId"`  // lts的云区域id
+
+	FilterUrl   string `json:"filterUrl"`   // 敏感词检测地址
+	FilterToken string `json:"filterToken"` // 敏感词检测token
 }
 
 type DockerComposeFile struct {

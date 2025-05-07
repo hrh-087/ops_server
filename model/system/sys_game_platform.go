@@ -15,6 +15,9 @@ type SysGamePlatform struct {
 	CloudSecretId  string `json:"cloudSecretId" gorm:"comment:云secretId"`
 	CloudSecretKey string `json:"cloudSecretKey" gorm:"comment:云secretKey"`
 
+	// 敏感词配置
+	FilterUrl   string `json:"filterUrl" gorm:"comment:敏感词地址"`
+	FilterToken string `json:"filterToken" gorm:"type:text;comment:敏感词token"`
 	// gm地址
 	GmUrl      string `json:"gmUrl" gorm:"comment:gm地址"`
 	GatewayUrl string `json:"gatewayUrl" gorm:"comment:网关地址"`

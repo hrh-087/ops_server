@@ -135,6 +135,8 @@ func (g GameTypeService) GenerateConfigFile(game system.SysGameServer) (content 
 		AccessKey:      game.Platform.CloudSecretId,
 		CloudProjectId: game.Platform.CloudProjectId,
 		CloudRegionId:  game.Platform.CloudRegionId,
+		FilterUrl:      game.Platform.FilterUrl,
+		FilterToken:    game.Platform.FilterToken,
 	}
 
 	tmpl, err := template.New("config").Parse(game.GameType.ConfigTemplate)
