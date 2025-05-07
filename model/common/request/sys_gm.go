@@ -68,3 +68,11 @@ type ImportPlayerDataParams struct {
 	ImportId       string `json:"importId" form:"importId"`             // 导入的account表id
 	OutputPlayerId string `json:"outputPlayerId" form:"outputPlayerId"` // 导出的玩家id
 }
+
+// 游戏服活动管理
+type GameServerActivityParams struct {
+	ServerId      int    `json:"serverId" form:"serverId"`           // 渠道id
+	Key           string `json:"key" form:"key"`                     // 活动key
+	Cron          string `json:"cron" form:"cron"`                   // 定时任务rule * * * * * *
+	ActivityExtra string `json:"activityExtra" form:"activityExtra"` // 活动额外参数
+}

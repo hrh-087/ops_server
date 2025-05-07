@@ -25,5 +25,9 @@ func (g *GmRouter) InitGmRouter(Router *gin.RouterGroup) {
 		router.POST("dimensionPush/", routerApi.DimensionPush)       // 维度推送
 		router.POST("getAccountInfo/", routerApi.GetPlayerId)        // 获取玩家账号信息
 		router.POST("importPlayerData/", routerApi.ImportPlayerData) // 导入玩家数据
+
+		router.POST("getActivityExtra/", routerApi.GetActivityExtra) // 获取活动额外配置
+		router.POST("setGameCron/", routerApi.SetGameCron)           // 设置游戏定时任务
+		router.POST("getGameCronList/", routerApi.GetGameCronList)   // 获取游戏定时任务列表
 	}
 }

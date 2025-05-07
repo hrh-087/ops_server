@@ -15,13 +15,7 @@ func (h HttpClient) SetSwitch(serverId int, typeKey string, state bool) (respons
 
 	params, _ := json.Marshal(data)
 
-	response, err = h.Post("/switch/setSwitch", params)
-	if err != nil {
-		return
-	}
-
-	return
-
+	return h.Post("/switch/setSwitch", params)
 }
 
 func (h HttpClient) GetSwitchList(serverId int) (response *HttpResponse, err error) {
@@ -31,10 +25,6 @@ func (h HttpClient) GetSwitchList(serverId int) (response *HttpResponse, err err
 
 	params, _ := json.Marshal(data)
 
-	response, err = h.Post("/switch/getSwitchList", params)
-	if err != nil {
-		return
-	}
+	return h.Post("/switch/getSwitchList", params)
 
-	return
 }

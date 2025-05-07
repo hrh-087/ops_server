@@ -1,6 +1,6 @@
 package response
 
-// gm开光
+// gm开关
 type GmSwitch struct {
 	ServerId int    `json:"serverId"`
 	TypeKey  string `json:"typeKey"`
@@ -32,4 +32,11 @@ type RankRewardConfig struct {
 	OpenId int `json:"openId"`
 	// 奖励，rank排名时获得的奖励，格式map，key是道具id，value是道具数量
 	Rewards map[string]int `json:"rewards"`
+}
+
+// 活动管理
+type GameServerCron struct {
+	ServerId int    `json:"serverId"`
+	Key      string `json:"key"`
+	Cron     string `json:"cron"`
 }
