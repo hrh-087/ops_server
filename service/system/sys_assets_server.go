@@ -2,12 +2,16 @@ package system
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/gofrs/uuid/v5"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"ops-server/global"
 	"ops-server/model/common/request"
 	"ops-server/model/system"
+	"ops-server/utils"
 	"strconv"
 	"strings"
 )
@@ -114,4 +118,50 @@ func (s *AssetsServerService) getServerPort(serverId uint, ruleRange string, tx 
 	}
 
 	return port, tx.Create(&system.SysAssetsServerPort{ServerId: serverId, Port: port}).Error
+}
+
+func (s AssetsServerService) GeneratePrometheusHostConfig() (err error) {
+	var hostList []system.SysAssetsServer
+	var prometheusHostConfig []request.PrometheusConfig
+
+	err = global.OPS_DB.Where("status = ? and server_type != ?", 1, 3).Preload("SysProject").Preload("Platform").Find(&hostList).Error
+	if err != nil {
+		global.OPS_LOG.Error("获取主机信息失败:", zap.Error(err))
+		return errors.New("获取主机信息失败")
+	}
+
+	for _, host := range hostList {
+		var config request.PrometheusConfig
+		var targets []string
+
+		labels := make(map[string]string)
+		if host.SysProject.ProjectName == "剑气劫" {
+			targets = append(targets, fmt.Sprintf("%s:%s", host.PrivateIp, global.OPS_CONFIG.Prometheus.NodeExporterPort))
+		} else {
+			targets = append(targets, fmt.Sprintf("%s:%s", host.PubIp, global.OPS_CONFIG.Prometheus.NodeExporterPort))
+		}
+
+		labels["platform"] = host.Platform.PlatformCode
+		labels["job"] = host.SysProject.ProjectName
+		labels["hostname"] = host.ServerName
+		labels["type"] = "host"
+
+		config.Targets = targets
+		config.Labels = labels
+		prometheusHostConfig = append(prometheusHostConfig, config)
+	}
+
+	jsonData, err := json.MarshalIndent(prometheusHostConfig, "", "  ")
+	if err != nil {
+		global.OPS_LOG.Error("json序列化失败:", zap.Error(err))
+		return errors.New("json序列化失败")
+	}
+
+	_, err = utils.CreateFile(global.OPS_CONFIG.Prometheus.GameServerJsonDir, "host.json", string(jsonData))
+	if err != nil {
+		global.OPS_LOG.Error("生成文件失败:", zap.Error(err))
+		return errors.New("生成文件失败")
+	}
+
+	return
 }

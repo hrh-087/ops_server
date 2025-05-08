@@ -20,6 +20,7 @@ func (a *AssetsServerRouter) InitAssetsServerRouter(Router *gin.RouterGroup) {
 		router.POST("server/", routerApi.CreateServer)
 		router.PUT("server/", routerApi.UpdateServer)
 		router.DELETE("server/", routerApi.DeleteServer)
+		router.POST("server/generatePrometheusHostConfig/", routerApi.GeneratePrometheusHostConfig)
 	}
 	{
 		routerWithoutRecord.GET("server/all/", routerApi.GetAssetsServerAll)
