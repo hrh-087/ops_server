@@ -46,7 +46,7 @@ func (g GmService) GetSwitchList(ctx *gin.Context, serverId int) (data interface
 
 	var switchMap = map[string]string{
 		"MATCH_LIMIT": "匹配限制开关",
-		"MAC_LIMIT":   "限制mac地址登录开关",
+		"MAC_LIMIT":   "关闭mac地址限制",
 	}
 	//projectId := ctx.GetString("projectId")
 	//
