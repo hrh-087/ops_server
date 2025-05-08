@@ -5,15 +5,19 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid/v5"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"ops-server/global"
+	"ops-server/job/task"
 	"ops-server/model/common/request"
 	"ops-server/model/system"
 	"ops-server/utils"
+	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type AssetsServerService struct{}
@@ -120,9 +124,29 @@ func (s *AssetsServerService) getServerPort(serverId uint, ruleRange string, tx 
 	return port, tx.Create(&system.SysAssetsServerPort{ServerId: serverId, Port: port}).Error
 }
 
-func (s AssetsServerService) GeneratePrometheusHostConfig() (err error) {
+func (s AssetsServerService) GeneratePrometheusHostConfig(ctx *gin.Context) (err error) {
 	var hostList []system.SysAssetsServer
 	var prometheusHostConfig []request.PrometheusConfig
+
+	projectId, err := strconv.ParseUint(ctx.GetString("projectId"), 10, 64)
+	if err != nil {
+		return errors.New("项目id解析失败")
+	}
+
+	sshConfig, err := task.GetSSHKey(uint(projectId), global.OPS_CONFIG.Prometheus.Addr, global.OPS_CONFIG.Prometheus.SshPort)
+	if err != nil {
+		return fmt.Errorf("获取ssh配置失败:%v", err)
+	}
+
+	sshClient, err := utils.NewSSHClient(&sshConfig)
+	if err != nil {
+		return fmt.Errorf("ssh连接失败:%v", err)
+	}
+	defer func() {
+		if err := sshClient.Close(); err != nil {
+			global.OPS_LOG.Error("ssh关闭失败", zap.Error(err))
+		}
+	}()
 
 	err = global.OPS_DB.Where("status = ? and server_type != ?", 1, 3).Preload("SysProject").Preload("Platform").Find(&hostList).Error
 	if err != nil {
@@ -157,10 +181,19 @@ func (s AssetsServerService) GeneratePrometheusHostConfig() (err error) {
 		return errors.New("json序列化失败")
 	}
 
-	_, err = utils.CreateFile(global.OPS_CONFIG.Prometheus.GameServerJsonDir, "host.json", string(jsonData))
+	configFilePath, err := utils.CreateFile(
+		filepath.Join(global.OPS_CONFIG.Local.Path, "prometheus", time.Now().Format("2006-01-02")),
+		"host.json",
+		string(jsonData),
+	)
 	if err != nil {
 		global.OPS_LOG.Error("生成文件失败:", zap.Error(err))
 		return errors.New("生成文件失败")
+	}
+
+	err = utils.UploadFile(sshClient, configFilePath, fmt.Sprintf("%s/host.json", global.OPS_CONFIG.Prometheus.HostServerJsonDir))
+	if err != nil {
+		return fmt.Errorf("上传主机监控文件失败:%v", err)
 	}
 
 	return

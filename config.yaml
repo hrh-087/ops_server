@@ -106,7 +106,8 @@ default:
   online-gm-url: http://116.205.247.197:8004/
 
 prometheus:
-  addr: 127.0.0.1:9090
-  game-server-json-dir: ./resource/
-  game-server-json-path: ./resource/
+  addr: 1.94.191.58
+  ssh-port: 22
+  game-server-json-dir: /tmp/
+  host-server-json-dir: /tmp/
   node-exporter-port: 41005

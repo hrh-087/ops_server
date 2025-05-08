@@ -176,7 +176,7 @@ func (a *AssetsServerApi) GetAssetsServerAll(c *gin.Context) {
 }
 
 func (a AssetsServerApi) GeneratePrometheusHostConfig(c *gin.Context) {
-	err := assetsServerService.GeneratePrometheusHostConfig()
+	err := assetsServerService.GeneratePrometheusHostConfig(c)
 	if err != nil {
 		global.OPS_LOG.Error("生成主机配置失败!", zap.Error(err))
 		response.FailWithMessage("生成主机配置失败", c)
