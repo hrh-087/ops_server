@@ -65,7 +65,7 @@ func HandleInstallServer(ctx context.Context, t *asynq.Task) (err error) {
 
 	if gameServer.Platform.PlatformCode == "887711" {
 		subnet = "30c8fcfc-12da-416a-8192-0141b36a73f9"
-	} else if gameServer.Platform.PlatformCode == "887722" {
+	} else if gameServer.Platform.PlatformCode == "887712" {
 		subnet = "5f0de524-8a24-4cdb-92bb-3bd504e3e3ae"
 	} else {
 		return errors.New("暂不支持该平台")
