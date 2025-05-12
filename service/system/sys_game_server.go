@@ -250,7 +250,7 @@ func (g *GameServerService) GetGameServerList(ctx context.Context, info request.
 }
 
 func (g *GameServerService) GetGameServerAll(ctx context.Context) (result []system.SysGameServer, err error) {
-	err = global.OPS_DB.WithContext(ctx).Preload("GameType").Find(&result).Error
+	err = global.OPS_DB.WithContext(ctx).Preload("Platform").Preload("GameType").Find(&result).Error
 	return
 }
 

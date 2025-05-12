@@ -63,6 +63,7 @@ func HandleInstallServer(ctx context.Context, t *asynq.Task) (err error) {
 
 	var subnet string
 
+	// todo 这里需要优化
 	if gameServer.Platform.PlatformCode == "887711" {
 		subnet = "30c8fcfc-12da-416a-8192-0141b36a73f9"
 	} else if gameServer.Platform.PlatformCode == "887712" {

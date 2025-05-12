@@ -159,6 +159,7 @@ func (s AssetsServerService) GeneratePrometheusHostConfig(ctx *gin.Context) (err
 		var targets []string
 
 		labels := make(map[string]string)
+		// todo 这里写死剑气劫项目(后续查看如何优化到相应的配置中，避免写死)
 		if host.SysProject.ProjectName == "剑气劫" {
 			targets = append(targets, fmt.Sprintf("%s:%s", host.PrivateIp, global.OPS_CONFIG.Prometheus.NodeExporterPort))
 		} else {
