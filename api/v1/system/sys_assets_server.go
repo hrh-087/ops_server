@@ -185,3 +185,20 @@ func (a AssetsServerApi) GeneratePrometheusHostConfig(c *gin.Context) {
 
 	response.OkWithMessage("生成主机配置成功", c)
 }
+
+func (a AssetsServerApi) PullInstanceCloudInfo(c *gin.Context) {
+	var server system.SysAssetsServer
+	err := c.ShouldBindJSON(&server)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	err = assetsServerService.PullInstanceCloudInfo(c, server)
+	if err != nil {
+		global.OPS_LOG.Error("拉取实例信息失败!", zap.Error(err))
+		response.FailWithMessage("拉取实例信息失败", c)
+		return
+	}
+	response.OkWithMessage("拉取实例信息成功", c)
+}

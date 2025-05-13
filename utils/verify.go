@@ -24,7 +24,7 @@ var (
 	CloudVerify    = Rules{"CloudName": {NotEmpty()}, "RegionId": {NotEmpty()}, "RegionName": {NotEmpty()}, "SecretId": {NotEmpty()}, "SecretKey": {NotEmpty()}}
 	PlatformVerify = Rules{"PlatformCode": {NotEmpty()}, "PlatformName": {NotEmpty()}}
 
-	AssetsServerVerify = Rules{"PrivateIp": {NotEmpty()}, "PubIp": {NotEmpty()}, "SSHPort": {NotEmpty()}, "ServerName": {NotEmpty()}, "PlatformId": {NotEmpty()}}
+	AssetsServerVerify = Rules{"SSHPort": {NotEmpty()}, "ServerName": {NotEmpty()}, "PlatformId": {NotEmpty()}, "HostType": {NotEmpty()}}
 	AssetsMysqlVerify  = Rules{"Host": {NotEmpty()}, "Name": {NotEmpty()}, "Pass": {NotEmpty()}, "Port": {NotEmpty()}, "PlatformId": {NotEmpty()}}
 	AssetsRedisVerify  = Rules{"Host": {NotEmpty()}, "Name": {NotEmpty()}, "PlatformId": {NotEmpty()}, "Port": {NotEmpty()}}
 	AssetsMongoVerify  = Rules{"Host": {NotEmpty()}, "Name": {NotEmpty()}, "PlatformId": {NotEmpty()}, "Auth": {NotEmpty()}}

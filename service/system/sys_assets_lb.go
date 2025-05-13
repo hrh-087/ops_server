@@ -166,7 +166,7 @@ func (s *AssetsLbService) RsyncLbListener(ctx *gin.Context) (err error) {
 						BackendPollName: fmt.Sprintf("%s-%d", gameServer.Host.PrivateIp, gameServer.TcpPort),
 						BackendAddr:     gameServer.Host.PrivateIp,
 						BackendPort:     int32(gameServer.TcpPort),
-						SubnetCidrId:    lb.SubnetCidrId,
+						SubnetCidrId:    gameServer.Host.SubVpcId,
 					}
 
 					listenerId, err = cloud.CreateListener(lbRequestParams)

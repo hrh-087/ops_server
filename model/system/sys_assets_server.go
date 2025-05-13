@@ -14,6 +14,9 @@ type SysAssetsServer struct {
 	PrivateIp          string    `json:"privateIp" gorm:"comment:内网ip"`
 	InstanceStates     int64     `json:"instanceStates" gorm:"comment:状态"`
 	SSHPort            string    `json:"sshPort" gorm:"comment:ssh端口"`
+	VpcId              string    `json:"vpcId" gorm:"comment:vpcId"`
+	SubVpcId           string    `json:"subVpcId" gorm:"comment:子网id"`
+	HostType           int8      `json:"hostType" gorm:"default:1; comment:服务器类型 1 本地服务器 2 云服务器 "`
 	SysAssetDeviceInfo `json:"deviceInfo" gorm:"embedded;comment:附加属性"`
 	Status             int64                 `json:"status" gorm:"comment:状态 0:待初始化 1 正常运行 2待回收 3 已回收;default:1"`
 	CloudProduceId     uint                  `json:"cloudProduceId" gorm:"comment:云产商id"`

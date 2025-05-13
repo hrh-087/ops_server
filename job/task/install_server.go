@@ -61,16 +61,16 @@ func HandleInstallServer(ctx context.Context, t *asynq.Task) (err error) {
 	gameServer.Status = 1
 	global.OPS_DB.Save(&gameServer)
 
-	var subnet string
+	//var subnet string
+	//
 
-	// todo 这里需要优化
-	if gameServer.Platform.PlatformCode == "887711" {
-		subnet = "30c8fcfc-12da-416a-8192-0141b36a73f9"
-	} else if gameServer.Platform.PlatformCode == "887712" {
-		subnet = "5f0de524-8a24-4cdb-92bb-3bd504e3e3ae"
-	} else {
-		return errors.New("暂不支持该平台")
-	}
+	//if gameServer.Platform.PlatformCode == "887711" {
+	//	subnet = "30c8fcfc-12da-416a-8192-0141b36a73f9"
+	//} else if gameServer.Platform.PlatformCode == "887712" {
+	//	subnet = "5f0de524-8a24-4cdb-92bb-3bd504e3e3ae"
+	//} else {
+	//	return errors.New("暂不支持该平台")
+	//}
 
 	// 捕捉err是否有值，有值时，记录日志，并返回错误
 	defer func() {
@@ -198,7 +198,7 @@ func HandleInstallServer(ctx context.Context, t *asynq.Task) (err error) {
 					BackendPollName: fmt.Sprintf("%s-%d", gameServer.Host.PrivateIp, gameServer.TcpPort),
 					BackendAddr:     gameServer.Host.PrivateIp,
 					BackendPort:     int32(gameServer.TcpPort),
-					SubnetCidrId:    subnet, // 使用负载均衡的子网ID
+					SubnetCidrId:    gameServer.Host.SubVpcId, // 使用负载均衡的子网ID
 				}
 
 				listenerId, err = cloud.CreateListener(lbRequestParams)
