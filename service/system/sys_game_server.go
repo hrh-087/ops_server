@@ -594,6 +594,7 @@ func (g GameServerService) GeneratePrometheusGameServerConfig(ctx *gin.Context, 
 		labels["gamename"] = fmt.Sprintf("%s_%d", gameServer.GameType.Code, gameServer.Vmid)
 		labels["type"] = "game"
 		labels["isMaintenance"] = strconv.FormatBool(isMaintenance)
+		labels["isFight"] = strconv.FormatBool(gameServer.GameType.IsFight)
 
 		config.Targets = targets
 		config.Labels = labels
