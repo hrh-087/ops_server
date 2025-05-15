@@ -1,4 +1,4 @@
-package game
+package prometheus
 
 import (
 	"encoding/json"

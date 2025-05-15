@@ -155,6 +155,7 @@ func (c CronTaskService) ExecCronTask(ctx *gin.Context, cronTask system.CronTask
 			//asynqTask := task.NewTask(old.TaskTypeName, []byte{})
 			entryId, err := task.NewCronTask(old.TaskTypeName, workers.CronMiddlewareParams{
 				CronTaskId: old.CronTaskId,
+				ProjectId:  old.ProjectId,
 			}, cronTask.CronRule, asynq.Queue("cron"))
 			if err != nil {
 				global.OPS_LOG.Error("开启周期性定时任务失败", zap.Error(err))
@@ -170,6 +171,7 @@ func (c CronTaskService) ExecCronTask(ctx *gin.Context, cronTask system.CronTask
 			taskInfo, err := task.NewOnceTask(old.TaskTypeName, workers.CronMiddlewareParams{
 				CronTaskId: old.CronTaskId,
 				TaskId:     taskId,
+				ProjectId:  old.ProjectId,
 			}, asynq.ProcessAt(cronTask.ExecTime), asynq.Queue("cron"))
 			if err != nil {
 				global.OPS_LOG.Error("开启一次性定时任务失败", zap.Error(err))

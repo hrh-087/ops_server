@@ -37,6 +37,8 @@ const (
 
 	// 定时任务
 	CronCloseMatchBlockTypeName = "cron:closeMatchBlock"
+	CronKickPlayerTypeName      = "cron:kickPlayer" // 定时踢人
+
 )
 
 // 任务存储时间

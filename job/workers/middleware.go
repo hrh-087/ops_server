@@ -104,6 +104,7 @@ func GetExecTimeMiddleware(h asynq.Handler) asynq.Handler {
 type CronMiddlewareParams struct {
 	CronTaskId uuid.UUID `json:"cronTaskId,omitempty"`
 	TaskId     uuid.UUID `json:"taskId,omitempty"`
+	ProjectId  uint      `json:"projectId"`
 }
 
 func CronMiddleware(h asynq.Handler) asynq.Handler {

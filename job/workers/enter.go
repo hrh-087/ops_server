@@ -64,7 +64,8 @@ func InitWorkers() {
 	gameMux.HandleFunc(task.RsyncGameScriptTypeName, task.HandleRsyncGameScript)
 
 	// cron
-	cronMux.HandleFunc(task.CronCloseMatchBlockTypeName, task.HandleCloseMatchBlock)
+	cronMux.HandleFunc(task.CronCloseMatchBlockTypeName, task.HandleCloseMatchBlock) // 关闭匹配服
+	cronMux.HandleFunc(task.CronKickPlayerTypeName, task.HandleKickPlayer)
 
 	mux.Handle("cron:", cronMux) // 匹配所有cron:开头的task
 	mux.Handle("game:", gameMux) // 匹配所有game:开头的task

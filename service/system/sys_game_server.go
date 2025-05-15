@@ -15,7 +15,7 @@ import (
 	"ops-server/utils"
 	"ops-server/utils/cloud"
 	cloudRequest "ops-server/utils/cloud/request"
-	"ops-server/utils/game"
+	"ops-server/utils/prometheus"
 	"strconv"
 	"time"
 )
@@ -560,6 +560,6 @@ func (g GameServerService) GeneratePrometheusGameServerConfig(ctx *gin.Context) 
 		return errors.New("获取游戏服信息失败")
 	}
 	// 生成游戏服监控文件
-	err = game.GenerateGameMonitorFile(uint(projectId), gameServerList, false)
+	err = prometheus.GenerateGameMonitorFile(uint(projectId), gameServerList, false)
 	return err
 }
