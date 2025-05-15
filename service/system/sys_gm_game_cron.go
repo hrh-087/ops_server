@@ -20,13 +20,6 @@ func (g GmService) SetGameCron(ctx *gin.Context, cronParams request.GameServerAc
 		return errors.New("设置cron失败")
 	}
 
-	//if cronParams.ActivityExtra != "" {
-	//	_, err = httpClient.SetActivityExtra(cronParams.ServerId, cronParams.Key, cronParams.ActivityExtra)
-	//	if err != nil {
-	//		return errors.New("设置额外参数失败")
-	//	}
-	//}
-
 	return
 }
 

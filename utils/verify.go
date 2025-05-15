@@ -66,6 +66,9 @@ var (
 	GmUpdateConfigVerify           = Rules{"Data": {NotEmpty()}}
 	GmImportPlayerDataVerify       = Rules{"Account": {NotEmpty()}, "ImportId": {NotEmpty()}, "OutputPlayerId": {NotEmpty()}, "PlatformCode": {NotEmpty()}}
 	GameServerActivityParamsVerify = Rules{"ServerId": {NotEmpty()}, "Key": {NotEmpty()}, "Cron": {NotEmpty()}}
+	GmServerIdVerify               = Rules{"ServerId": {NotEmpty()}}
+
+	SetLiveActivityServerVerify = Rules{"ServerId": {NotEmpty()}, "NameForTQT": {NotEmpty()}, "StartTime": {NotEmpty()}, "EndTime": {NotEmpty()}}
 
 	// 文件上传
 	//FileNameVerify = Rules{"FileName": {NotEmpty()}}

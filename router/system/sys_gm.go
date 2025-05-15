@@ -29,5 +29,10 @@ func (g *GmRouter) InitGmRouter(Router *gin.RouterGroup) {
 		router.POST("getActivityExtra/", routerApi.GetActivityExtra) // 获取活动额外配置
 		router.POST("setGameCron/", routerApi.SetGameCron)           // 设置游戏定时任务
 		router.POST("getGameCronList/", routerApi.GetGameCronList)   // 获取游戏定时任务列表
+
+		router.POST("kickLivePlayer/", routerApi.KickLivePlayer)       // 踢出直播服玩家
+		router.POST("getLiveServerList/", routerApi.GetLiveServerList) // 获取直播服列表
+		router.POST("clearLiveServer/", routerApi.ClearLiveServer)     // 清除直播服数据
+		router.POST("setLiveServer/", routerApi.SetLiveActivityServer) // 设置直播服数据
 	}
 }

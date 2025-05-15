@@ -249,7 +249,7 @@ func (g GameServerApi) ExecGameTask(c *gin.Context) {
 }
 
 func (g GameServerApi) GeneratePrometheusGameServerConfig(c *gin.Context) {
-	err := gameServerService.GeneratePrometheusGameServerConfig(c, false)
+	err := gameServerService.GeneratePrometheusGameServerConfig(c)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return

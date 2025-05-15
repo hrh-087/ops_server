@@ -76,3 +76,29 @@ type GameServerActivityParams struct {
 	Cron          string `json:"cron" form:"cron"`                   // 定时任务rule * * * * * *
 	ActivityExtra string `json:"activityExtra" form:"activityExtra"` // 活动额外参数
 }
+
+// 直播服管理
+// 设置直播服参数
+type LiveServerActivity struct {
+	Id         int    `json:"id" form:"id"`
+	ServerId   int    `json:"serverId" form:"serverId"`
+	NameForTQT string `json:"nameForTQT" form:"nameForTQT"`
+	Number     int    `json:"number" form:"number"`
+	HomeOwner  []int  `json:"homeOwner" form:"homeOwner"`
+	Member     []int  `json:"member" form:"member"`
+	UpdateTime int64  `json:"updateTime" form:"updateTime"`
+	StartTime  string `json:"startTime" form:"startTime"`
+	EndTime    string `json:"endTime" form:"endTime"`
+}
+
+// 直播服踢人
+type LiveKickPlayer struct {
+	ServerId int    `json:"serverId" form:"serverId"`
+	Vmid     string `json:"vmid" form:"vmid"`
+	GroupId  int    `json:"groupId" form:"groupId"`
+	PlayerId int    `json:"playerId" form:"playerId"`
+}
+
+type GmServerId struct {
+	ServerId int `json:"serverId" form:"serverId"`
+}
