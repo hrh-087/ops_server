@@ -44,8 +44,8 @@ func HandleKickPlayer(ctx context.Context, t *asynq.Task) (err error) {
 	projectId := ctx.Value("projectId").(string)
 	fmt.Println("projectId:", projectId)
 
-	//err = global.OPS_DB.Debug().WithContext(ctx).Where("project_id = ?", params.ProjectId).Find(&platformList).Error
-	err = global.OPS_DB.Debug().WithContext(ctx).Where("project_id = ? and platform_code = 887706", params.ProjectId).Find(&platformList).Error
+	err = global.OPS_DB.Debug().WithContext(ctx).Where("project_id = ?", params.ProjectId).Find(&platformList).Error
+	//err = global.OPS_DB.Debug().WithContext(ctx).Where("project_id = ? and platform_code = 887706", params.ProjectId).Find(&platformList).Error
 	if err != nil {
 		return errors.New("获取项目游戏平台失败")
 	}
