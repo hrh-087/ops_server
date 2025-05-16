@@ -1,9 +1,11 @@
 package task
 
 import (
+	"encoding/json"
 	"errors"
 	"github.com/hibiken/asynq"
 	"go.uber.org/zap"
+	"golang.org/x/crypto/ssh"
 	"ops-server/global"
 	"ops-server/model/system"
 	"ops-server/utils"
@@ -12,19 +14,31 @@ import (
 )
 
 const (
-	InstallServerTypeName = "game:installGame"  // 安装游戏服
-	BatchCommandTypeName  = "game:batchCommand" // 批量命令
+	BatchCommandTypeName = "game:batchCommand" // 批量命令
 
-	// 正常更新任务
-	UpdateGameImageTypeName    = "game:updateGameImage"    // 更新游戏服镜像
-	StopGameTypeName           = "game:stopGame"           // 关闭游戏服
-	UpdateGameJsonDataTypeName = "game:updateGameJsonData" // 更新游戏服配置
-	StartGameTypeName          = "game:startGame"          // 启动游戏服
-	CheckGameVersionTypeName   = "game:checkGameVersion"   // 检查游戏服版本
+	// 游戏服
+	UpdateGameConfigTypeName    = "game:updateGameConfig"    // 更新游戏服配置
+	RsyncGameConfigTypeName     = "game:rsyncGameConfig"     // 同步游戏服配置
+	RsyncGameJsonConfigTypeName = "game:rsyncGameJsonConfig" // 同步游戏服json配置文件
+	RsyncGameScriptTypeName     = "game:rsyncGameScript"     // 同步游戏服脚本
+	InstallGameServerTypeName   = "game:installGameServer"   // 安装游戏服
+	StartGameTypeName           = "game:startGame"           // 启动游戏服
+	StopGameTypeName            = "game:stopGame"            // 关闭游戏服
+	UpdateGameImageTypeName     = "game:updateGameImage"     // 更新游戏服镜像
+	CheckGameVersionTypeName    = "game:checkGameVersion"    // 检查游戏服版本
+
 	// 热更游戏服代码
 	HotGameUnzipFileTypeName   = "game:HotGameUnzipFile"   // 解压热更文件包
 	HotGameRsyncHostTypeName   = "game:HotGameRsyncHost"   // 同步到服务器
 	HotGameRsyncServerTypeName = "game:HotGameRsyncServer" // 同步到游戏服
+
+	// 项目配置
+	InitProjectTypeName = "project:initProject" // 初始化项目
+
+	// 定时任务
+	CronCloseMatchBlockTypeName = "cron:closeMatchBlock"
+	CronKickPlayerTypeName      = "cron:kickPlayer" // 定时踢人
+
 )
 
 // 任务存储时间
@@ -43,6 +57,27 @@ func taskTimeout() asynq.Option {
 func NewTask(serverType string, payload []byte, opts ...asynq.Option) *asynq.Task {
 	opts = append(opts, retention(), retryCount(), taskTimeout())
 	return asynq.NewTask(serverType, payload, opts...)
+}
+
+func NewOnceTask(serverType string, params interface{}, opts ...asynq.Option) (*asynq.TaskInfo, error) {
+	payload, err := json.Marshal(params)
+	if err != nil {
+		return nil, err
+	}
+
+	task := NewTask(serverType, payload, opts...)
+
+	return global.AsynqClient.Enqueue(task)
+}
+
+func NewCronTask(serverType string, params interface{}, cron string, opts ...asynq.Option) (string, error) {
+	payload, err := json.Marshal(params)
+	if err != nil {
+		return "", err
+	}
+	task := NewTask(serverType, payload, opts...)
+
+	return global.AsynqScheduler.Register(cron, task)
 }
 
 func WriteTaskResult(t *asynq.Task, result []string) {
@@ -83,4 +118,14 @@ func GetSSHKey(projectId uint, host, port string) (auth utils.SShConfig, err err
 			PrivateKeyPassphrase: sshKey.PrivateKeyPassphrase,
 		}, err
 	}
+}
+
+func GetSSHConn(projectId uint, pubIp string, port string) (client *ssh.Client, err error) {
+	sshConfig, err := GetSSHKey(projectId, pubIp, port)
+	if err != nil {
+		global.OPS_LOG.Error("获取ssh配置失败", zap.Error(err))
+		return nil, err
+	}
+
+	return utils.NewSSHClient(&sshConfig)
 }

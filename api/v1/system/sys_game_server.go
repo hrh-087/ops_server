@@ -102,7 +102,7 @@ func (g *GameServerApi) GetGameServerList(c *gin.Context) {
 		return
 	}
 
-	list, total, err := gameServerService.GetGameServerList(c, pageInfo.PageInfo, pageInfo.NameAndPlatformSearch)
+	list, total, err := gameServerService.GetGameServerList(c, pageInfo.PageInfo, pageInfo.SysGameServer)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -172,4 +172,87 @@ func (g *GameServerApi) InstallGameServer(c *gin.Context) {
 	response.OkWithDetailed(gin.H{
 		"jobId": jobId.String(),
 	}, "添加至任务至队列成功", c)
+}
+
+func (g *GameServerApi) RsyncGameConfig(c *gin.Context) {
+	var updateInfo systemReq.UpdateGameConfigParams
+
+	err := c.ShouldBindJSON(&updateInfo)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err := utils.Verify(updateInfo, utils.UpdateGameConfigVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	jobId, err := gameServerService.RsyncGameConfig(c, updateInfo.UpdateType, updateInfo.GameIds)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	response.OkWithDetailed(gin.H{
+		"jobId": jobId.String(),
+	}, "添加至任务至队列成功", c)
+}
+
+func (g *GameServerApi) UpdateGameConfig(c *gin.Context) {
+	var updateInfo systemReq.UpdateGameConfigParams
+
+	err := c.ShouldBindJSON(&updateInfo)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err = utils.Verify(updateInfo, utils.UpdateGameConfigVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	err = gameServerService.UpdateGameConfig(c, updateInfo.UpdateType, updateInfo.GameIds)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	response.OkWithMessage("更新成功", c)
+}
+
+func (g GameServerApi) ExecGameTask(c *gin.Context) {
+	var gameTask systemReq.GameTaskParams
+
+	err := c.ShouldBindJSON(&gameTask)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err = utils.Verify(gameTask, utils.GameTaskVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	jobId, err := gameServerService.ExecGameTask(c, gameTask.TaskType, gameTask.GameServerIds)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	response.OkWithDetailed(gin.H{
+		"jobId": jobId.String(),
+	}, "添加至任务至队列成功", c)
+
+}
+
+func (g GameServerApi) GeneratePrometheusGameServerConfig(c *gin.Context) {
+	err := gameServerService.GeneratePrometheusGameServerConfig(c)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	response.OkWithMessage("生成成功", c)
 }

@@ -21,19 +21,19 @@ func (*SysGameType) TableName() string {
 
 type SysGameServer struct {
 	ProjectModel
-	PlatformId uint            `json:"platformId" gorm:"comment:渠道id"`
+	PlatformId uint            `form:"platformId" json:"platformId" gorm:"comment:渠道id"`
 	Platform   SysGamePlatform `json:"platform" gorm:"foreignKey:PlatformId;references:ID"`
 
-	Name        string `json:"name" gorm:"comment:名称"`
+	Name        string `form:"name" json:"name" gorm:"comment:名称"`
 	Vmid        int64  `json:"vmid" gorm:"comment:vmid"`
 	TcpPort     int64  `json:"tcpPort" gorm:"comment:tcp端口"`
 	HttpPort    int64  `json:"httpPort" gorm:"comment:http端口"`
 	GrpcPort    int64  `json:"grpcPort" gorm:"comment:grpc端口"`
-	Status      int64  `json:"status" gorm:"comment:状态 0: 待安装 1:安装中 2:已安装 3:已删除"`
+	Status      int64  `form:"status" json:"status" gorm:"default:5;comment:状态 0: 待安装 1:安装中 2:已安装 3:已删除 4 安装失败 5待安装"`
 	ConfigFile  string `json:"configFile" gorm:"type:text;comment:配置文件"`
 	ComposeFile string `json:"composeFile" gorm:"type:text;comment:docker-compose文件"`
 
-	GameTypeId uint        `json:"gameTypeId" gorm:"comment:游戏类型id"`
+	GameTypeId uint        `form:"gameTypeId" json:"gameTypeId" gorm:"comment:游戏类型id"`
 	GameType   SysGameType `json:"gameType" gorm:"foreignKey:GameTypeId;references:ID"`
 
 	RedisId uint           `json:"redisId" gorm:"comment:redis_id"`

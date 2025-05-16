@@ -29,6 +29,7 @@ func (a *AssetsRedisService) UpdateRedis(ctx context.Context, redis system.SysAs
 		"port",
 		"name",
 		"password",
+		"is_cluster",
 	}
 	if errors.Is(global.OPS_DB.WithContext(ctx).Where("id = ?", redis.ID).First(&old).Error, gorm.ErrRecordNotFound) {
 		return errors.New("记录不存在")

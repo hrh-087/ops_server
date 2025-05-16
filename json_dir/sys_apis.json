@@ -1,0 +1,1433 @@
+[
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/api/createApi/",
+    "description": "创建一个api",
+    "apiGroup": "api",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/api/deleteApisByIds/",
+    "description": "批量删除api",
+    "apiGroup": "api",
+    "method": "DELETE"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/api/getApiById/",
+    "description": "查看api详情",
+    "apiGroup": "api",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/api/freshCasbin/",
+    "description": "刷新缓存",
+    "apiGroup": "api",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/api/getApiList/",
+    "description": "获取api列表",
+    "apiGroup": "api",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/api/updateApi/",
+    "description": "更新api",
+    "apiGroup": "api",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/api/deleteApi/",
+    "description": "删除api",
+    "apiGroup": "api",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/api/getApiGroups/",
+    "description": "获取api组",
+    "apiGroup": "api",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/menu/getBaseMenuById/",
+    "description": "获取基础菜单详情",
+    "apiGroup": "菜单",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/menu/getMenuAuthority/",
+    "description": "获取角色菜单信息",
+    "apiGroup": "菜单",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/menu/getBaseMenuTree/",
+    "description": "获取用户动态路由",
+    "apiGroup": "菜单",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/menu/getMenuList/",
+    "description": "获取菜单列表",
+    "apiGroup": "菜单",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/menu/getMenu/",
+    "description": "获取菜单树",
+    "apiGroup": "默认Api组",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/menu/updateBaseMenu/",
+    "description": "更新菜单",
+    "apiGroup": "菜单",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/menu/deleteBaseMenu/",
+    "description": "删除菜单",
+    "apiGroup": "菜单",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/menu/addBaseMenu/",
+    "description": "新增菜单",
+    "apiGroup": "菜单",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/menu/addMenuAuthority/",
+    "description": "增加菜单和角色关联关系",
+    "apiGroup": "菜单",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/authority/getAuthorityList/",
+    "description": "获取角色列表",
+    "apiGroup": "角色",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/authority/createAuthority/",
+    "description": "创建角色",
+    "apiGroup": "角色",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/authority/deleteAuthority/",
+    "description": "删除角色",
+    "apiGroup": "角色",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/authority/updateAuthority/",
+    "description": "更新角色",
+    "apiGroup": "角色",
+    "method": "PUT"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/authority/copyAuthority/",
+    "description": "复制角色",
+    "apiGroup": "角色",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/api/getAllApis/",
+    "description": "获取所有api",
+    "apiGroup": "api",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/casbin/updateCasbin/",
+    "description": "更新权限",
+    "apiGroup": "权限",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/casbin/getPolicyPathByAuthorityId/",
+    "description": "获取角色权限",
+    "apiGroup": "权限",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/user/getUserinfo/",
+    "description": "获取用户信息",
+    "apiGroup": "默认Api组",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/user/getUserList/",
+    "description": "获取用户列表",
+    "apiGroup": "用户",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/user/setUserInfo/",
+    "description": "设置用户信息",
+    "apiGroup": "用户",
+    "method": "PUT"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/user/setUserAuthorities/",
+    "description": "设置用户角色组",
+    "apiGroup": "用户",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/user/register/",
+    "description": "创建用户",
+    "apiGroup": "用户",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/user/resetPassword/",
+    "description": "重置密码",
+    "apiGroup": "用户",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/user/deleteUser/",
+    "description": "删除角色",
+    "apiGroup": "用户",
+    "method": "DELETE"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/user/setUserAuthority/",
+    "description": "切换角色",
+    "apiGroup": "默认Api组",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/user/changePassword/",
+    "description": "修改密码",
+    "apiGroup": "默认Api组",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/user/setSelfInfo/",
+    "description": "修改自身信息",
+    "apiGroup": "默认Api组",
+    "method": "PUT"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/project/createProject/",
+    "description": "创建项目",
+    "apiGroup": "项目管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/project/getProjectList/",
+    "description": "获取项目列表",
+    "apiGroup": "项目管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/project/getProjectById/",
+    "description": "获取项目详情",
+    "apiGroup": "项目管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/project/updateProject/",
+    "description": "更新项目",
+    "apiGroup": "项目管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/project/deleteProject/",
+    "description": "删除项目",
+    "apiGroup": "项目管理",
+    "method": "DELETE"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/project/getBaseProjectTree/",
+    "description": "获取全部项目",
+    "apiGroup": "项目管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/project/getAuthorityProject/",
+    "description": "获取角色项目",
+    "apiGroup": "默认Api组",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/user/setUserProject/",
+    "description": "设置用户项目权限",
+    "apiGroup": "默认Api组",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/cloud/cloudProduce/",
+    "description": "删除云商",
+    "apiGroup": "配置管理",
+    "method": "DELETE"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/cloud/cloudProduce/:id/",
+    "description": "获取云商信息",
+    "apiGroup": "配置管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/platform/gamePlatform/",
+    "description": "删除渠道",
+    "apiGroup": "配置管理",
+    "method": "DELETE"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/platform/gamePlatform/:id/",
+    "description": "获取渠道信息",
+    "apiGroup": "配置管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/server/",
+    "description": "删除服务器",
+    "apiGroup": "资产组",
+    "method": "DELETE"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/server/:id/",
+    "description": "获取服务器信息",
+    "apiGroup": "资产组",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/redis/",
+    "description": "删除redis",
+    "apiGroup": "资产组",
+    "method": "DELETE"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/redis/:id/",
+    "description": "获取redis信息",
+    "apiGroup": "资产组",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/mongo/",
+    "description": "删除mongo",
+    "apiGroup": "资产组",
+    "method": "DELETE"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/mongo/:id/",
+    "description": "获取mongo信息",
+    "apiGroup": "资产组",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/mysql/",
+    "description": "删除mysql",
+    "apiGroup": "资产组",
+    "method": "DELETE"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/mysql/:id/",
+    "description": "获取mysql信息",
+    "apiGroup": "资产组",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/kafka/",
+    "description": "删除kafka",
+    "apiGroup": "资产组",
+    "method": "DELETE"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/kafka/:id/",
+    "description": "获取kafka信息",
+    "apiGroup": "资产组",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/game/type/",
+    "description": "删除游戏服类型",
+    "apiGroup": "游戏服管理",
+    "method": "DELETE"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/game/type/:id/",
+    "description": "过去游戏服类型信息",
+    "apiGroup": "游戏服管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/game/server/",
+    "description": "删除游戏服",
+    "apiGroup": "游戏服管理",
+    "method": "DELETE"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/game/server/:id/",
+    "description": "获取游戏服信息",
+    "apiGroup": "游戏服管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/game/server/install/",
+    "description": "安装游戏服",
+    "apiGroup": "游戏服管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/",
+    "description": "获取作业任务列表",
+    "apiGroup": "作业管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/info/",
+    "description": "获取任务详情",
+    "apiGroup": "作业管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/task/result/",
+    "description": "获取任务执行结果",
+    "apiGroup": "作业管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/system/key/",
+    "description": "获取秘钥列表",
+    "apiGroup": "系统管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/system/key/:id/",
+    "description": "获取秘钥信息",
+    "apiGroup": "系统管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/command/:id/",
+    "description": "获取命令详情",
+    "apiGroup": "作业管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/command/",
+    "description": "删除命令",
+    "apiGroup": "作业管理",
+    "method": "DELETE"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/command/batchCommand/",
+    "description": "批量执行命令",
+    "apiGroup": "作业管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/gameUpdate/",
+    "description": "删除更新任务",
+    "apiGroup": "作业管理",
+    "method": "DELETE"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/gameUpdate/:id/",
+    "description": "获取更新任务详情",
+    "apiGroup": "作业管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/gameUpdate/exec/",
+    "description": "执行更新任务",
+    "apiGroup": "作业管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/lb/rsyncCloud/",
+    "description": "同步云负载均衡",
+    "apiGroup": "资产组",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/lb/",
+    "description": "删除负载均衡信息",
+    "apiGroup": "资产组",
+    "method": "DELETE"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/lb/:id/",
+    "description": "获取负载均衡信息",
+    "apiGroup": "资产组",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/lb/rsyncLbListener/",
+    "description": "同步负载均衡监听器信息",
+    "apiGroup": "资产组",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/lb/writeRedis/",
+    "description": "写入LBDATA",
+    "apiGroup": "资产组",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/system/record/",
+    "description": "删除操作记录",
+    "apiGroup": "系统管理",
+    "method": "DELETE"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/system/record/batch/",
+    "description": "批量删除操作记录",
+    "apiGroup": "系统管理",
+    "method": "DELETE"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/project/setAuthorityProject/",
+    "description": "设置角色项目",
+    "apiGroup": "系统管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/game/server/updateConfig/",
+    "description": "更新游戏服配置文件",
+    "apiGroup": "游戏服管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/game/server/rsyncConfig/",
+    "description": "同步游戏服配置文件",
+    "apiGroup": "游戏服管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/taskManage/",
+    "description": "删除任务",
+    "apiGroup": "作业管理",
+    "method": "DELETE"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/taskManage/:id/",
+    "description": "获取任务管理详情",
+    "apiGroup": "作业管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/taskManage/exec/",
+    "description": "执行任务",
+    "apiGroup": "作业管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/game/server/execTask/",
+    "description": "执行游戏服任务",
+    "apiGroup": "游戏服管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/api/syncApi/",
+    "description": "同步Api",
+    "apiGroup": "api",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/api/ignoreApi/",
+    "description": "忽略Api",
+    "apiGroup": "api",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/api/enterSyncApi/",
+    "description": "确认同步Api",
+    "apiGroup": "api",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/gm/setSwitch/",
+    "description": "设置开关",
+    "apiGroup": "gm管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/cloud/cloudProduce/all/",
+    "description": "获取全部云商",
+    "apiGroup": "配置管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/platform/gamePlatform/all/",
+    "description": "获取全部渠道",
+    "apiGroup": "配置管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/game/server/all/",
+    "description": "获取全部游戏服",
+    "apiGroup": "游戏服管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/game/type/all/",
+    "description": "获取全部游戏服类型",
+    "apiGroup": "游戏服管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/command/all/",
+    "description": "获取全部命令",
+    "apiGroup": "作业管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/kafka/all/",
+    "description": "获取全部kafka",
+    "apiGroup": "资产组",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/redis/all/",
+    "description": "获取全部Redis",
+    "apiGroup": "资产组",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/server/all/",
+    "description": "获取全部服务器",
+    "apiGroup": "资产组",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/mongo/all/",
+    "description": "获取全部MongoDB",
+    "apiGroup": "资产组",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/mysql/all/",
+    "description": "获取全部MySQL",
+    "apiGroup": "资产组",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/gm/getSwitchList/",
+    "description": "获取开关列表",
+    "apiGroup": "gm管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/platform/gamePlatform/kick/",
+    "description": "游戏服踢人",
+    "apiGroup": "配置管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/game/type/copyAll/",
+    "description": "同步游戏类型到其他项目",
+    "apiGroup": "游戏服管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/project/initProject/",
+    "description": "初始化项目",
+    "apiGroup": "项目管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/gm/getRankList/",
+    "description": "获取榜单列表",
+    "apiGroup": "gm管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/gm/getRankRewardList/",
+    "description": "获取榜单奖励列表",
+    "apiGroup": "gm管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/gm/setRankReward/",
+    "description": "设置榜单配置",
+    "apiGroup": "gm管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/gameUpdate/svnInfo/",
+    "description": "获取游戏服svn配置信息",
+    "apiGroup": "作业管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/gm/uploadGameConfig/",
+    "description": "上传策划配置表",
+    "apiGroup": "gm管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/gm/getItemConfigInfo/",
+    "description": "获取策划配置信息",
+    "apiGroup": "gm管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/cron/",
+    "description": "更新定时任务",
+    "apiGroup": "作业管理",
+    "method": "PUT"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/cron/:id/",
+    "description": "获取定时任务详情",
+    "apiGroup": "作业管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/cron/exec/",
+    "description": "开启/关闭定时任务",
+    "apiGroup": "作业管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/task/",
+    "description": "获取子任务列表",
+    "apiGroup": "作业管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/cloud/cloudProduce/",
+    "description": "获取云商列表",
+    "apiGroup": "配置管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/cloud/cloudProduce/",
+    "description": "添加云商",
+    "apiGroup": "配置管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/cloud/cloudProduce/",
+    "description": "更新云商信息",
+    "apiGroup": "配置管理",
+    "method": "PUT"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/platform/gamePlatform/",
+    "description": "创建渠道",
+    "apiGroup": "配置管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/platform/gamePlatform/",
+    "description": "获取渠道列表",
+    "apiGroup": "配置管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/platform/gamePlatform/",
+    "description": "更新渠道信息",
+    "apiGroup": "配置管理",
+    "method": "PUT"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/server/",
+    "description": "创建一台服务器",
+    "apiGroup": "资产组",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/server/",
+    "description": "更新服务器信息",
+    "apiGroup": "资产组",
+    "method": "PUT"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/server/",
+    "description": "获取服务器列表",
+    "apiGroup": "资产组",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/redis/",
+    "description": "创建redis",
+    "apiGroup": "资产组",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/redis/",
+    "description": "更新redis",
+    "apiGroup": "资产组",
+    "method": "PUT"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/redis/",
+    "description": "获取redis列表",
+    "apiGroup": "资产组",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/mongo/",
+    "description": "创建mongo",
+    "apiGroup": "资产组",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/mongo/",
+    "description": "获取mongo列表",
+    "apiGroup": "资产组",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/mongo/",
+    "description": "更新mongo信息",
+    "apiGroup": "资产组",
+    "method": "PUT"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/mysql/",
+    "description": "创建mysql",
+    "apiGroup": "资产组",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/mysql/",
+    "description": "获取mysql列表",
+    "apiGroup": "资产组",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/mysql/",
+    "description": "更新mysql信息",
+    "apiGroup": "资产组",
+    "method": "PUT"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/kafka/",
+    "description": "获取kafka列表",
+    "apiGroup": "资产组",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/kafka/",
+    "description": "创建kafka",
+    "apiGroup": "资产组",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/kafka/",
+    "description": "更新kafka信息",
+    "apiGroup": "资产组",
+    "method": "PUT"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/game/type/",
+    "description": "获取游戏服类型列表",
+    "apiGroup": "游戏服管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/game/type/",
+    "description": "创建游戏服类型",
+    "apiGroup": "游戏服管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/game/type/",
+    "description": "更新游戏服类型信息",
+    "apiGroup": "游戏服管理",
+    "method": "PUT"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/game/server/",
+    "description": "创建游戏服",
+    "apiGroup": "游戏服管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/game/server/",
+    "description": "获取游戏服列表",
+    "apiGroup": "游戏服管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/game/server/",
+    "description": "更新游戏服信息",
+    "apiGroup": "游戏服管理",
+    "method": "PUT"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/system/key/",
+    "description": "创建秘钥",
+    "apiGroup": "系统管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/system/key/",
+    "description": "删除秘钥",
+    "apiGroup": "系统管理",
+    "method": "DELETE"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/system/key/",
+    "description": "更新秘钥",
+    "apiGroup": "系统管理",
+    "method": "PUT"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/command/",
+    "description": "创建命令",
+    "apiGroup": "作业管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/command/",
+    "description": "获取命令列表",
+    "apiGroup": "作业管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/command/",
+    "description": "更新命令",
+    "apiGroup": "作业管理",
+    "method": "PUT"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/gameUpdate/",
+    "description": "创建更新任务",
+    "apiGroup": "作业管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/gameUpdate/",
+    "description": "获取更新列表",
+    "apiGroup": "作业管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/gameUpdate/",
+    "description": "修改更新任务",
+    "apiGroup": "作业管理",
+    "method": "PUT"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/assets/lb/",
+    "description": "获取负载均衡列表",
+    "apiGroup": "资产组",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/system/record/",
+    "description": "获取操作记录列表",
+    "apiGroup": "系统管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/taskManage/",
+    "description": "创建任务",
+    "apiGroup": "作业管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/taskManage/",
+    "description": "获取任务管理列表",
+    "apiGroup": "作业管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/taskManage/",
+    "description": "更新任务",
+    "apiGroup": "作业管理",
+    "method": "PUT"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/cron/",
+    "description": "获取定时任务列表",
+    "apiGroup": "作业管理",
+    "method": "GET"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/cron/",
+    "description": "创建定时任务",
+    "apiGroup": "作业管理",
+    "method": "POST"
+  },
+  {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "path": "/job/cron/",
+    "description": "删除定时任务",
+    "apiGroup": "作业管理",
+    "method": "DELETE"
+  }
+]

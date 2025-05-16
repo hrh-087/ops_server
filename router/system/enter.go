@@ -9,6 +9,7 @@ type RouterGroup struct {
 	CasbinRouter
 	ProjectRouter
 	SshAuthRouter
+	OperationRecordRouter
 
 	CloudProduceRouter
 	GamePlatformRouter
@@ -18,6 +19,7 @@ type RouterGroup struct {
 	AssetsMongoRouter
 	AssetsRedisRouter
 	AssetsKafkaRouter
+	AssetsLbRouter
 
 	GameTypeRouter
 	GameServerRouter
@@ -27,4 +29,10 @@ type RouterGroup struct {
 	JobCommandRouter
 
 	GameUpdateRouter
+
+	SysTaskRouter
+
+	GmRouter
+
+	CronTaskRouter
 }

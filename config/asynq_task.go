@@ -9,4 +9,5 @@ type Asynq struct {
 	Retention     int64  `mapstructure:"retention" json:"retention" yaml:"retention"`       // 缓存时间/小时
 	Concurrency   int    `mapstructure:"concurrency" json:"concurrency" yaml:"concurrency"` // 并发数量
 	Timeout       int64  `mapstructure:"timeout" json:"timeout" yaml:"timeout"`             // 任务执行超时时间/秒
+	Tz            string `mapstructure:"tz" json:"tz" yaml:"tz"`                            // 时区
 }

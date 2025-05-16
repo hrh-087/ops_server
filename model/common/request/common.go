@@ -28,3 +28,20 @@ type GetAuthorityId struct {
 type IdsReq struct {
 	Ids []int `json:"ids" form:"ids"`
 }
+
+type UploadConfigParams struct {
+	Data map[string][]interface{} `json:"data"`
+}
+
+type GmItemConfigParams struct {
+	ItemType string `json:"itemType"`
+}
+
+type ExcelTypeParams struct {
+	ExcelType string `json:"excelType" form:"excelType"`
+}
+
+type PrometheusConfig struct {
+	Targets []string          `json:"targets"`
+	Labels  map[string]string `json:"labels"`
+}

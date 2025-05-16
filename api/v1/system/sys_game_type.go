@@ -89,7 +89,7 @@ func (g *GameTypeApi) DeleteGameType(c *gin.Context) {
 }
 
 func (g *GameTypeApi) GetGameTypeList(c *gin.Context) {
-	var pageInfo systemReq.SearchGameParams
+	var pageInfo systemReq.SearchGameTypeParams
 
 	err := c.ShouldBindQuery(&pageInfo)
 	if err != nil {
@@ -102,7 +102,7 @@ func (g *GameTypeApi) GetGameTypeList(c *gin.Context) {
 		return
 	}
 
-	list, total, err := gameTypeService.GetGameTypeList(c, pageInfo.PageInfo, pageInfo.NameAndPlatformSearch)
+	list, total, err := gameTypeService.GetGameTypeList(c, pageInfo.PageInfo, pageInfo.SysGameType)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -154,4 +154,27 @@ func (g *GameTypeApi) GetGameTypeById(c *gin.Context) {
 	}
 
 	response.OkWithDetailed(result, "获取成功", c)
+}
+
+func (g GameTypeApi) CopyGameType(c *gin.Context) {
+	var copyGameType systemReq.CopyGameTypeParams
+
+	if err := c.ShouldBindJSON(&copyGameType); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err := utils.Verify(copyGameType, utils.CopyGameTypeVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err := gameTypeService.CopyGameType(c, copyGameType.ProjectId, copyGameType.GameTypeIds); err != nil {
+		global.OPS_LOG.Error("复制失败!", zap.Error(err))
+		response.FailWithMessage("复制失败"+err.Error(), c)
+		return
+	}
+
+	response.OkWithMessage("复制成功", c)
+	return
 }

@@ -46,6 +46,9 @@ func (casbinService *CasbinService) Casbin() *casbin.SyncedCachedEnforcer {
 		[matchers]
 		m = r.sub == p.sub && keyMatch2(r.obj,p.obj) && r.act == p.act
 		`
+		//m = r.sub == p.sub && regexMatch(r.obj,p.obj) && r.act == p.act
+		//m = r.sub == p.sub && keyMatch2(r.obj,p.obj) && r.act == p.act
+
 		m, err := model.NewModelFromString(text)
 		if err != nil {
 			zap.L().Error("字符串加载模型失败!", zap.Error(err))

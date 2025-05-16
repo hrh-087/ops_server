@@ -3,10 +3,12 @@ package system
 import (
 	"context"
 	"errors"
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"ops-server/global"
 	"ops-server/model/common/request"
 	"ops-server/model/system"
+	"ops-server/utils/game"
 	"strings"
 )
 
@@ -20,16 +22,26 @@ func (g *GamePlatformService) CreatePlatform(ctx context.Context, platform syste
 
 	platform.PlatformCode = strings.TrimSpace(platform.PlatformCode)
 
+	// 如果不以/结尾则添加根号
+	if !strings.HasSuffix(platform.ImageUri, "/") {
+		platform.ImageUri += "/"
+	}
+
 	return global.OPS_DB.WithContext(ctx).Create(&platform).Error
 }
 
 func (g *GamePlatformService) UpdatePlatform(ctx context.Context, platform system.SysGamePlatform) (err error) {
-	var oldCloud system.SysGamePlatform
-	err = global.OPS_DB.WithContext(ctx).Where("id = ?", platform.ID).First(&oldCloud).Error
+	var old system.SysGamePlatform
+	err = global.OPS_DB.WithContext(ctx).Where("id = ?", platform.ID).First(&old).Error
 	if err != nil {
 		return
 	}
-	return global.OPS_DB.WithContext(ctx).Model(&oldCloud).Updates(platform).Error
+
+	// 如果不以/结尾则添加根号
+	if !strings.HasSuffix(old.ImageUri, "/") {
+		platform.ImageUri += "/"
+	}
+	return global.OPS_DB.WithContext(ctx).Model(&old).Updates(platform).Error
 }
 
 func (g *GamePlatformService) DeletePlatform(ctx context.Context, id int) (err error) {
@@ -72,4 +84,9 @@ func (g *GamePlatformService) GetPlatformList(ctx context.Context, platform syst
 	OrderStr := "id desc"
 	err = db.Preload("SysProject").Order(OrderStr).Find(&resultList).Error
 	return resultList, total, err
+}
+
+func (g GamePlatformService) KickGameServer(ctx *gin.Context, serverId int) (err error) {
+	err = game.KickPlayer(ctx, serverId)
+	return
 }

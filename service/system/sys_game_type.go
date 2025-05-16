@@ -7,11 +7,12 @@ import (
 	"fmt"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"html/template"
 	"ops-server/global"
 	"ops-server/model/common/request"
 	"ops-server/model/system"
+	"strconv"
 	"strings"
+	"text/template"
 )
 
 type GameTypeService struct {
@@ -59,7 +60,7 @@ func (g *GameTypeService) GetGameTypeById(ctx context.Context, id int) (result s
 	return
 }
 
-func (g *GameTypeService) GetGameTypeList(ctx context.Context, info request.PageInfo, server request.NameAndPlatformSearch) (list interface{}, total int64, err error) {
+func (g *GameTypeService) GetGameTypeList(ctx context.Context, info request.PageInfo, server system.SysGameType) (list interface{}, total int64, err error) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	db := global.OPS_DB.WithContext(ctx).Model(&system.SysGameType{})
@@ -91,6 +92,7 @@ func (g *GameTypeService) GetGameTypeAll(ctx context.Context) (result []system.S
 func (g GameTypeService) GenerateConfigFile(game system.SysGameServer) (content string, err error) {
 	var dbNamePrefix string
 	var buf bytes.Buffer
+	var fightType string
 
 	if strings.TrimSpace(game.GameType.ConfigTemplate) == "" {
 		return "", errors.New("配置模板为空")
@@ -102,23 +104,39 @@ func (g GameTypeService) GenerateConfigFile(game system.SysGameServer) (content 
 		dbNamePrefix = game.GameType.Code
 	}
 
+	if game.GameType.Code == "fight" {
+		fightType = "default"
+	} else {
+		fightType = game.GameType.Code
+	}
+
 	templateData := request.GameConfigFile{
-		PlatformCode:  game.Platform.PlatformCode,
-		Vmid:          game.Vmid,
-		Name:          game.Name,
-		PubIp:         game.Host.PubIp,
-		InnerIp:       game.Host.PrivateIp,
-		HttpPort:      game.HttpPort,
-		GrpcPort:      game.GrpcPort,
-		TcpPort:       game.TcpPort,
-		MongoUri:      game.Mongo.Host,
-		MongoAuth:     game.Mongo.Auth,
-		DbName:        fmt.Sprintf("%s_%s", dbNamePrefix, game.Platform.PlatformCode),
-		KafkaUri:      game.Kafka.Host,
-		RedisUri:      game.Redis.Host,
-		RedisPass:     game.Redis.Password,
-		RedisMeshUri:  game.Redis.Host,
-		RedisMeshPass: game.Redis.Password,
+		PlatformCode:   game.Platform.PlatformCode,
+		Vmid:           game.Vmid,
+		Name:           game.Name,
+		PubIp:          game.Host.PubIp,
+		InnerIp:        game.Host.PrivateIp,
+		HttpPort:       game.HttpPort,
+		GrpcPort:       game.GrpcPort,
+		TcpPort:        game.TcpPort,
+		MongoUri:       game.Mongo.Host,
+		MongoAuth:      game.Mongo.Auth,
+		DbName:         fmt.Sprintf("%s_%s", dbNamePrefix, game.Platform.PlatformCode),
+		KafkaUri:       game.Kafka.Host,
+		RedisUri:       fmt.Sprintf("%s:%d", game.Redis.Host, game.Redis.Port),
+		RedisPass:      game.Redis.Password,
+		RedisMeshUri:   fmt.Sprintf("%s:%d", game.Redis.Host, game.Redis.Port),
+		RedisMeshPass:  game.Redis.Password,
+		GatewayUri:     game.Platform.GatewayUrl,
+		FightType:      fightType,
+		LtsGroupId:     game.Platform.LtsLogGroupId,
+		LtsStreamId:    game.Platform.LtsLogStreamId,
+		SecretKey:      game.Platform.CloudSecretKey,
+		AccessKey:      game.Platform.CloudSecretId,
+		CloudProjectId: game.Platform.CloudProjectId,
+		CloudRegionId:  game.Platform.CloudRegionId,
+		FilterUrl:      game.Platform.FilterUrl,
+		FilterToken:    game.Platform.FilterToken,
 	}
 
 	tmpl, err := template.New("config").Parse(game.GameType.ConfigTemplate)
@@ -136,10 +154,63 @@ func (g GameTypeService) GenerateConfigFile(game system.SysGameServer) (content 
 }
 
 func (g GameTypeService) GenerateComposeFile(game system.SysGameServer) (content string, err error) {
+	var buf bytes.Buffer
+	var imageName string
+
 	if strings.TrimSpace(game.GameType.ComposeTemplate) == "" {
 		return "", errors.New("compose模板为空")
 	}
 
-	content = game.GameType.ComposeTemplate
-	return
+	if game.GameType.IsFight {
+		imageName = "fight"
+	} else {
+		imageName = game.GameType.Code
+	}
+
+	templateData := request.DockerComposeFile{
+		ImageService:     game.GameType.Code,
+		ImageTag:         game.Platform.ImageTag,
+		JsonConfigVolume: global.OPS_CONFIG.Game.GameConfigDir,
+		ImageUri:         game.Platform.ImageUri,
+		ImageName:        imageName,
+	}
+
+	tmpl, err := template.New("config").Parse(game.GameType.ComposeTemplate)
+	if err != nil {
+		return "", err
+	}
+
+	err = tmpl.Execute(&buf, templateData)
+	if err != nil {
+		global.OPS_LOG.Error("生成docker-compose文件失败", zap.Error(err))
+		return "", errors.New("生成docker-compose文件失败")
+	}
+
+	return buf.String(), nil
+}
+
+func (g GameTypeService) CopyGameType(ctx context.Context, projectId uint, gameTypeIds []int) (err error) {
+	var gameTypeList []system.SysGameType
+
+	headerProjectId := ctx.Value("projectId").(string)
+	if headerProjectId == strconv.Itoa(int(projectId)) {
+		return errors.New("不可以复制到同一项目下")
+	}
+
+	err = global.OPS_DB.WithContext(ctx).Where("id in ?", gameTypeIds).Find(&gameTypeList).Error
+	if err != nil {
+		return
+	}
+
+	return global.OPS_DB.Transaction(func(tx *gorm.DB) error {
+		for _, gameType := range gameTypeList {
+			gameType.ID = 0
+			gameType.ProjectId = projectId
+			err = tx.Create(&gameType).Error
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }

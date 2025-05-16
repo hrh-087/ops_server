@@ -24,10 +24,11 @@ func Routers() *gin.Engine {
 
 	ProjectGroup := Router.Group(global.OPS_CONFIG.System.RouterPrefix)
 
-	PrivateGroup.Use(middleware.JwtAuth()).Use(middleware.CasbinHandler())
-	//PrivateGroup.Use(middleware.JwtAuth())
+	//PrivateGroup.Use(middleware.JwtAuth()).Use(middleware.CasbinHandler())
+	PrivateGroup.Use(middleware.JwtAuth())
 
-	ProjectGroup.Use(middleware.JwtAuth()).Use(middleware.ProjectAuth()).Use(middleware.CasbinHandler())
+	//ProjectGroup.Use(middleware.JwtAuth()).Use(middleware.ProjectAuth()).Use(middleware.CasbinHandler())
+	ProjectGroup.Use(middleware.JwtAuth()).Use(middleware.ProjectAuth())
 
 	{
 		systemRouter.BaseRouter.InitBaseRouter(PublicGroup) // 注册基础功能路由 不做鉴权
@@ -40,6 +41,7 @@ func Routers() *gin.Engine {
 		systemRouter.ApiRouter.InitApiRouter(PrivateGroup, PublicGroup)
 		systemRouter.CasbinRouter.InitCasbinRouter(PrivateGroup)
 		systemRouter.ProjectRouter.InitProjectRouter(PrivateGroup)
+		systemRouter.OperationRecordRouter.InitSysOperationRecordRouter(ProjectGroup)
 
 		systemRouter.SshAuthRouter.InitSshAuthRouter(ProjectGroup)
 		systemRouter.CloudProduceRouter.InitCloudProduceRouter(ProjectGroup)
@@ -50,6 +52,7 @@ func Routers() *gin.Engine {
 		systemRouter.AssetsMongoRouter.InitAssetsMongoRouter(ProjectGroup)
 		systemRouter.AssetsRedisRouter.InitAssetsRedisRouter(ProjectGroup)
 		systemRouter.AssetsKafkaRouter.InitAssetsKafkaRouter(ProjectGroup)
+		systemRouter.AssetsLbRouter.InitAssetsLbRouter(ProjectGroup)
 
 		systemRouter.GameTypeRouter.InitGameTypeRouter(ProjectGroup)
 		systemRouter.GameServerRouter.InitGameServerRouter(ProjectGroup)
@@ -59,8 +62,15 @@ func Routers() *gin.Engine {
 		systemRouter.JobCommandRouter.InitJobCommandRouter(ProjectGroup)
 
 		systemRouter.GameUpdateRouter.InitGameUpdateRouter(ProjectGroup)
+		systemRouter.SysTaskRouter.InitSysTaskRouter(ProjectGroup)
+
+		systemRouter.GmRouter.InitGmRouter(ProjectGroup)
+
+		systemRouter.CronTaskRouter.InitCronTaskRouter(ProjectGroup)
 
 	}
+
+	global.OPS_ROUTERS = Router.Routes()
 
 	return Router
 }

@@ -25,11 +25,12 @@ func (j *Job) TableName() string {
 }
 
 type JobTask struct {
-	JobId uuid.UUID `json:"jobId" gorm:"index;comment:任务id"`
+	JobId uuid.UUID `json:"jobId" form:"jobId" gorm:"index;comment:任务id"`
 
 	AsynqId string    `json:"asynqId" gorm:"index;comment:asynq任务id"`
 	TaskId  uuid.UUID `json:"taskId" gorm:"primary_key"`
 
+	Queue    string    `json:"queue" gorm:"default:default;comment:队列"`
 	HostName string    `json:"hostName" gorm:"comment:服务器名称"`
 	HostIp   string    `json:"hostIp" gorm:"comment:服务器ip"`
 	ExecTime float64   `json:"execTime" gorm:"comment:耗时"`

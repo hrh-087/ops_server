@@ -33,6 +33,7 @@ COPY --from=0 /data/ops/server /data/ops/server
 #COPY --from=0 /data/ops/game_script /data/ops/game_script
 COPY --from=0 /data/ops/config.yaml /data/ops/etc/config.yaml
 #COPY --from=0 /data/ops/resource /data/ops/resource
+COPY --from=0 /data/ops/json_dir /data/ops/json_dir
 
 EXPOSE 8000
-ENTRYPOINT ./server -c /data/ops/etc/config.yaml
+# ENTRYPOINT ./server -c /data/ops/etc/config.yaml

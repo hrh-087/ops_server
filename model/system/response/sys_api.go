@@ -9,3 +9,8 @@ type SysAPIResponse struct {
 type SysAPIListResponse struct {
 	Data []system.SysApi `json:"data"`
 }
+
+type SysSyncApis struct {
+	NewApis    []system.SysApi `json:"newApis"`
+	DeleteApis []system.SysApi `json:"deleteApis"`
+}

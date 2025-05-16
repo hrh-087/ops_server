@@ -14,9 +14,12 @@ type SysAssetsServer struct {
 	PrivateIp          string    `json:"privateIp" gorm:"comment:内网ip"`
 	InstanceStates     int64     `json:"instanceStates" gorm:"comment:状态"`
 	SSHPort            string    `json:"sshPort" gorm:"comment:ssh端口"`
+	VpcId              string    `json:"vpcId" gorm:"comment:vpcId"`
+	SubVpcId           string    `json:"subVpcId" gorm:"comment:子网id"`
+	HostType           int8      `json:"hostType" gorm:"default:1; comment:服务器类型 1 本地服务器 2 云服务器 "`
 	SysAssetDeviceInfo `json:"deviceInfo" gorm:"embedded;comment:附加属性"`
 	Status             int64                 `json:"status" gorm:"comment:状态 0:待初始化 1 正常运行 2待回收 3 已回收;default:1"`
-	CloudProduceId     uint                  `json:"cloudProduceId" gorm:"comment:云产商id"`
+	CloudProduceId     uint                  `json:"cloudProduceId" gorm:"default:0;comment:云产商id"`
 	Cloud              SysCloudProduce       `json:"cloudProduce" gorm:"foreignKey:CloudProduceId;references:ID"`
 	PlatformId         uint                  `json:"platformId" gorm:"comment:渠道id"`
 	Platform           SysGamePlatform       `json:"platform" gorm:"foreignKey:PlatformId;references:ID"`
@@ -44,10 +47,11 @@ type SysAssetsRedis struct {
 	Platform           SysGamePlatform `json:"platform" gorm:"foreignKey:PlatformId;references:ID"`
 	SysAssetDeviceInfo `json:"deviceInfo" gorm:"embedded;comment:附加属性"`
 
-	Name     string `json:"name" gorm:"comment:redis名称"`
-	Host     string `json:"host" gorm:"comment:连接地址"`
-	Port     int64  `json:"port" gorm:"comment:连接端口"`
-	Password string `json:"password" gorm:"comment:连接密码"`
+	Name      string `json:"name" gorm:"comment:redis名称"`
+	Host      string `json:"host" gorm:"comment:连接地址"`
+	Port      int64  `json:"port" gorm:"comment:连接端口"`
+	Password  string `json:"password" gorm:"comment:连接密码"`
+	IsCluster bool   `json:"isCluster" gorm:"comment:是否集群"`
 }
 
 func (a *SysAssetsRedis) TableName() string {

@@ -42,23 +42,24 @@ excel:
 local:
   path: ./resource/
   store-path: ./resource/
+  json-dir: ./json_dir
 
 redis:
-  addr: 192.168.128.129:55561
-  password: "pineapple"
+  addr: 192.168.128.129:6379
+  password: ""
   db: 1
   useCluster: false
   clusterAddrs:
-    - 172.21.0.3:7000
+    - 192.168.128.129:6379
 
 system:
   db-type: mysql
   router-prefix: ""
-  addr: 8000
+  addr: 8001
   iplimit-count: 15000
   iplimit-time: 3600
   use-multipoint: false # 暂未处理多点登录  默认为false
-  use-redis: false
+  use-redis: true
   use-mongo: false
 
 zap:
@@ -82,8 +83,31 @@ asynq:
   retention: 7 # 保留天数
   concurrency: 10 # 并发数
   timeout: 600 # 任务执行超时时间 单位秒
+  tz: Asia/Shanghai # 时区
 
 game:
   game-path: /data/game/ # 游戏安装目录
   game-script-path: /data/script/ # 游戏脚本目录
   game-script-auto-path: /data/script/auto/ # 游戏脚本目录
+  hot-file-dir: /data/ops/data/ops/resource/ # 热更新文件目录
+  game-config-dir: /data/game/data/ # 游戏配置文件目录
+  remote-config-dir: /data/game/data/ # 远程配置文件目录
+
+
+ops:
+  host: 192.168.128.129
+  port: 22
+  user: root
+  name: "运维后台"
+
+
+default:
+  gm-url: http://116.205.247.197:8004/
+  online-gm-url: http://116.205.247.197:8004/
+
+prometheus:
+  addr: 1.94.191.58
+  ssh-port: 22
+  game-server-json-dir: /tmp/
+  host-server-json-dir: /tmp/
+  node-exporter-port: 41005
