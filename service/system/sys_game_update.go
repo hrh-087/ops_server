@@ -377,7 +377,7 @@ func (s *GameUpdateService) ExecUpdateTask(ctx *gin.Context, id int) (jobId uuid
 					}
 				case 2:
 					// 游戏服类型
-					err = global.OPS_DB.Debug().WithContext(ctx).Model(&system.SysGameServer{}).Preload("Host").Where("status = ? and game_type_id in ?", 2, gameTypeList).Find(&serverList).Group("game_type_id,host_id").Error
+					err = global.OPS_DB.Debug().WithContext(ctx).Model(&system.SysGameServer{}).Preload("Host").Where("status = ? and game_type_id in ?", 2, gameTypeList).Group("host_id").Find(&serverList).Error
 					if err != nil {
 						return
 					}
