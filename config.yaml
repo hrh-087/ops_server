@@ -28,8 +28,8 @@ captcha:
   open-captcha-timeout: 3600
 
 email:
-  to: 1197289278@qq.com
-  from: 1197289278@163.com
+  to: 123456@qq.com
+  from: 123456@163.com
   host: smtp.163.com
   secret: xxx
   nickname: test
@@ -95,18 +95,18 @@ game:
 
 
 ops:
-  host: 192.168.128.129
+  host: 127.0.0.1
   port: 22
   user: root
   name: "运维后台"
 
 
 default:
-  gm-url: http://116.205.247.197:8004/
-  online-gm-url: http://116.205.247.197:8004/
+  gm-url: http://127.0.0.1:8001/
+  online-gm-url: http://127.0.0.1:8001/
 
 prometheus:
-  addr: 1.94.191.58
+  addr: 127.0.0.1
   ssh-port: 22
   game-server-json-dir: /tmp/
   host-server-json-dir: /tmp/
