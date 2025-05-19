@@ -37,6 +37,10 @@ go build -ldflags="-s -w" -o server
 ./server -c  config.yaml -o worker
 # 运行定时任务
 ./server -c config.yaml -o scheduler
+
+# 账号密码
+账号: admin
+密码: dianchu666
 ```
 
 
